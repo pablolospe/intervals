@@ -41,7 +41,10 @@ export function PitchCanvas({ idleLabel }: { idleLabel: string }) {
       const buf = live.buffer;
       const waveH = h * 0.5;
       g.strokeStyle = color;
-      g.lineWidth = 2;
+      g.lineWidth = 2.5;
+      g.lineJoin = "round";
+      g.shadowColor = color;
+      g.shadowBlur = note ? 14 : 0;
       g.beginPath();
       if (buf) {
         let start = 0;
@@ -58,6 +61,7 @@ export function PitchCanvas({ idleLabel }: { idleLabel: string }) {
         g.lineTo(w, waveH / 2);
       }
       g.stroke();
+      g.shadowBlur = 0;
 
       // Note name.
       g.fillStyle = color;
@@ -114,5 +118,5 @@ export function PitchCanvas({ idleLabel }: { idleLabel: string }) {
     };
   }, [idleLabel]);
 
-  return <canvas ref={ref} className="h-72 w-full rounded-xl border border-zinc-800 bg-zinc-900" aria-label="Pitch visualizer" />;
+  return <canvas ref={ref} className="h-72 w-full rounded-2xl border border-zinc-800 bg-zinc-950/80" aria-label="Pitch visualizer" />;
 }

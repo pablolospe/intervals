@@ -45,6 +45,10 @@ export const INTERVALS: readonly IntervalDef[] = [
     song: { title: "El día que me quieras", artist: "Carlos Gardel", motif: [n(0), n(8, 2)] } },
   { id: "M6-asc", name: { es: "6ta mayor", en: "Major 6th" }, semitones: 9, direction: "asc",
     song: { title: "My Way", motif: [n(0), n(9, 2)] } },
+  { id: "m7-asc", name: { es: "7ma menor", en: "Minor 7th" }, semitones: 10, direction: "asc",
+    song: { title: "Somewhere (West Side Story)", motif: [n(0), n(10, 2)] } },
+  { id: "M7-asc", name: { es: "7ma mayor", en: "Major 7th" }, semitones: 11, direction: "asc",
+    song: { title: "Take On Me", artist: "a-ha", motif: [n(0), n(11, 2)] } },
   { id: "P8-asc", name: { es: "8va justa", en: "Perfect octave" }, semitones: 12, direction: "asc",
     song: { title: "Somewhere Over the Rainbow", motif: [n(0, 2), n(12, 2)] } },
 ];

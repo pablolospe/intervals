@@ -2,12 +2,22 @@
 import { useEffect } from "react";
 import { getInterval, INTERVALS } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
-import { useTrainer } from "@/store/trainer-store";
+import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
 import { PitchCanvas } from "./pitch-canvas";
 
+const MASCOT: Record<Phase, { face: string; anim: string }> = {
+  IDLE: { face: "🎹", anim: "" },
+  PLAYING_INTERVAL: { face: "👂", anim: "anim-ring" },
+  SINGING_ROOT: { face: "🎤", anim: "anim-ring" },
+  SINGING_TARGET: { face: "🎤", anim: "anim-ring" },
+  SUCCESS: { face: "🎉", anim: "anim-pop" },
+  MISS: { face: "🙈", anim: "anim-wiggle" },
+};
+
 const btn =
-  "rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40";
+const ghost = `${btn} border border-zinc-700 bg-zinc-900/60 text-zinc-200 hover:border-zinc-500 hover:bg-zinc-800`;
 
 export function TrainerApp() {
   const { lang, selection, currentId, phase, evaluation, micError, score, setLang, setSelection } = useTrainer();
@@ -20,108 +30,145 @@ export function TrainerApp() {
 
   const def = currentId ? getInterval(currentId) : null;
   const busy = phase === "PLAYING_INTERVAL";
-  const showAnswer = phase === "SUCCESS" || phase === "MISS";
-  const steps = ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "SUCCESS"] as const;
-  const stepIndex = phase === "MISS" ? 3 : steps.indexOf(phase as (typeof steps)[number]);
+  const finished = phase === "SUCCESS" || phase === "MISS";
+  const stepIndex = phase === "MISS" ? 3 : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "SUCCESS"].indexOf(phase);
+  const quip = phase === "SUCCESS" ? t.success[score.total % t.success.length] : phase === "MISS" ? t.miss[score.total % t.miss.length] : null;
+  const mascot = MASCOT[phase];
+  const mainLabel = phase === "IDLE" ? t.newChallenge : finished ? t.next : t.skip;
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-8 text-zinc-100">
+    <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8 text-zinc-100">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">{t.title}</h1>
-          <p className="text-sm text-zinc-400">{t.subtitle}</p>
+          <h1 className="bg-gradient-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-4xl font-bold tracking-tight text-transparent">
+            {t.title}
+          </h1>
+          <p className="text-sm text-zinc-400">{t.tagline}</p>
         </div>
-        <div role="group" aria-label={t.language} className="flex overflow-hidden rounded-lg border border-zinc-700 text-xs">
-          {(["es", "en"] as const).map((l) => (
-            <button
-              key={l}
-              onClick={() => setLang(l)}
-              aria-pressed={lang === l}
-              className={`px-3 py-1.5 uppercase ${lang === l ? "bg-zinc-100 text-zinc-900" : "text-zinc-300"}`}
-            >
-              {l}
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/70 px-3 py-1.5 text-sm" aria-label={`${t.streak}: ${score.streak}`}>
+            <span aria-hidden>🔥</span>
+            <span className="font-semibold tabular-nums">{score.streak}</span>
+          </div>
+          <div role="group" aria-label={t.language} className="flex overflow-hidden rounded-full border border-zinc-700 text-xs">
+            {(["es", "en"] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                aria-pressed={lang === l}
+                className={`px-3 py-1.5 uppercase ${lang === l ? "bg-zinc-100 text-zinc-900" : "text-zinc-300"}`}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
-          {t.interval}
-          <select
-            value={selection}
-            onChange={(e) => setSelection(e.target.value)}
-            className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-100"
+      <section className="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-5 shadow-2xl shadow-black/40 backdrop-blur">
+        <div className="mb-4 flex items-center gap-4">
+          <div
+            key={`${phase}-${score.total}`}
+            className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-3xl ${mascot.anim}`}
+            aria-hidden
           >
-            <option value="random">{t.random}</option>
-            {INTERVALS.map((i) => (
-              <option key={i.id} value={i.id}>
-                {i.name[lang]} ({i.direction === "asc" ? "↑" : "↓"})
-              </option>
-            ))}
-          </select>
-        </label>
-        <button onClick={startChallenge} disabled={busy} className={`${btn} bg-emerald-500 text-zinc-950 hover:bg-emerald-400`}>
-          {t.newChallenge}
-        </button>
-        <button onClick={replay} disabled={busy || !def} className={`${btn} border border-zinc-700 hover:bg-zinc-800`}>
-          {t.replay}
-        </button>
-      </div>
+            {mascot.face}
+          </div>
+          <div role="status" className="min-w-0">
+            <p className={`text-xl font-semibold ${phase === "SUCCESS" ? "text-emerald-300" : phase === "MISS" ? "text-amber-300" : ""}`}>
+              {t.phase[phase]}
+            </p>
+            <p className="text-sm text-zinc-400">
+              {quip ??
+                (def && !finished
+                  ? `${def.name[lang]} · ${def.direction === "asc" ? t.ascending : t.descending}`
+                  : "")}
+            </p>
+            {finished && def && evaluation && (
+              <p className="mt-1 text-xs text-zinc-500">
+                {def.name[lang]} ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
+                {evaluation.errorCents >= 0 ? "+" : ""}
+                {evaluation.errorCents.toFixed(0)} {t.cents}
+              </p>
+            )}
+          </div>
+        </div>
 
-      <ol className="flex gap-2" aria-label="progress">
-        {steps.map((s, i) => (
-          <li key={s} className={`h-1.5 flex-1 rounded-full ${i <= stepIndex ? "bg-emerald-400" : "bg-zinc-800"}`} />
-        ))}
-      </ol>
+        <ol className="mb-4 grid grid-cols-4 gap-2" aria-label="progress">
+          {t.steps.map((label, i) => (
+            <li key={label} className="flex flex-col gap-1">
+              <span className={`h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-emerald-400" : "bg-zinc-800"}`} />
+              <span className={`text-[11px] ${i === stepIndex ? "text-zinc-100" : "text-zinc-500"}`}>{label}</span>
+            </li>
+          ))}
+        </ol>
 
-      <p role="status" className={`text-lg ${phase === "SUCCESS" ? "text-emerald-400" : phase === "MISS" ? "text-amber-400" : ""}`}>
-        {t.phase[phase]}
-      </p>
+        <PitchCanvas idleLabel={t.idleLabel} />
 
-      <PitchCanvas idleLabel={t.idleLabel} />
+        {micError && <p className="mt-3 rounded-lg bg-red-950/60 p-3 text-sm text-red-300">{t.micDenied}</p>}
 
-      {micError && <p className="text-sm text-red-400">{t.micDenied}</p>}
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            onClick={startChallenge}
+            disabled={busy}
+            className={`${btn} bg-emerald-400 px-6 text-base text-zinc-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-300`}
+          >
+            {mainLabel}
+          </button>
+          <button onClick={replay} disabled={busy || !def} className={ghost}>
+            🔁 {t.replay}
+          </button>
+          <span className="ml-auto text-sm text-zinc-400">
+            {t.score}: <b className="text-zinc-100">{score.correct}/{score.total}</b>
+          </span>
+        </div>
+      </section>
 
-      {showAnswer && def && evaluation && (
-        <p className="text-sm text-zinc-400">
-          {def.name[lang]} ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}:{" "}
-          {evaluation.errorCents >= 0 ? "+" : ""}
-          {evaluation.errorCents.toFixed(0)} {t.cents}
-        </p>
-      )}
+      <section aria-labelledby="pick">
+        <h2 id="pick" className="mb-2 text-sm font-medium text-zinc-300">{t.pickInterval}</h2>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {[{ id: "random", label: `🎲 ${t.random}`, arrow: "" }, ...INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }))].map((o) => (
+            <button
+              key={o.id}
+              onClick={() => setSelection(o.id)}
+              aria-pressed={selection === o.id}
+              className={`rounded-xl border px-3 py-2 text-left text-sm transition ${
+                selection === o.id
+                  ? "border-emerald-400 bg-emerald-400/10 text-emerald-200"
+                  : "border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:border-zinc-600"
+              }`}
+            >
+              {o.label} <span className="text-zinc-500">{o.arrow}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
-      <section className="rounded-xl border border-zinc-800 p-4">
-        <h2 className="mb-2 text-sm font-medium text-zinc-300">{t.reference}</h2>
+      <section className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-4">
+        <h2 className="text-sm font-semibold text-violet-200">💡 {t.helpTitle}</h2>
+        <p className="mb-3 text-sm text-zinc-400">{t.helpText}</p>
         <div className="flex flex-wrap items-center gap-3">
-          <fieldset className="flex gap-4 text-sm" aria-label={t.refMode}>
+          <button onClick={playReference} disabled={busy || !def} className={ghost}>
+            ▶ {t.playReference}
+          </button>
+          <fieldset className="flex gap-4 text-xs text-zinc-400" aria-label={t.helpTitle}>
             <label className="flex items-center gap-1.5">
               <input type="radio" name="ref" defaultChecked /> {t.instrumental}
             </label>
-            <label className="flex items-center gap-1.5 text-zinc-500">
+            <label className="flex items-center gap-1.5 text-zinc-600">
               <input type="radio" name="ref" disabled /> {t.clip}
             </label>
           </fieldset>
-          <button onClick={playReference} disabled={busy || !def} className={`${btn} border border-zinc-700 hover:bg-zinc-800`}>
-            {t.playReference}
-          </button>
         </div>
-        {def && (showAnswer || phase === "SINGING_TARGET") && (
-          <p className="mt-2 text-sm text-zinc-400">
-            {t.song}: {def.song.title}
+        {def && (finished || phase === "SINGING_TARGET") && (
+          <p className="mt-3 text-sm text-violet-200">
+            🎵 {t.song}: <b>{def.song.title}</b>
             {def.song.artist ? ` — ${def.song.artist}` : ""}
           </p>
         )}
       </section>
 
-      <footer className="flex gap-6 text-sm text-zinc-400">
-        <span>
-          {t.score}: {score.correct}/{score.total}
-        </span>
-        <span>
-          {t.streak}: {score.streak}
-        </span>
-      </footer>
+      <footer className="text-center text-xs text-zinc-600">{t.footer}</footer>
     </main>
   );
 }

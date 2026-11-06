@@ -24,3 +24,33 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
+body {
+  background:
+    radial-gradient(60rem 30rem at 15% -10%, rgba(52, 211, 153, 0.14), transparent 60%),
+    radial-gradient(50rem 30rem at 100% 0%, rgba(167, 139, 250, 0.16), transparent 60%),
+    #09090b;
+  background-attachment: fixed;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.6) rotate(-12deg); }
+  60% { transform: scale(1.25) rotate(8deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-12deg); }
+  75% { transform: rotate(12deg); }
+}
+@keyframes ring {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+  100% { box-shadow: 0 0 0 22px rgba(52, 211, 153, 0); }
+}
+.anim-pop { animation: pop 0.5s ease-out; }
+.anim-wiggle { animation: wiggle 0.6s ease-in-out 2; }
+.anim-ring { animation: ring 1.2s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-pop, .anim-wiggle, .anim-ring { animation: none; }
+}
