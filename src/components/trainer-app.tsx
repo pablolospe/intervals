@@ -4,15 +4,16 @@ import { getInterval, INTERVALS } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
+import { Mascot, type Mood } from "./mascot";
 import { PitchCanvas } from "./pitch-canvas";
 
-const MASCOT: Record<Phase, { face: string; anim: string }> = {
-  IDLE: { face: "🎹", anim: "" },
-  PLAYING_INTERVAL: { face: "👂", anim: "anim-ring" },
-  SINGING_ROOT: { face: "🎤", anim: "anim-ring" },
-  SINGING_TARGET: { face: "🎤", anim: "anim-ring" },
-  SUCCESS: { face: "🎉", anim: "anim-pop" },
-  MISS: { face: "🙈", anim: "anim-wiggle" },
+const ANIM: Record<Phase, string> = {
+  IDLE: "",
+  PLAYING_INTERVAL: "anim-ring",
+  SINGING_ROOT: "anim-ring",
+  SINGING_TARGET: "anim-ring",
+  SUCCESS: "anim-pop",
+  MISS: "anim-wiggle",
 };
 
 const btn =
@@ -33,7 +34,7 @@ export function TrainerApp() {
   const finished = phase === "SUCCESS" || phase === "MISS";
   const stepIndex = phase === "MISS" ? 3 : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "SUCCESS"].indexOf(phase);
   const quip = phase === "SUCCESS" ? t.success[score.total % t.success.length] : phase === "MISS" ? t.miss[score.total % t.miss.length] : null;
-  const mascot = MASCOT[phase];
+  const mood: Mood = phase === "SUCCESS" ? "happy" : phase === "MISS" ? "sad" : "neutral";
   const mainLabel = phase === "IDLE" ? t.newChallenge : finished ? t.next : t.skip;
 
   return (
@@ -47,7 +48,7 @@ export function TrainerApp() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/70 px-3 py-1.5 text-sm" aria-label={`${t.streak}: ${score.streak}`}>
-            <span aria-hidden>🔥</span>
+            <span className="text-zinc-400">{t.streak}</span>
             <span className="font-semibold tabular-nums">{score.streak}</span>
           </div>
           <div role="group" aria-label={t.language} className="flex overflow-hidden rounded-full border border-zinc-700 text-xs">
@@ -69,10 +70,9 @@ export function TrainerApp() {
         <div className="mb-4 flex items-center gap-4">
           <div
             key={`${phase}-${score.total}`}
-            className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-3xl ${mascot.anim}`}
-            aria-hidden
+            className={`h-20 w-20 shrink-0 overflow-hidden rounded-full bg-zinc-800 p-1.5 ${ANIM[phase]}`}
           >
-            {mascot.face}
+            <Mascot heyJude={currentId === "m3-desc"} mood={mood} />
           </div>
           <div role="status" className="min-w-0">
             <p className={`text-xl font-semibold ${phase === "SUCCESS" ? "text-emerald-300" : phase === "MISS" ? "text-amber-300" : ""}`}>
@@ -116,7 +116,7 @@ export function TrainerApp() {
             {mainLabel}
           </button>
           <button onClick={replay} disabled={busy || !def} className={ghost}>
-            🔁 {t.replay}
+            {t.replay}
           </button>
           <span className="ml-auto text-sm text-zinc-400">
             {t.score}: <b className="text-zinc-100">{score.correct}/{score.total}</b>
@@ -127,7 +127,7 @@ export function TrainerApp() {
       <section aria-labelledby="pick">
         <h2 id="pick" className="mb-2 text-sm font-medium text-zinc-300">{t.pickInterval}</h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {[{ id: "random", label: `🎲 ${t.random}`, arrow: "" }, ...INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }))].map((o) => (
+          {[{ id: "random", label: t.random, arrow: "" }, ...INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }))].map((o) => (
             <button
               key={o.id}
               onClick={() => setSelection(o.id)}
@@ -145,11 +145,11 @@ export function TrainerApp() {
       </section>
 
       <section className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-4">
-        <h2 className="text-sm font-semibold text-violet-200">💡 {t.helpTitle}</h2>
+        <h2 className="text-sm font-semibold text-violet-200">{t.helpTitle}</h2>
         <p className="mb-3 text-sm text-zinc-400">{t.helpText}</p>
         <div className="flex flex-wrap items-center gap-3">
           <button onClick={playReference} disabled={busy || !def} className={ghost}>
-            ▶ {t.playReference}
+            {t.playReference}
           </button>
           <fieldset className="flex gap-4 text-xs text-zinc-400" aria-label={t.helpTitle}>
             <label className="flex items-center gap-1.5">
@@ -162,7 +162,7 @@ export function TrainerApp() {
         </div>
         {def && (finished || phase === "SINGING_TARGET") && (
           <p className="mt-3 text-sm text-violet-200">
-            🎵 {t.song}: <b>{def.song.title}</b>
+            {t.song}: <b>{def.song.title}</b>
             {def.song.artist ? ` — ${def.song.artist}` : ""}
           </p>
         )}
