@@ -4,6 +4,7 @@ import { getInterval, INTERVALS } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
+import { IdentifyModal } from "./identify-modal";
 import { Mascot, type Mood } from "./mascot";
 import { PitchCanvas } from "./pitch-canvas";
 
@@ -36,6 +37,7 @@ export function TrainerApp() {
   const isRandom = selection === "random";
   const revealed = !isRandom || finished; // surprise mode hides the answer until it is given
   const identifying = phase === "IDENTIFY";
+  const options = INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }));
   const stepLabels = isRandom ? t.stepsRandom : t.steps;
   const order: Phase[] = isRandom
     ? ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "IDENTIFY", "SUCCESS"]
@@ -134,22 +136,20 @@ export function TrainerApp() {
         </div>
       </section>
 
-      <section aria-labelledby="pick" className={identifying ? "rounded-2xl border border-emerald-400/40 bg-emerald-400/5 p-4" : ""}>
+      <section aria-labelledby="pick">
         <h2 id="pick" className="mb-2 text-sm font-medium text-zinc-300">
-          {identifying ? t.identifyTitle : t.pickInterval}
+          {t.pickInterval}
         </h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {[...(identifying ? [] : [{ id: "random", label: t.random, arrow: "" }]), ...INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }))].map((o) => (
+          {[{ id: "random", label: t.random, arrow: "" }, ...options].map((o) => (
             <button
               key={o.id}
-              onClick={() => (identifying ? answer(o.id) : setSelection(o.id))}
-              aria-pressed={identifying ? undefined : selection === o.id}
+              onClick={() => setSelection(o.id)}
+              aria-pressed={selection === o.id}
               className={`rounded-xl border px-3 py-2 text-left text-sm transition ${
-                !identifying && selection === o.id
+                selection === o.id || (finished && isRandom && o.id === currentId)
                   ? "border-emerald-400 bg-emerald-400/10 text-emerald-200"
-                  : finished && isRandom && o.id === currentId
-                    ? "border-emerald-400 bg-emerald-400/10 text-emerald-200"
-                    : "border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:border-zinc-600"
+                  : "border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:border-zinc-600"
               }`}
             >
               {o.label} <span className="text-zinc-500">{o.arrow}</span>
@@ -157,6 +157,8 @@ export function TrainerApp() {
           ))}
         </div>
       </section>
+
+      <IdentifyModal open={identifying} title={t.identifyTitle} subtitle={t.phase.IDENTIFY} options={options} onPick={answer} />
 
       <section className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-4">
         <h2 className="text-sm font-semibold text-violet-200">{t.helpTitle}</h2>
