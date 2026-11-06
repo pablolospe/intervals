@@ -66,11 +66,20 @@ export function PitchCanvas({ idleLabel }: { idleLabel: string }) {
       // Note name.
       g.fillStyle = color;
       g.textAlign = "center";
-      g.font = "600 40px var(--font-geist-sans), sans-serif";
-      g.fillText(note ? `${note.name}${note.octave}` : "—", w / 2, h * 0.68);
+      const fs = Math.max(18, Math.min(40, h * 0.14));
+      const ny = h * 0.68;
+      g.font = `600 ${fs}px var(--font-geist-sans), sans-serif`;
+      const label = note ? `${note.name}${note.octave}` : "—";
+      g.fillText(label, w / 2, ny);
       if (!note) {
-        g.font = "14px var(--font-geist-sans), sans-serif";
-        g.fillText(idleLabel, w / 2, h * 0.68 + 24);
+        g.font = `${Math.max(11, fs * 0.35)}px var(--font-geist-sans), sans-serif`;
+        g.fillText(idleLabel, w / 2, ny + fs * 0.6);
+      } else {
+        const nameW = g.measureText(label).width;
+        g.font = `${Math.max(11, fs * 0.4)}px var(--font-geist-mono), monospace`;
+        g.textAlign = "left";
+        g.fillText(`${note.cents >= 0 ? "+" : ""}${note.cents.toFixed(0)}¢`, w / 2 + nameW / 2 + 8, ny);
+        g.textAlign = "center";
       }
 
       // Cents gauge: -50..+50, good zone ±35.
@@ -96,13 +105,10 @@ export function PitchCanvas({ idleLabel }: { idleLabel: string }) {
         g.moveTo(x, gy - 14);
         g.lineTo(x, gy + 14);
         g.stroke();
-        g.fillStyle = color;
-        g.font = "12px var(--font-geist-mono), monospace";
-        g.fillText(`${note.cents >= 0 ? "+" : ""}${note.cents.toFixed(0)}¢`, x, gy + 30);
       }
 
       // Stabilization bar.
-      const by = h - 14;
+      const by = h - 12;
       g.fillStyle = "#27272a";
       g.fillRect(x0, by, x1 - x0, 6);
       g.fillStyle = GOOD;
@@ -118,5 +124,5 @@ export function PitchCanvas({ idleLabel }: { idleLabel: string }) {
     };
   }, [idleLabel]);
 
-  return <canvas ref={ref} className="h-72 w-full rounded-2xl border border-zinc-800 bg-zinc-950/80" aria-label="Pitch visualizer" />;
+  return <canvas ref={ref} className="block h-full w-full rounded-2xl border border-zinc-800 bg-zinc-950/80" aria-label="Pitch visualizer" />;
 }
