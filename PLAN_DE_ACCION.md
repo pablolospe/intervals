@@ -54,22 +54,24 @@ Todo el motor de audio se escribe en **TypeScript puro y desacoplado de React**,
 
 ---
 
-## 4. Catálogo Inicial de Intervalos y Canciones
+## 4. Catálogo Completo de Intervalos y Canciones Mnémicas
 
-Cada intervalo cuenta con su definición matemática, la secuencia de notas para el sintetizador y los metadatos del clip de audio (incluyendo cuál es la nota raíz original de la grabación para poder pitchearla con exactitud):
+Cada intervalo cuenta con su definición matemática, equivalencia en tonos/semitonos y ejemplos representativos tanto **ascendentes** como **descendentes**:
 
-| Intervalo | Semitonos | Dirección | Canción de Referencia | Notas Originales (Clip) |
-| :--- | :---: | :---: | :--- | :--- |
-| **2da Menor** | 1 | Ascendente | *Tiburón (Jaws)* | Mi2 $\rightarrow$ Fa2 |
-| **2da Mayor** | 2 | Ascendente | *Cumpleaños Feliz* | Do4 $\rightarrow$ Re4 |
-| **3ra Menor** | 3 | Descendente | *Hey Jude* (The Beatles) | Fa4 $\rightarrow$ Re4 |
-| **3ra Mayor** | 4 | Ascendente | *En el puente de Avignon* / *Oh When the Saints* | Do4 $\rightarrow$ Mi4 |
-| **4ta Justa** | 5 | Ascendente | *Arroz con leche* / *Marcha Nupcial* | Sol3 $\rightarrow$ Do4 |
-| **4ta Aumentada (Tritono)** | 6 | Ascendente | *Los Simpson* | Do4 $\rightarrow$ Fa#4 |
-| **5ta Justa** | 7 | Ascendente | *Superman* / *Star Wars* | Do4 $\rightarrow$ Sol4 |
-| **6ta Menor** | 8 | Ascendente | *El día que me quieras* (Carlos Gardel) | Sol3 $\rightarrow$ Mi$\flat$4 |
-| **6ta Mayor** | 9 | Ascendente | *My Way (A mi manera)* | Do4 $\rightarrow$ La4 |
-| **8va Justa** | 12 | Ascendente | *Somewhere Over the Rainbow* | Do4 $\rightarrow$ Do5 |
+| Intervalo | Semitonos / Tonos | Ejemplos Ascendentes | Ejemplos Descendentes |
+| :--- | :---: | :--- | :--- |
+| **2da Menor (2m)** | 1 semitono (½ T) | *Tiburón* (tema principal), *La Pantera Rosa* | *Para Elisa* (Beethoven) |
+| **2da Mayor (2M)** | 2 semitonos (1 T) | *Cumpleaños feliz* ("Cum-ple-años..."), *Martinillo* | *Yesterday* (The Beatles) |
+| **3ra Menor (3m)** | 3 semitonos (1½ T) | *Arrullo* (Brahms), *Greensleeves* | *Hey Jude* (The Beatles), *Canción de despedida* (Barney) |
+| **3ra Mayor (3M)** | 4 semitonos (2 T) | *Oh! When the Saints* | *5ta Sinfonía* (Beethoven - transiciones), *La Primavera* (Vivaldi) |
+| **4ta Justa (4J)** | 5 semitonos (2½ T) | *Marcha nupcial* (Wagner), *A Hard Day's Night* (The Beatles) | *Pequeña serenata nocturna* (Mozart) |
+| **4ta Aumentada / Tritono (4A / 5d)** | 6 semitonos (3 T) | *Tema de Los Simpson* | *Even Flow* (Pearl Jam - inicio del verso) |
+| **5ta Justa (5J)** | 7 semitonos (3½ T) | *Tema principal de Star Wars*, *Estrellita (Twinkle Twinkle)* | *Tema de Los Picapiedra (The Flintstones)* |
+| **6ta Menor (6m)** | 8 semitonos (4 T) | *The Entertainer* (Scott Joplin), *El día que me quieras* (Gardel) | *Tema de Love Story* |
+| **6ta Mayor (6M)** | 9 semitonos (4½ T) | *My Way* (Frank Sinatra) | *No Surprises* (Radiohead) |
+| **7ma Menor (7m)** | 10 semitonos (5 T) | *The Winner Takes It All* (ABBA) | *Blanca Navidad (White Christmas)* |
+| **7ma Mayor (7M)** | 11 semitonos (5½ T) | *Take on Me* (A-ha), *Superman* (tema principal) | *I Love You* (Cole Porter) |
+| **8va Justa (8J)** | 12 semitonos (6 T) | *Somewhere Over the Rainbow* | *Tema de Doogie Howser* |
 
 ---
 
@@ -83,7 +85,7 @@ Cada intervalo cuenta con su definición matemática, la secuencia de notas para
 ### Fase 2: Motor Híbrido de Reproducción (`SynthEngine` + `SampleEngine`)
 * [ ] Construir `SynthEngine` con envolvente ADSR y reproducción de secuencias melódicas transportables.
 * [ ] Construir `SampleEngine` con carga de `AudioBuffer` y pitcheo dinámico (`detune`) sincronizado con la nota base del ejercicio.
-* [ ] Definir el catálogo tipado de intervalos y canciones (`intervals-catalog.ts`).
+* [x] Definir el catálogo tipado de intervalos y canciones (`intervals-catalog.ts` con ejemplos ascendentes y descendentes).
 
 ### Fase 3: Captura de Micrófono y Estabilizador Vocal
 * [ ] Conectar `PitchDetector` al micrófono real del navegador.

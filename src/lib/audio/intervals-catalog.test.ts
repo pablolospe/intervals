@@ -1,0 +1,37 @@
+import { describe, expect, it } from "vitest";
+import { getInterval, INTERVALS, intervalNotes, motifNotes, pickRoot, signedSemitones } from "./intervals-catalog";
+
+describe("catalog", () => {
+  it("has unique ids and valid data", () => {
+    expect(new Set(INTERVALS.map((i) => i.id)).size).toBe(INTERVALS.length);
+    for (const i of INTERVALS) {
+      expect(i.song.motif[0].offset).toBe(0);
+      expect(i.semitones).toBeGreaterThan(0);
+    }
+  });
+
+  it("the motif contains the interval jump for every entry", () => {
+    for (const i of INTERVALS) {
+      const jumps = i.song.motif.slice(1).map((m, k) => m.offset - i.song.motif[k].offset);
+      expect(jumps).toContain(signedSemitones(i));
+    }
+  });
+
+  it("builds interval and transposed motif notes", () => {
+    const d = getInterval("m3-desc");
+    expect(intervalNotes(d, 65).map((n) => n.midi)).toEqual([65, 62]);
+    expect(motifNotes(d, 70).map((n) => n.midi)).toEqual([70, 67]);
+    expect(() => getInterval("nope")).toThrow();
+  });
+
+  it("pickRoot keeps both notes inside the comfortable range", () => {
+    for (const i of INTERVALS) {
+      for (const r of [0, 0.5, 0.999]) {
+        const root = pickRoot(i, () => r);
+        const t = root + signedSemitones(i);
+        expect(Math.min(root, t)).toBeGreaterThanOrEqual(45);
+        expect(Math.max(root, t)).toBeLessThanOrEqual(69);
+      }
+    }
+  });
+});
