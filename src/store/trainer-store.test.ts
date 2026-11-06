@@ -52,4 +52,32 @@ describe("trainer state machine", () => {
     expect(s().currentId).toBe("P8-asc");
     expect(s().confirmNote(220)).toBe("ignored"); // still PLAYING_INTERVAL
   });
+
+  it("surprise mode asks the user to name the interval before scoring", () => {
+    s().setSelection("random");
+    s().startChallenge(() => 0); // m2-asc
+    s().playbackFinished();
+    s().confirmNote(220);
+    s().confirmNote(midiToFrequency(57 + 1));
+    expect(s().phase).toBe("IDENTIFY");
+    expect(s().score.total).toBe(0);
+    s().answer("M2-asc");
+    expect(s().phase).toBe("MISS");
+    expect(s().score).toEqual({ correct: 0, total: 1, streak: 0 });
+
+    s().startChallenge(() => 0);
+    s().playbackFinished();
+    s().confirmNote(220);
+    s().confirmNote(midiToFrequency(57 + 1));
+    s().answer("m2-asc");
+    expect(s().phase).toBe("SUCCESS");
+    expect(s().score).toEqual({ correct: 1, total: 2, streak: 1 });
+  });
+
+  it("ignores answers outside the IDENTIFY phase", () => {
+    s().setSelection("random");
+    s().startChallenge(() => 0);
+    s().answer("m2-asc");
+    expect(s().phase).toBe("PLAYING_INTERVAL");
+  });
 });

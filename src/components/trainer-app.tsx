@@ -12,6 +12,7 @@ const ANIM: Record<Phase, string> = {
   PLAYING_INTERVAL: "anim-ring",
   SINGING_ROOT: "anim-ring",
   SINGING_TARGET: "anim-ring",
+  IDENTIFY: "",
   SUCCESS: "anim-pop",
   MISS: "anim-wiggle",
 };
@@ -21,7 +22,7 @@ const btn =
 const ghost = `${btn} border border-zinc-700 bg-zinc-900/60 text-zinc-200 hover:border-zinc-500 hover:bg-zinc-800`;
 
 export function TrainerApp() {
-  const { lang, selection, currentId, phase, evaluation, micError, score, setLang, setSelection } = useTrainer();
+  const { lang, selection, currentId, phase, evaluation, micError, score, setLang, setSelection, answer } = useTrainer();
   const { startChallenge, replay, playReference } = useTrainerAudio();
   const t = dict[lang];
 
@@ -32,7 +33,14 @@ export function TrainerApp() {
   const def = currentId ? getInterval(currentId) : null;
   const busy = phase === "PLAYING_INTERVAL";
   const finished = phase === "SUCCESS" || phase === "MISS";
-  const stepIndex = phase === "MISS" ? 3 : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "SUCCESS"].indexOf(phase);
+  const isRandom = selection === "random";
+  const revealed = !isRandom || finished; // surprise mode hides the answer until it is given
+  const identifying = phase === "IDENTIFY";
+  const stepLabels = isRandom ? t.stepsRandom : t.steps;
+  const order: Phase[] = isRandom
+    ? ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "IDENTIFY", "SUCCESS"]
+    : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "SUCCESS"];
+  const stepIndex = phase === "MISS" ? order.length - 1 : order.indexOf(phase);
   const quip = phase === "SUCCESS" ? t.success[score.total % t.success.length] : phase === "MISS" ? t.miss[score.total % t.miss.length] : null;
   const mood: Mood = phase === "SUCCESS" ? "happy" : phase === "MISS" ? "sad" : "neutral";
   const mainLabel = phase === "IDLE" ? t.newChallenge : finished ? t.next : t.skip;
@@ -72,7 +80,7 @@ export function TrainerApp() {
             key={`${phase}-${score.total}`}
             className={`h-20 w-20 shrink-0 overflow-hidden rounded-full bg-zinc-800 p-1.5 ${ANIM[phase]}`}
           >
-            <Mascot heyJude={currentId === "m3-desc"} mood={mood} />
+            <Mascot heyJude={currentId === "m3-desc" && revealed} mood={mood} />
           </div>
           <div role="status" className="min-w-0">
             <p className={`text-xl font-semibold ${phase === "SUCCESS" ? "text-emerald-300" : phase === "MISS" ? "text-amber-300" : ""}`}>
@@ -81,12 +89,14 @@ export function TrainerApp() {
             <p className="text-sm text-zinc-400">
               {quip ??
                 (def && !finished
-                  ? `${def.name[lang]} · ${def.direction === "asc" ? t.ascending : t.descending}`
+                  ? revealed
+                    ? `${def.name[lang]} · ${def.direction === "asc" ? t.ascending : t.descending}`
+                    : t.mystery
                   : "")}
             </p>
             {finished && def && evaluation && (
               <p className="mt-1 text-xs text-zinc-500">
-                {def.name[lang]} ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
+                {isRandom ? `${t.wasIt}: ` : ""}{def.name[lang]} ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
                 {evaluation.errorCents >= 0 ? "+" : ""}
                 {evaluation.errorCents.toFixed(0)} {t.cents}
               </p>
@@ -94,8 +104,8 @@ export function TrainerApp() {
           </div>
         </div>
 
-        <ol className="mb-4 grid grid-cols-4 gap-2" aria-label="progress">
-          {t.steps.map((label, i) => (
+        <ol className="mb-4 grid gap-2" style={{ gridTemplateColumns: `repeat(${stepLabels.length}, minmax(0, 1fr))` }} aria-label="progress">
+          {stepLabels.map((label, i) => (
             <li key={label} className="flex flex-col gap-1">
               <span className={`h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-emerald-400" : "bg-zinc-800"}`} />
               <span className={`text-[11px] ${i === stepIndex ? "text-zinc-100" : "text-zinc-500"}`}>{label}</span>
@@ -124,18 +134,22 @@ export function TrainerApp() {
         </div>
       </section>
 
-      <section aria-labelledby="pick">
-        <h2 id="pick" className="mb-2 text-sm font-medium text-zinc-300">{t.pickInterval}</h2>
+      <section aria-labelledby="pick" className={identifying ? "rounded-2xl border border-emerald-400/40 bg-emerald-400/5 p-4" : ""}>
+        <h2 id="pick" className="mb-2 text-sm font-medium text-zinc-300">
+          {identifying ? t.identifyTitle : t.pickInterval}
+        </h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {[{ id: "random", label: t.random, arrow: "" }, ...INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }))].map((o) => (
+          {[...(identifying ? [] : [{ id: "random", label: t.random, arrow: "" }]), ...INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }))].map((o) => (
             <button
               key={o.id}
-              onClick={() => setSelection(o.id)}
-              aria-pressed={selection === o.id}
+              onClick={() => (identifying ? answer(o.id) : setSelection(o.id))}
+              aria-pressed={identifying ? undefined : selection === o.id}
               className={`rounded-xl border px-3 py-2 text-left text-sm transition ${
-                selection === o.id
+                !identifying && selection === o.id
                   ? "border-emerald-400 bg-emerald-400/10 text-emerald-200"
-                  : "border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:border-zinc-600"
+                  : finished && isRandom && o.id === currentId
+                    ? "border-emerald-400 bg-emerald-400/10 text-emerald-200"
+                    : "border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:border-zinc-600"
               }`}
             >
               {o.label} <span className="text-zinc-500">{o.arrow}</span>
@@ -148,7 +162,7 @@ export function TrainerApp() {
         <h2 className="text-sm font-semibold text-violet-200">{t.helpTitle}</h2>
         <p className="mb-3 text-sm text-zinc-400">{t.helpText}</p>
         <div className="flex flex-wrap items-center gap-3">
-          <button onClick={playReference} disabled={busy || !def} className={ghost}>
+          <button onClick={playReference} disabled={busy || !def || !revealed} className={ghost}>
             {t.playReference}
           </button>
           <fieldset className="flex gap-4 text-xs text-zinc-400" aria-label={t.helpTitle}>
@@ -160,7 +174,7 @@ export function TrainerApp() {
             </label>
           </fieldset>
         </div>
-        {def && (finished || phase === "SINGING_TARGET") && (
+        {def && (finished || (phase === "SINGING_TARGET" && !isRandom)) && (
           <p className="mt-3 text-sm text-violet-200">
             {t.song}: <b>{def.song.title}</b>
             {def.song.artist ? ` — ${def.song.artist}` : ""}
