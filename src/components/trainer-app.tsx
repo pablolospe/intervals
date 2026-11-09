@@ -23,7 +23,7 @@ const btn = "btn px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm";
 const ghost = `${btn} btn-ghost`;
 
 export function TrainerApp() {
-  const { lang, selection, currentId, phase, evaluation, micError, score, setLang, setSelection, answer } = useTrainer();
+  const { lang, selection, currentId, phase, evaluation, micError, score, setSelection, answer } = useTrainer();
   const { startChallenge, replay, playReference } = useTrainerAudio();
   const t = dict[lang];
 
@@ -70,18 +70,6 @@ export function TrainerApp() {
             <span className="text-zinc-600">·</span>
             <span className="text-zinc-400">{t.streak}</span>
             <b className="tabular-nums">{score.streak}</b>
-          </div>
-          <div role="group" aria-label={t.language} className="flex overflow-hidden rounded-full border border-zinc-700 text-xs">
-            {(["es", "en"] as const).map((l) => (
-              <button
-                key={l}
-                onClick={() => setLang(l)}
-                aria-pressed={lang === l}
-                className={`px-3 py-1.5 uppercase ${lang === l ? "bg-zinc-100 text-zinc-900" : "text-zinc-300"}`}
-              >
-                {l}
-              </button>
-            ))}
           </div>
         </div>
       </header>
