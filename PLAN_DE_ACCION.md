@@ -67,8 +67,8 @@ Cada intervalo cuenta con su definición matemática, equivalencia en tonos/semi
 | **4ta Justa (4J)** | 5 semitonos (2½ T) | *Marcha nupcial* (Wagner), *A Hard Day's Night* (The Beatles) | *Pequeña serenata nocturna* (Mozart) |
 | **4ta Aumentada / Tritono (4A / 5d)** | 6 semitonos (3 T) | *Tema de Los Simpson* | *Even Flow* (Pearl Jam - inicio del verso) |
 | **5ta Justa (5J)** | 7 semitonos (3½ T) | *Tema principal de Star Wars*, *Estrellita (Twinkle Twinkle)* | *Tema de Los Picapiedra (The Flintstones)* |
-| **6ta Menor (6m)** | 8 semitonos (4 T) | *The Entertainer* (Scott Joplin), *El día que me quieras* (Gardel) | *Tema de Love Story* |
-| **6ta Mayor (6M)** | 9 semitonos (4½ T) | *My Way* (Frank Sinatra) | *No Surprises* (Radiohead) |
+| **6ta Menor (6m)** | 8 semitonos (4 T) | *The Entertainer* (Scott Joplin) | *Tema de Love Story* |
+| **6ta Mayor (6M)** | 9 semitonos (4½ T) | *El día que me quieras* (Carlos Gardel), *My Way* (Frank Sinatra) | *No Surprises* (Radiohead) |
 | **7ma Menor (7m)** | 10 semitonos (5 T) | *The Winner Takes It All* (ABBA) | *Blanca Navidad (White Christmas)* |
 | **7ma Mayor (7M)** | 11 semitonos (5½ T) | *Take on Me* (A-ha), *Superman* (tema principal) | *I Love You* (Cole Porter) |
 | **8va Justa (8J)** | 12 semitonos (6 T) | *Somewhere Over the Rainbow* | *Tema de Doogie Howser* |

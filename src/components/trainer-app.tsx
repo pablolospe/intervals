@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import Link from "next/link";
 import { getInterval, INTERVALS } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
@@ -18,9 +19,8 @@ const ANIM: Record<Phase, string> = {
   MISS: "anim-wiggle",
 };
 
-const btn =
-  "rounded-xl px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40";
-const ghost = `${btn} border border-zinc-700 bg-zinc-900/60 text-zinc-200 hover:border-zinc-500 hover:bg-zinc-800`;
+const btn = "btn px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm";
+const ghost = `${btn} btn-ghost`;
 
 export function TrainerApp() {
   const { lang, selection, currentId, phase, evaluation, micError, score, setLang, setSelection, answer } = useTrainer();
@@ -51,10 +51,17 @@ export function TrainerApp() {
     <main className="mx-auto flex h-dvh w-full max-w-5xl flex-col gap-3 px-3 py-3 text-zinc-100 sm:px-6 sm:py-5">
       <header className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="bg-gradient-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-4xl">
+          <Link
+            href="/"
+            className="group mb-1 inline-flex items-center gap-1.5 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+          >
+            <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
+            <span>Suite</span>
+          </Link>
+          <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-4xl">
             {t.title}
           </h1>
-          <p className="hidden text-sm text-zinc-400 sm:block [@media(max-height:480px)]:!hidden">{t.tagline}</p>
+          <p className="hidden text-sm text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-3 py-1 text-xs sm:text-sm" aria-label={`${t.score}: ${score.correct}/${score.total}. ${t.streak}: ${score.streak}`}>
@@ -86,7 +93,7 @@ export function TrainerApp() {
               key={`${phase}-${score.total}`}
               className={`[@media(max-height:480px)]:hidden h-12 w-12 shrink-0 overflow-hidden rounded-full bg-zinc-800 p-1 sm:h-20 sm:w-20 sm:p-1.5 ${ANIM[phase]}`}
             >
-              <Mascot heyJude={currentId === "m3-desc" && revealed} mood={mood} />
+              <Mascot intervalId={currentId} revealed={revealed} mood={mood} />
             </div>
             <div role="status" className="min-w-0">
               <p className={`text-base font-semibold sm:text-xl ${phase === "SUCCESS" ? "text-emerald-300" : phase === "MISS" ? "text-amber-300" : ""}`}>
@@ -129,7 +136,7 @@ export function TrainerApp() {
             <button
               onClick={startChallenge}
               disabled={busy}
-              className={`${btn} bg-emerald-400 px-4 text-sm text-zinc-950 sm:px-5 sm:text-base shadow-lg shadow-emerald-500/20 hover:bg-emerald-300`}
+              className={`${btn} btn-primary px-4 text-sm sm:px-5 sm:text-base`}
             >
               {mainLabel}
             </button>
@@ -150,13 +157,13 @@ export function TrainerApp() {
                   key={o.id}
                   onClick={() => setSelection(o.id)}
                   aria-pressed={selection === o.id}
-                  className={`truncate rounded-xl border px-2 py-1.5 text-left text-xs transition [@media(max-height:600px)]:py-1 sm:px-3 sm:py-2 sm:text-sm ${
+                  className={`truncate rounded-xl border px-2 py-1.5 text-left text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 [@media(max-height:600px)]:py-1 sm:px-3 sm:py-2 sm:text-sm ${
                     selection === o.id || (finished && isRandom && o.id === currentId)
-                      ? "border-emerald-400 bg-emerald-400/10 text-emerald-200"
-                      : "border-zinc-800 bg-zinc-900/50 text-zinc-300 hover:border-zinc-600"
+                      ? "border-emerald-400 bg-emerald-400/15 text-emerald-100 shadow-[0_0_0_1px_rgba(52,211,153,0.4)]"
+                      : "border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:border-zinc-400 hover:bg-zinc-700"
                   }`}
                 >
-                  {o.label} <span className="text-zinc-500">{o.arrow}</span>
+                  {o.label} <span className="text-zinc-400">{o.arrow}</span>
                 </button>
               ))}
             </div>
@@ -165,12 +172,12 @@ export function TrainerApp() {
           <section className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-2.5 sm:p-4">
             <div className="flex items-center justify-between gap-2 sm:block">
               <h2 className="text-xs font-semibold text-violet-200 sm:text-sm">{t.helpTitle}</h2>
-              <p className="mb-2 hidden text-sm text-zinc-400 sm:block [@media(max-height:480px)]:!hidden">{t.helpText}</p>
+              <p className="mb-2 hidden text-sm text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.helpText}</p>
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <button onClick={playReference} disabled={busy || !def || !revealed} className={ghost}>
                   {t.playReference}
                 </button>
-                <fieldset className="hidden gap-4 text-xs text-zinc-400 sm:flex [@media(max-height:480px)]:!hidden" aria-label={t.helpTitle}>
+                <fieldset className="hidden gap-4 text-xs text-zinc-400 sm:flex [@media(max-height:480px)]:hidden!" aria-label={t.helpTitle}>
                   <label className="flex items-center gap-1.5">
                     <input type="radio" name="ref" defaultChecked /> {t.instrumental}
                   </label>

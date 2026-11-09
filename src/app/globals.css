@@ -54,3 +54,48 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .anim-pop, .anim-wiggle, .anim-ring { animation: none; }
 }
+
+/* ---------- Design system: buttons, surfaces, paper ---------- */
+@layer components {
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+      transition-[background-color,border-color,color,box-shadow,transform] duration-150
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950
+      disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none;
+  }
+  /* Raised "key" buttons: a solid bottom edge that squashes when pressed. */
+  .btn-primary {
+    @apply bg-emerald-400 text-zinc-950 shadow-[0_4px_0_0_#047857] hover:bg-emerald-300
+      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#047857];
+  }
+  .btn-accent {
+    @apply bg-violet-400 text-zinc-950 shadow-[0_4px_0_0_#5b21b6] hover:bg-violet-300
+      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#5b21b6];
+  }
+  .btn-danger {
+    @apply bg-red-500 text-white shadow-[0_4px_0_0_#991b1b] hover:bg-red-400
+      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#991b1b];
+  }
+  .btn-ghost {
+    @apply border border-zinc-600 bg-zinc-800 text-zinc-50 shadow-[0_3px_0_0_#09090b] hover:border-zinc-400 hover:bg-zinc-700
+      enabled:active:translate-y-[2px] enabled:active:shadow-[0_1px_0_0_#09090b];
+  }
+  .btn-sm {
+    @apply rounded-lg px-3 py-1.5 text-xs sm:text-sm;
+  }
+  /* Small toggle-able pill (aria-pressed drives the selected look). */
+  .chip {
+    @apply inline-flex select-none items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-100
+      transition hover:border-zinc-400 hover:bg-zinc-700
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300
+      disabled:cursor-not-allowed disabled:opacity-40
+      aria-pressed:border-emerald-400 aria-pressed:bg-emerald-400/15 aria-pressed:text-emerald-200;
+  }
+  .card {
+    @apply rounded-2xl border border-zinc-800 bg-zinc-900/70 shadow-xl shadow-black/30 backdrop-blur;
+  }
+  /* Light "sheet music" surface so notation reads at full contrast. */
+  .paper {
+    @apply rounded-xl bg-stone-50 text-zinc-900 shadow-[inset_0_-2px_0_0_rgba(0,0,0,0.08)];
+  }
+}

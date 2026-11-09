@@ -1,20 +1,86 @@
 export type Mood = "neutral" | "happy" | "sad";
+export type MascotCharacter = "mccartney" | "gardel" | "homer";
 
-/** Fotos de Paul McCartney utilizadas como reacción para "Hey Jude" (3ra menor descendente). */
-function PaulPhoto({ mood }: { mood: Mood }) {
-  const isHappy = mood === "happy";
-  const src = isHappy ? "/images/mccartney/happy.jpg" : "/images/mccartney/sad.jpg";
-  const alt = isHappy ? "Paul McCartney sonriendo" : "Paul McCartney serio";
+export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
+  if (!intervalId) return null;
+  if (intervalId === "m3-desc") return "mccartney";
+  if (intervalId === "TT-asc") return "homer";
+  if (intervalId === "M6-asc") return "gardel";
+  return null;
+}
+
+interface PhotoConfig {
+  src: string;
+  alt: string;
+  objectPosition: string;
+}
+
+const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig; neutral: PhotoConfig }> = {
+  mccartney: {
+    happy: {
+      src: "/images/mccartney/happy.jpg",
+      alt: "Paul McCartney sonriendo (Hey Jude)",
+      objectPosition: "object-[50%_25%] scale-105",
+    },
+    sad: {
+      src: "/images/mccartney/sad.jpg",
+      alt: "Paul McCartney triste (Hey Jude)",
+      objectPosition: "object-center",
+    },
+    neutral: {
+      src: "/images/mccartney/sad.jpg",
+      alt: "Paul McCartney serio (Hey Jude)",
+      objectPosition: "object-center",
+    },
+  },
+  gardel: {
+    happy: {
+      src: "/images/gardel/happy.jpg",
+      alt: "Carlos Gardel sonriendo con el sombrero",
+      objectPosition: "object-[50%_32%] scale-110",
+    },
+    sad: {
+      src: "/images/gardel/sad.webp",
+      alt: "Carlos Gardel melancólico con la copa",
+      objectPosition: "object-[55%_35%] scale-105",
+    },
+    neutral: {
+      src: "/images/gardel/happy.jpg",
+      alt: "Carlos Gardel",
+      objectPosition: "object-[50%_32%] scale-110",
+    },
+  },
+  homer: {
+    happy: {
+      src: "/images/homer/happy.jpg",
+      alt: "Homero Simpson festejando (The Simpsons)",
+      objectPosition: "object-[50%_25%] scale-105",
+    },
+    sad: {
+      src: "/images/homer/sad.jpg",
+      alt: "Homero Simpson enojado/frustrado",
+      objectPosition: "object-center",
+    },
+    neutral: {
+      src: "/images/homer/happy.jpg",
+      alt: "Homero Simpson",
+      objectPosition: "object-[50%_25%] scale-105",
+    },
+  },
+};
+
+function CharacterPhoto({ character, mood }: { character: MascotCharacter; mood: Mood }) {
+  const cfg = CHARACTERS[character][mood];
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-full bg-zinc-900">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={src}
-        alt={alt}
-        className={`h-full w-full rounded-full object-cover select-none transition-transform duration-300 ${
-          isHappy ? "object-[50%_25%] scale-105" : "object-center"
-        } ${mood === "sad" ? "brightness-90 contrast-105" : ""}`}
+        src={cfg.src}
+        alt={cfg.alt}
+        className={`h-full w-full rounded-full object-cover select-none transition-transform duration-300 ${cfg.objectPosition} ${
+          mood === "sad" ? "brightness-90 contrast-105" : ""
+        }`}
       />
       {mood === "sad" && (
         <svg
@@ -43,6 +109,17 @@ function NoteBadge({ mood }: { mood: Mood }) {
   );
 }
 
-export function Mascot({ heyJude, mood }: { heyJude: boolean; mood: Mood }) {
-  return heyJude ? <PaulPhoto mood={mood} /> : <NoteBadge mood={mood} />;
+export interface MascotProps {
+  intervalId?: string | null;
+  revealed?: boolean;
+  mood: Mood;
+  /** Retrocompatibilidad */
+  heyJude?: boolean;
+}
+
+export function Mascot({ intervalId, revealed = true, mood, heyJude }: MascotProps) {
+  const resolvedId = heyJude ? "m3-desc" : intervalId;
+  const character = revealed ? getMascotCharacter(resolvedId) : null;
+
+  return character ? <CharacterPhoto character={character} mood={mood} /> : <NoteBadge mood={mood} />;
 }

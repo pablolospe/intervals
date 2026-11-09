@@ -18,8 +18,6 @@ const DURATIONS: { code: DurationCode; label: string }[] = [
   { code: "16", label: "Semicorchea" },
 ];
 
-const chip =
-  "rounded-lg border border-zinc-700 bg-zinc-900/60 px-2.5 py-1.5 text-xs font-medium text-zinc-200 transition hover:border-zinc-500 disabled:opacity-40";
 
 export function ScoreEditor() {
   const [state, setState] = useState<EditorState>(initialEditor);
@@ -172,14 +170,14 @@ export function ScoreEditor() {
       <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-300">
         <div className="flex items-center gap-2" role="group" aria-label="Cantidad de compases">
           <span>Compases</span>
-          <button className={chip} onClick={() => changeMeasures(state.score.measures - 1)} disabled={state.score.measures <= Math.max(1, usedMeasures(state.score))} aria-label="Quitar un compás">−</button>
+          <button className="chip" onClick={() => changeMeasures(state.score.measures - 1)} disabled={state.score.measures <= Math.max(1, usedMeasures(state.score))} aria-label="Quitar un compás">−</button>
           <span className="w-6 text-center font-semibold tabular-nums">{state.score.measures}</span>
-          <button className={chip} onClick={() => changeMeasures(state.score.measures + 1)} disabled={state.score.measures >= MAX_MEASURES} aria-label="Agregar un compás">+</button>
+          <button className="chip" onClick={() => changeMeasures(state.score.measures + 1)} disabled={state.score.measures >= MAX_MEASURES} aria-label="Agregar un compás">+</button>
         </div>
-        <button className={chip} onClick={doUndo} disabled={!state.history.length}>↶ Deshacer</button>
+        <button className="chip" onClick={doUndo} disabled={!state.history.length}>↶ Deshacer</button>
       </div>
 
-      <div ref={wrap} className="min-h-40 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60 p-2">
+      <div ref={wrap} className="card min-h-40 overflow-hidden p-2">
         <ScoreView score={state.score} width={width} selected={selected} onSelect={select} />
         {!hasMusic && (
           <p className="px-4 pb-3 text-sm text-zinc-500">Vacía. Escribí abajo, por ejemplo: “{EXAMPLES[0]}”.</p>
@@ -195,24 +193,25 @@ export function ScoreEditor() {
           <span className="text-xs text-zinc-500">Tocá una nota para editarla (← → para moverte, ↑ ↓ cambian la altura, Supr borra).</span>
         ) : (
           <>
-            <button className={chip} disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, 1))}>↑ Subir</button>
-            <button className={chip} disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, -1))}>↓ Bajar</button>
-            <button className={chip} disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, 7))}>8va ↑</button>
-            <button className={chip} disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, -7))}>8va ↓</button>
-            <button className={chip} disabled={!isNote} onClick={() => edit(ed.cycleAccidental)}>♮ ♯ ♭</button>
+            <button className="chip" disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, 1))}>↑ Subir</button>
+            <button className="chip" disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, -1))}>↓ Bajar</button>
+            <button className="chip" disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, 7))}>8va ↑</button>
+            <button className="chip" disabled={!isNote} onClick={() => edit((s, sel) => ed.transpose(s, sel, -7))}>8va ↓</button>
+            <button className="chip" disabled={!isNote} onClick={() => edit(ed.cycleAccidental)}>♮ ♯ ♭</button>
             <span className="mx-1 h-4 w-px bg-zinc-700" />
             {DURATIONS.map((d) => (
               <button
                 key={d.code}
-                className={`${chip} ${leaf.duration === d.code ? "!border-emerald-400 text-emerald-300" : ""}`}
+                className="chip"
+                aria-pressed={leaf.duration === d.code}
                 onClick={() => edit((s, sel) => ed.setDuration(s, sel, d.code))}
               >
                 {d.label}
               </button>
             ))}
             <span className="mx-1 h-4 w-px bg-zinc-700" />
-            <button className={chip} disabled={!isNote} onClick={() => edit(ed.toRest)}>Silencio</button>
-            <button className={`${chip} hover:!border-red-400`} onClick={remove}>Borrar</button>
+            <button className="chip" disabled={!isNote} onClick={() => edit(ed.toRest)}>Silencio</button>
+            <button className="chip hover:!border-red-400 hover:!text-red-200" onClick={remove}>Borrar</button>
           </>
         )}
       </div>
@@ -223,9 +222,7 @@ export function ScoreEditor() {
           onClick={() => void voice.toggle()}
           disabled={voice.status.kind === "loading" || voice.status.kind === "transcribing"}
           aria-pressed={voice.status.kind === "listening"}
-          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:opacity-60 ${
-            voice.status.kind === "listening" ? "animate-pulse bg-red-500 text-white" : "bg-violet-400 text-zinc-950"
-          }`}
+          className={`btn ${voice.status.kind === "listening" ? "btn-danger animate-pulse" : "btn-accent"}`}
         >
           {voice.status.kind === "listening" ? "■ Listo" : "🎤 Hablar"}
         </button>
@@ -235,7 +232,7 @@ export function ScoreEditor() {
             value={engine}
             onChange={(e) => setEngine(e.target.value as EngineId)}
             disabled={voice.status.kind !== "idle"}
-            className="rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-zinc-200"
+            className="rounded-lg border border-zinc-600 bg-zinc-800 px-2 py-1.5 text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
           >
             {ENGINES.map((en) => (
               <option key={en.id} value={en.id}>{en.label}</option>
@@ -264,15 +261,15 @@ export function ScoreEditor() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="ahora quiero un tresillo de negras: do mi sol"
-          className="min-w-0 flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm text-zinc-100 outline-none focus:border-emerald-400"
+          className="min-w-0 flex-1 rounded-xl border border-zinc-600 bg-zinc-900 px-4 py-2.5 text-sm text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30"
           autoFocus
         />
-        <button className="rounded-xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-zinc-950">Escribir</button>
+        <button className="btn btn-primary">Escribir</button>
         <button
           type="button"
           onClick={play}
           disabled={!hasMusic}
-          className="rounded-xl border border-zinc-700 bg-zinc-900/60 px-4 py-2.5 text-sm font-semibold text-zinc-200 disabled:opacity-40"
+          className="btn btn-ghost"
         >
           ▶ Escuchar
         </button>
@@ -282,7 +279,7 @@ export function ScoreEditor() {
 
       <div className="flex flex-wrap gap-2">
         {EXAMPLES.map((ex) => (
-          <button key={ex} onClick={() => submit(ex)} className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-400 hover:border-zinc-600">
+          <button key={ex} onClick={() => submit(ex)} className="rounded-full border border-zinc-700 bg-zinc-900/60 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-zinc-100">
             {ex}
           </button>
         ))}
