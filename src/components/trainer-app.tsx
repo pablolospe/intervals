@@ -194,10 +194,10 @@ export function TrainerApp() {
               disabled={busy}
               aria-label={`${t.direction}: ${asc ? t.ascending : t.descending}. ${t.switchDirection}`}
               title={t.switchDirection}
-              className={`btn group w-16 shrink-0 flex-col gap-1 rounded-2xl border-2 px-1 py-2 sm:w-24 ${
+              className={`btn group w-1/3 shrink-0 flex-col justify-center gap-1 rounded-2xl border-2 px-1 py-2 sm:w-28 ${
                 asc
-                  ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_#047857] enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#047857]"
-                  : "border-violet-400 bg-violet-400/15 text-violet-200 shadow-[0_4px_0_0_#5b21b6] enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#5b21b6]"
+                  ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_#047857] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#047857]"
+                  : "border-violet-400 bg-violet-400/15 text-violet-200 shadow-[0_4px_0_0_#5b21b6] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#5b21b6]"
               }`}
             >
               <svg
@@ -212,7 +212,7 @@ export function TrainerApp() {
               >
                 <path d="M12 20V4M5 11l7-7 7 7" />
               </svg>
-              <span className="text-[10px] font-semibold uppercase tracking-wide sm:text-xs">{asc ? t.ascending : t.descending}</span>
+              <span className="text-[10px] font-bold uppercase tracking-tight sm:text-xs sm:tracking-wide">{asc ? t.ascending : t.descending}</span>
             </button>
             )}
             {isRandom ? (
@@ -229,7 +229,7 @@ export function TrainerApp() {
                 )}
               </div>
             ) : (
-            <div className="grid flex-1 grid-cols-2 content-start gap-1.5 min-[460px]:grid-cols-3 sm:grid-cols-4 sm:gap-2 md:grid-cols-2">
+            <div className="grid w-2/3 flex-1 grid-cols-2 content-start gap-1.5 sm:gap-2">
               {options.map((o) => (
                 <button
                   key={o.id}
@@ -239,7 +239,7 @@ export function TrainerApp() {
                   }}
                   disabled={busy}
                   aria-pressed={selection === o.id}
-                  className={`truncate rounded-xl border px-2 py-1.5 text-left text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed [@media(max-height:600px)]:py-1 sm:px-3 sm:py-2 sm:text-sm ${
+                  className={`truncate rounded-xl border px-1.5 py-1.5 text-center text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed [@media(max-height:600px)]:py-1 sm:px-3 sm:py-2 sm:text-left sm:text-sm ${
                     selection === o.id
                       ? "border-emerald-400 bg-emerald-400/15 text-emerald-100 shadow-[0_0_0_1px_rgba(52,211,153,0.4)]"
                       : "border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:border-zinc-400 hover:bg-zinc-700"
