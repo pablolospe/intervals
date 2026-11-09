@@ -1,35 +1,34 @@
 export type Mood = "neutral" | "happy" | "sad";
 
-const STROKE = { stroke: "#1c1917", strokeWidth: 1.8, strokeLinecap: "round" as const, fill: "none" };
+/** Fotos de Paul McCartney utilizadas como reacción para "Hey Jude" (3ra menor descendente). */
+function PaulPhoto({ mood }: { mood: Mood }) {
+  const isHappy = mood === "happy";
+  const src = isHappy ? "/images/mccartney/happy.jpg" : "/images/mccartney/sad.jpg";
+  const alt = isHappy ? "Paul McCartney sonriendo" : "Paul McCartney serio";
 
-/** Original mop-top cartoon (not a photo) used as the "Hey Jude" reaction face. */
-function MopTop({ mood }: { mood: Mood }) {
-  const brows =
-    mood === "sad" ? [[22, 30, 29, 27], [35, 27, 42, 30]] : mood === "happy" ? [[22, 28, 29, 26.5], [35, 26.5, 42, 28]] : [[22, 28.5, 29, 28.5], [35, 28.5, 42, 28.5]];
   return (
-    <svg viewBox="0 0 64 64" className="h-full w-full" role="img" aria-label={`Hey Jude: ${mood}`}>
-      <ellipse cx="32" cy="34" rx="17" ry="19" fill="#f3c9a5" />
-      <path d="M12 36 C9 14 27 6 37 9 C52 12 56 26 52 38 L48 38 C48 28 45 23 32 23 C19 23 16 29 16 38Z" fill="#3b2a20" />
-      {brows.map(([x1, y1, x2, y2], i) => (
-        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} {...STROKE} />
-      ))}
-      <circle cx="26" cy="34" r="1.9" fill="#1c1917" />
-      <circle cx="38" cy="34" r="1.9" fill="#1c1917" />
-      {mood === "happy" && (
-        <>
-          <circle cx="21" cy="41" r="3" fill="#f9a8a8" opacity="0.6" />
-          <circle cx="43" cy="41" r="3" fill="#f9a8a8" opacity="0.6" />
-          <path d="M23 43 Q32 55 41 43 Z" fill="#fff" stroke="#1c1917" strokeWidth="1.6" strokeLinejoin="round" />
-        </>
-      )}
-      {mood === "neutral" && <path d="M27 46 L37 46" {...STROKE} />}
+    <div className="relative h-full w-full overflow-hidden rounded-full bg-zinc-900">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className={`h-full w-full rounded-full object-cover select-none transition-transform duration-300 ${
+          isHappy ? "object-[50%_25%] scale-105" : "object-center"
+        } ${mood === "sad" ? "brightness-90 contrast-105" : ""}`}
+      />
       {mood === "sad" && (
-        <>
-          <path d="M25 50 Q32 42 39 50" {...STROKE} />
-          <ellipse cx="25" cy="40" rx="1.6" ry="2.6" fill="#7dd3fc" />
-        </>
+        <svg
+          viewBox="0 0 24 24"
+          className="absolute bottom-1 right-1 h-3.5 w-3.5 sm:h-5 sm:w-5 drop-shadow"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 2.5 C12 2.5 6 10 6 15 A6 6 0 0 0 18 15 C18 10 12 2.5 12 2.5 Z"
+            fill="#38bdf8"
+          />
+        </svg>
       )}
-    </svg>
+    </div>
   );
 }
 
@@ -45,5 +44,5 @@ function NoteBadge({ mood }: { mood: Mood }) {
 }
 
 export function Mascot({ heyJude, mood }: { heyJude: boolean; mood: Mood }) {
-  return heyJude ? <MopTop mood={mood} /> : <NoteBadge mood={mood} />;
+  return heyJude ? <PaulPhoto mood={mood} /> : <NoteBadge mood={mood} />;
 }

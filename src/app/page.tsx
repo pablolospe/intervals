@@ -3,6 +3,7 @@ import Link from "next/link";
 const MODULES = [
   { href: "/intervalos", title: "Intervalos", desc: "Entrená el oído con canciones pegadizas y tu voz." },
   { href: "/partitura", title: "Partitura", desc: "Escribí música dictando: “un tresillo de negras: do mi sol”." },
+  { href: "/ritmo", title: "Ritmo", desc: "Escuchá un compás y adiviná las 4 células rítmicas que sonaron." },
 ];
 
 export default function Home() {
