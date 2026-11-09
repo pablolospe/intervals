@@ -38,7 +38,7 @@ export const INTERVALS: readonly IntervalDef[] = [
   { id: "P4-asc", name: { es: "4ta justa", en: "Perfect 4th" }, semitones: 5, direction: "asc",
     song: { title: "Bridal Chorus (Here Comes the Bride)", motif: [n(0), n(5, 2)] } },
   { id: "TT-asc", name: { es: "Tritono", en: "Tritone" }, semitones: 6, direction: "asc",
-    song: { title: "The Simpsons", motif: [n(0), n(6, 2)] } },
+    song: { title: "The Simpsons", motif: [n(0), n(6), n(7, 2)] } },
   { id: "P5-asc", name: { es: "5ta justa", en: "Perfect 5th" }, semitones: 7, direction: "asc",
     song: { title: "Star Wars (Main Theme)", motif: [n(0), n(7, 2)] } },
   { id: "m6-asc", name: { es: "6ta menor", en: "Minor 6th" }, semitones: 8, direction: "asc",
