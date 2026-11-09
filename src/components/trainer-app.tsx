@@ -39,8 +39,7 @@ export function TrainerApp() {
   const isRandom = selection === "random";
   const revealed = !isRandom || finished; // surprise mode hides the answer until it is given
   const identifying = phase === "IDENTIFY";
-  const dirArrow = direction === "asc" ? "↑" : "↓";
-  const options = BASE_INTERVALS.map((b) => ({ id: b.id, label: b.name[lang], arrow: dirArrow }));
+  const options = BASE_INTERVALS.map((b) => ({ id: b.id, label: b.name[lang] }));
   const asc = direction === "asc";
   const stepLabels = isRandom ? t.stepsRandom : t.steps;
   const order: Phase[] = isRandom
@@ -169,6 +168,7 @@ export function TrainerApp() {
               </div>
             </div>
             <div className="flex items-stretch gap-2 sm:gap-3">
+            {!isRandom && (
             <button
               onClick={() => setDirection(asc ? "desc" : "asc")}
               disabled={busy}
@@ -194,6 +194,7 @@ export function TrainerApp() {
               </svg>
               <span className="text-[10px] font-semibold uppercase tracking-wide sm:text-xs">{asc ? t.ascending : t.descending}</span>
             </button>
+            )}
             {isRandom ? (
               <div className="flex flex-1 flex-col justify-center gap-1 rounded-2xl border border-violet-400/40 bg-violet-400/10 p-3 sm:p-4">
                 <p className="text-sm font-semibold text-violet-100 sm:text-base">
@@ -203,7 +204,7 @@ export function TrainerApp() {
                 <p className="text-xs text-violet-200/80 sm:text-sm">{t.randomHelp}</p>
                 {finished && def && (
                   <p className="mt-1 text-xs text-violet-100 sm:text-sm">
-                    {t.wasIt}: <b>{def.name[lang]} {dirArrow}</b>
+                    {t.wasIt}: <b>{def.name[lang]} {def.direction === "asc" ? "↑" : "↓"}</b>
                   </p>
                 )}
               </div>
@@ -260,7 +261,20 @@ export function TrainerApp() {
         </div>
       </div>
 
-      <IdentifyModal open={identifying} title={t.identifyTitle} subtitle={t.phase.IDENTIFY} options={options} onPick={answer} />
+      <IdentifyModal
+        open={identifying}
+        labels={{
+          title: t.identifyTitle,
+          subtitle: t.phase.IDENTIFY,
+          direction: t.guessDirection,
+          interval: t.guessInterval,
+          ascending: t.ascending,
+          descending: t.descending,
+          submit: t.submitGuess,
+        }}
+        options={options}
+        onAnswer={answer}
+      />
 
       <footer className="hidden text-center text-xs text-zinc-600 md:block">{t.footer}</footer>
     </main>

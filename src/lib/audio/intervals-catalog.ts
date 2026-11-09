@@ -59,7 +59,7 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
     desc: { title: "Pequeña serenata nocturna", artist: "Mozart", motif: [n(0, 1), n(-5, 0.5), n(0, 1), n(-5, 0.5), n(0, 0.5), n(4, 0.5), n(7, 1.5)] },
   } },
   { id: "TT", name: { es: "Tritono", en: "Tritone" }, semitones: 6, songs: {
-    asc: { title: "The Simpsons", motif: [n(0, 1), n(6, 1), n(7, 1.5), n(9, 0.5), n(12, 1), n(9, 0.5), n(7, 1.5)] },
+    asc: { title: "The Simpsons", motif: [n(0, 1), n(6, 1), n(7, 2)] },
     desc: { title: "Black Sabbath", artist: "Black Sabbath", motif: [n(0, 1), n(-6, 3), n(-12, 1), n(0, 1), n(-6, 3)] },
   } },
   { id: "P5", name: { es: "5ta justa", en: "Perfect 5th" }, semitones: 7, songs: {

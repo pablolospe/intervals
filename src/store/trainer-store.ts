@@ -34,8 +34,8 @@ export interface TrainerState {
   setDirection: (direction: Direction) => void;
   setMicError: (v: boolean) => void;
   startChallenge: (rand?: () => number) => void;
-  /** Random mode only: the user names the (base) interval after singing it. */
-  answer: (baseId: string) => void;
+  /** Surprise mode only: the user names the interval and its direction after singing it. */
+  answer: (baseId: string, direction: Direction) => void;
   replay: () => void;
   playbackFinished: () => void;
   confirmNote: (hz: number) => ConfirmResult;
@@ -66,8 +66,11 @@ export const useTrainer = create<TrainerState>((set, get) => ({
 
   startChallenge: (rand = Math.random) => {
     const { selection, direction } = get();
-    const base = selection === "random" ? BASE_INTERVALS[Math.floor(rand() * BASE_INTERVALS.length)].id : selection;
-    const id = directedId(base, direction);
+    const random = selection === "random";
+    const base = random ? BASE_INTERVALS[Math.floor(rand() * BASE_INTERVALS.length)].id : selection;
+    // Surprise mode also randomises the direction: guessing it is part of the game.
+    const dir: Direction = random ? (rand() < 0.5 ? "asc" : "desc") : direction;
+    const id = directedId(base, dir);
     set({
       currentId: id,
       rootMidi: pickRoot(getInterval(id), rand),
@@ -115,12 +118,13 @@ export const useTrainer = create<TrainerState>((set, get) => ({
     return "ignored";
   },
 
-  answer: (baseId) => {
+  answer: (baseId, direction) => {
     const { phase, currentId, score } = get();
     if (phase !== "IDENTIFY" || !currentId) return;
-    const correct = getInterval(currentId).base === baseId;
+    const answerId = directedId(baseId, direction);
+    const correct = answerId === currentId;
     set({
-      answerId: baseId,
+      answerId,
       phase: correct ? "SUCCESS" : "MISS",
       score: {
         correct: score.correct + (correct ? 1 : 0),

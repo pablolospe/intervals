@@ -50,19 +50,19 @@ describe("trainer state machine", () => {
   it("random selection picks from the catalog and ignores stray confirmations", () => {
     s().setSelection("random");
     s().startChallenge(() => 0.999);
-    expect(s().currentId).toBe("P8-asc");
+    expect(s().currentId).toBe("P8-desc"); // direction is random too
     expect(s().confirmNote(220)).toBe("ignored"); // still PLAYING_INTERVAL
   });
 
   it("surprise mode asks the user to name the interval before scoring", () => {
     s().setSelection("random");
-    s().startChallenge(() => 0); // m2-asc
+    s().startChallenge(() => 0); // m2-asc (0 picks the first interval and "asc")
     s().playbackFinished();
     s().confirmNote(220);
     s().confirmNote(midiToFrequency(57 + 1));
     expect(s().phase).toBe("IDENTIFY");
     expect(s().score.total).toBe(0);
-    s().answer("M2");
+    s().answer("M2", "asc");
     expect(s().phase).toBe("MISS");
     expect(s().score).toEqual({ correct: 0, total: 1, streak: 0 });
 
@@ -70,9 +70,16 @@ describe("trainer state machine", () => {
     s().playbackFinished();
     s().confirmNote(220);
     s().confirmNote(midiToFrequency(57 + 1));
-    s().answer("m2");
+    s().answer("m2", "desc"); // right interval, wrong direction
+    expect(s().phase).toBe("MISS");
+
+    s().startChallenge(() => 0);
+    s().playbackFinished();
+    s().confirmNote(220);
+    s().confirmNote(midiToFrequency(57 + 1));
+    s().answer("m2", "asc");
     expect(s().phase).toBe("SUCCESS");
-    expect(s().score).toEqual({ correct: 1, total: 2, streak: 1 });
+    expect(s().score).toEqual({ correct: 1, total: 3, streak: 1 });
   });
 
   it("descending mode builds descending challenges", () => {
@@ -96,7 +103,7 @@ describe("trainer state machine", () => {
   it("ignores answers outside the IDENTIFY phase", () => {
     s().setSelection("random");
     s().startChallenge(() => 0);
-    s().answer("m2");
+    s().answer("m2", "asc");
     expect(s().phase).toBe("PLAYING_INTERVAL");
   });
 });
