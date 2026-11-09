@@ -8,6 +8,7 @@ describe("catalog", () => {
     expect(getInterval("P5-desc")).toMatchObject({ base: "P5", direction: "desc", semitones: 7 });
     for (const i of INTERVALS) {
       expect(i.song.motif[0].offset).toBe(0);
+      expect(i.songs.length).toBeGreaterThanOrEqual(2);
       expect(i.semitones).toBeGreaterThan(0);
     }
   });

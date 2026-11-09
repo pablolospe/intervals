@@ -25,9 +25,14 @@ const ghost = `${btn} btn-ghost`;
 export function TrainerApp() {
   const { lang, selection, direction, currentId, phase, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
   const { startChallenge, replay, playReference } = useTrainerAudio();
+  const [selectedSongIndex, setSelectedSongIndex] = useState(0);
   const t = dict[lang];
   /** Interval to return to when leaving surprise mode. */
   const [lastPick, setLastPick] = useState(selection === "random" ? "P5" : selection);
+
+  useEffect(() => {
+    setSelectedSongIndex(0);
+  }, [currentId]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -51,34 +56,33 @@ export function TrainerApp() {
   const mainLabel = phase === "IDLE" ? t.newChallenge : finished ? t.next : t.skip;
 
   return (
-    <main className="mx-auto flex h-dvh w-full max-w-5xl flex-col gap-3 px-3 py-3 text-zinc-100 sm:px-6 sm:py-5">
-      <header className="flex items-center justify-between gap-3">
-        <div>
+    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-5 md:h-dvh md:overflow-hidden">
+      <header className="flex shrink-0 items-center justify-between gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/"
-            className="group mb-1 inline-flex items-center gap-1.5 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+            className="group inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 text-xs font-medium text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-200"
           >
             <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
             <span>Suite</span>
           </Link>
-          <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-4xl">
+          <span className="text-zinc-700 hidden sm:inline">·</span>
+          <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-3xl">
             {t.title}
           </h1>
-          <p className="hidden text-sm text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
+          <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-3 py-1 text-xs sm:text-sm" aria-label={`${t.score}: ${score.correct}/${score.total}. ${t.streak}: ${score.streak}`}>
-            <span className="hidden text-zinc-400 sm:inline">{t.score}</span>
-            <b className="tabular-nums">{score.correct}/{score.total}</b>
-            <span className="text-zinc-600">·</span>
-            <span className="text-zinc-400">{t.streak}</span>
-            <b className="tabular-nums">{score.streak}</b>
-          </div>
+        <div className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 text-xs sm:px-3 sm:text-sm" aria-label={`${t.score}: ${score.correct}/${score.total}. ${t.streak}: ${score.streak}`}>
+          <span className="hidden text-zinc-400 sm:inline">{t.score}</span>
+          <b className="tabular-nums">{score.correct}/{score.total}</b>
+          <span className="text-zinc-600">·</span>
+          <span className="text-zinc-400">{t.streak}</span>
+          <b className="tabular-nums">{score.streak}</b>
         </div>
       </header>
 
-      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-3 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:grid-rows-1 [@media(max-height:480px)]:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] [@media(max-height:480px)]:grid-rows-1">
-        <section className="flex min-h-0 flex-col overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-2xl shadow-black/40 backdrop-blur sm:p-5">
+      <div className="flex flex-col gap-2.5 md:grid md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:gap-3">
+        <section className="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-xl backdrop-blur sm:rounded-3xl sm:p-5">
           <div className="mb-2 flex items-center gap-3 sm:mb-4 sm:gap-4">
             <div
               key={`${phase}-${score.total}`}
@@ -234,29 +238,54 @@ export function TrainerApp() {
           </section>
 
           <section className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-2.5 sm:p-4">
-            <div className="flex items-center justify-between gap-2 sm:block">
-              <h2 className="text-xs font-semibold text-violet-200 sm:text-sm">{t.helpTitle}</h2>
-              <p className="mb-2 hidden text-sm text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.helpText}</p>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <button onClick={playReference} disabled={busy || !def || !revealed} className={ghost}>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-xs font-semibold text-violet-200 sm:text-sm">{t.helpTitle}</h2>
+                <button
+                  onClick={() => playReference(selectedSongIndex)}
+                  disabled={busy || !def || !revealed}
+                  className={`${ghost} py-1 px-3 text-xs`}
+                >
+                  <span aria-hidden className="mr-1">▶</span>
                   {t.playReference}
                 </button>
-                <fieldset className="hidden gap-4 text-xs text-zinc-400 sm:flex [@media(max-height:480px)]:hidden!" aria-label={t.helpTitle}>
-                  <label className="flex items-center gap-1.5">
-                    <input type="radio" name="ref" defaultChecked /> {t.instrumental}
-                  </label>
-                  <label className="flex items-center gap-1.5 text-zinc-600">
-                    <input type="radio" name="ref" disabled /> {t.clip}
-                  </label>
-                </fieldset>
               </div>
+              <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.helpText}</p>
+
+              {def && def.songs && def.songs.length > 1 && (
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  {def.songs.map((s, idx) => {
+                    const isSel = selectedSongIndex === idx;
+                    return (
+                      <button
+                        key={s.title}
+                        type="button"
+                        onClick={() => {
+                          setSelectedSongIndex(idx);
+                          playReference(idx);
+                        }}
+                        disabled={busy || !revealed}
+                        className={`rounded-lg px-2.5 py-1 text-xs font-medium transition ${
+                          isSel
+                            ? "border border-violet-400 bg-violet-400/25 text-violet-100 shadow-sm"
+                            : "border border-zinc-700 bg-zinc-800/60 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200"
+                        } disabled:cursor-not-allowed disabled:opacity-40`}
+                      >
+                        <span aria-hidden className="mr-1 text-[10px]">♫</span>
+                        {s.title}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {def && (finished || (phase === "SINGING_TARGET" && !isRandom)) && (
+                <p className="mt-0.5 text-xs text-violet-200 sm:text-sm">
+                  {t.song}: <b>{(def.songs[selectedSongIndex] ?? def.song).title}</b>
+                  {(def.songs[selectedSongIndex] ?? def.song).artist ? ` — ${(def.songs[selectedSongIndex] ?? def.song).artist}` : ""}
+                </p>
+              )}
             </div>
-            {def && (finished || (phase === "SINGING_TARGET" && !isRandom)) && (
-              <p className="mt-2 text-xs text-violet-200 sm:text-sm">
-                {t.song}: <b>{def.song.title}</b>
-                {def.song.artist ? ` — ${def.song.artist}` : ""}
-              </p>
-            )}
           </section>
         </div>
       </div>

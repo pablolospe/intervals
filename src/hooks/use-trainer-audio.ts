@@ -85,10 +85,10 @@ export function useTrainerAudio() {
     return playChallenge();
   }, [playChallenge]);
 
-  const playReference = useCallback(() => {
+  const playReference = useCallback((songIndex = 0) => {
     const { currentId, rootMidi } = useTrainer.getState();
     if (!currentId || rootMidi === null) return;
-    playNotes(motifNotes(getInterval(currentId), rootMidi), 100);
+    playNotes(motifNotes(getInterval(currentId), rootMidi, songIndex), 100);
   }, [playNotes]);
 
   useEffect(
