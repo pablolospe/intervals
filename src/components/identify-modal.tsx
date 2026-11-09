@@ -50,11 +50,7 @@ export function IdentifyModal({ open, labels, options, onAnswer }: Props) {
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
-    if (open && !d.open) {
-      setDirection(null);
-      setInterval(null);
-      d.showModal();
-    }
+    if (open && !d.open) d.showModal();
     if (!open && d.open) d.close();
   }, [open]);
 
@@ -124,7 +120,13 @@ export function IdentifyModal({ open, labels, options, onAnswer }: Props) {
       <button
         type="button"
         disabled={!direction || !interval}
-        onClick={() => direction && interval && onAnswer(interval, direction)}
+        onClick={() => {
+          if (!direction || !interval) return;
+          onAnswer(interval, direction);
+          // Fresh choices for the next round.
+          setDirection(null);
+          setInterval(null);
+        }}
         className="btn btn-accent mt-5 w-full py-3 text-base"
       >
         {labels.submit}

@@ -21,6 +21,9 @@ const ANIM: Record<Phase, string> = {
 
 const btn = "btn px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm";
 const ghost = `${btn} btn-ghost`;
+/** Small translucent pill that sits on top of the pitch view while it's in use. */
+const floating =
+  "inline-flex items-center gap-1.5 rounded-full border border-zinc-600/80 bg-zinc-900/80 px-2.5 py-1 text-xs font-semibold text-zinc-100 backdrop-blur transition hover:border-zinc-400 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:opacity-40";
 
 export function TrainerApp() {
   const { lang, selection, direction, currentId, phase, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
@@ -53,7 +56,9 @@ export function TrainerApp() {
   const stepIndex = phase === "MISS" ? order.length - 1 : order.indexOf(phase);
   const quip = phase === "SUCCESS" ? t.success[score.total % t.success.length] : phase === "MISS" ? t.miss[score.total % t.miss.length] : null;
   const mood: Mood = phase === "SUCCESS" ? "happy" : phase === "MISS" ? "sad" : "neutral";
-  const mainLabel = phase === "IDLE" ? t.newChallenge : finished ? t.next : t.skip;
+  const mainLabel = phase === "IDLE" ? t.newChallenge : t.next;
+  /** The pitch view only matters while listening/singing; otherwise it hosts the main actions. */
+  const canvasIdle = phase === "IDLE" || finished;
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-5 md:h-dvh md:overflow-hidden">
@@ -82,7 +87,7 @@ export function TrainerApp() {
       </header>
 
       <div className="flex flex-col gap-2.5 md:grid md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:gap-3">
-        <section className="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-xl backdrop-blur sm:rounded-3xl sm:p-5">
+        <section className="flex flex-col self-start rounded-2xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-xl backdrop-blur sm:rounded-3xl sm:p-5">
           <div className="mb-2 flex items-center gap-3 sm:mb-4 sm:gap-4">
             <div
               key={`${phase}-${score.total}`}
@@ -121,24 +126,35 @@ export function TrainerApp() {
             ))}
           </ol>
 
-          <div className="min-h-20 flex-1">
+          {/* Pitch view: action buttons float over it while it's idle, and shrink to the corner while singing. */}
+          <div className="relative h-36 shrink-0 sm:h-44 md:h-52 [@media(max-height:600px)]:h-28">
             <PitchCanvas idleLabel={t.idleLabel} />
+            {canvasIdle ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 rounded-2xl bg-zinc-950/75 p-3 backdrop-blur-[2px] sm:flex-row sm:gap-3">
+                <button onClick={startChallenge} className="btn btn-primary px-5 py-3 text-base sm:px-6">
+                  <span aria-hidden>▶</span> {mainLabel}
+                </button>
+                {def && (
+                  <button onClick={replay} className="btn btn-ghost px-5 py-3 text-base">
+                    <span aria-hidden>↻</span> {t.replay}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="absolute right-2 top-2 flex gap-1.5">
+                <button onClick={replay} disabled={busy || !def} className={floating} aria-label={t.replay} title={t.replay}>
+                  <span aria-hidden>↻</span>
+                  <span className="hidden sm:inline">{t.replay}</span>
+                </button>
+                <button onClick={startChallenge} disabled={busy} className={floating} aria-label={t.skip} title={t.skip}>
+                  <span aria-hidden>⏭</span>
+                  <span className="hidden sm:inline">{t.skip}</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {micError && <p className="mt-2 rounded-lg bg-red-950/60 p-2 text-xs text-red-300 sm:text-sm">{t.micDenied}</p>}
-
-          <div className="mt-3 flex flex-wrap items-center gap-2 sm:gap-3">
-            <button
-              onClick={startChallenge}
-              disabled={busy}
-              className={`${btn} btn-primary px-4 text-sm sm:px-5 sm:text-base`}
-            >
-              {mainLabel}
-            </button>
-            <button onClick={replay} disabled={busy || !def} className={ghost}>
-              {t.replay}
-            </button>
-          </div>
         </section>
 
         <div className="flex flex-col gap-3 md:overflow-y-auto [@media(max-height:480px)]:overflow-y-auto">
