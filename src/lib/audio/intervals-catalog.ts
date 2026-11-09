@@ -79,7 +79,7 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
     desc: { title: "Watermelon Man", artist: "Herbie Hancock", motif: [n(0, 1), n(-10, 2)] },
   } },
   { id: "M7", name: { es: "7ma mayor", en: "Major 7th" }, semitones: 11, songs: {
-    asc: { title: "Take On Me", artist: "a-ha", motif: [n(0, 1), n(11, 1.5), n(11, 0.5), n(7, 0.5), n(4, 0.5), n(7, 1.5)] },
+    asc: { title: "Take On Me", artist: "a-ha", motif: [n(0, 1.5), n(11, 1.5), n(12, 2)] },
     desc: { title: "I Love You", artist: "Cole Porter", motif: [n(0, 1.5), n(-11, 2.5)] },
   } },
   { id: "P8", name: { es: "8va justa", en: "Perfect octave" }, semitones: 12, songs: {
