@@ -55,7 +55,7 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
     desc: { title: "5ta Sinfonía", artist: "Beethoven", motif: [n(0, 0.5), n(0, 0.5), n(0, 0.5), n(-4, 2), n(-2, 0.5), n(-2, 0.5), n(-2, 0.5), n(-5, 2)] },
   } },
   { id: "P4", name: { es: "4ta justa", en: "Perfect 4th" }, semitones: 5, songs: {
-    asc: { title: "Bridal Chorus (Here Comes the Bride)", motif: [n(0, 1.5), n(5, 1.5), n(5, 0.5), n(5, 1.5), n(7, 0.5), n(4, 0.5), n(5, 2)] },
+    asc: { title: "Bridal Chorus (Here Comes the Bride)", motif: [n(0, 1), n(5, 1.5), n(5, 0.5), n(5, 2), n(0, 1), n(7, 1.5), n(4, 0.5), n(5, 2)] },
     desc: { title: "Pequeña serenata nocturna", artist: "Mozart", motif: [n(0, 1), n(-5, 0.5), n(0, 1), n(-5, 0.5), n(0, 0.5), n(4, 0.5), n(7, 1.5)] },
   } },
   { id: "TT", name: { es: "Tritono", en: "Tritone" }, semitones: 6, songs: {
