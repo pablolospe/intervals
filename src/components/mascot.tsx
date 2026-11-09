@@ -1,11 +1,13 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
   if (intervalId === "m2-asc") return "jaws";
   if (intervalId === "m3-desc") return "mccartney";
   if (intervalId === "TT-asc") return "homer";
+  if (intervalId === "P5-asc") return "luke";
+  if (intervalId === "P5-desc") return "flintstones";
   if (intervalId === "M6-asc") return "gardel";
   return null;
 }
@@ -83,6 +85,40 @@ const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig
       src: "/images/homer/happy.jpg",
       alt: "Homero Simpson",
       objectPosition: "object-[50%_25%] scale-105",
+    },
+  },
+  luke: {
+    happy: {
+      src: "/images/luke/happy.jpg",
+      alt: "Luke Skywalker sonriendo (Star Wars)",
+      objectPosition: "object-[50%_30%] scale-105",
+    },
+    sad: {
+      src: "/images/luke/sad.jpg",
+      alt: "Luke Skywalker sufriendo en Ciudad Nube (Star Wars)",
+      objectPosition: "object-[50%_40%] scale-110",
+    },
+    neutral: {
+      src: "/images/luke/happy.jpg",
+      alt: "Luke Skywalker (Star Wars)",
+      objectPosition: "object-[50%_30%] scale-105",
+    },
+  },
+  flintstones: {
+    happy: {
+      src: "/images/flintstones/happy.jpg",
+      alt: "Pedro Picapiedra sonriendo (Los Picapiedras)",
+      objectPosition: "object-[55%_45%] scale-100",
+    },
+    sad: {
+      src: "/images/flintstones/sad.jpg",
+      alt: "Pedro Picapiedra desanimado/cansado (Los Picapiedras)",
+      objectPosition: "object-center scale-100",
+    },
+    neutral: {
+      src: "/images/flintstones/happy.jpg",
+      alt: "Pedro Picapiedra (Los Picapiedras)",
+      objectPosition: "object-[55%_45%] scale-100",
     },
   },
 };
