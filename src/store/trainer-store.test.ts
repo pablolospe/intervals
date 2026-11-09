@@ -7,7 +7,8 @@ const cents = (f: number, c: number) => f * 2 ** (c / 1200);
 
 beforeEach(() => {
   useTrainer.setState({ ...s(), score: { correct: 0, total: 0, streak: 0 } });
-  s().setSelection("P5-asc");
+  s().setDirection("asc");
+  s().setSelection("P5");
 });
 
 describe("trainer state machine", () => {
@@ -61,7 +62,7 @@ describe("trainer state machine", () => {
     s().confirmNote(midiToFrequency(57 + 1));
     expect(s().phase).toBe("IDENTIFY");
     expect(s().score.total).toBe(0);
-    s().answer("M2-asc");
+    s().answer("M2");
     expect(s().phase).toBe("MISS");
     expect(s().score).toEqual({ correct: 0, total: 1, streak: 0 });
 
@@ -69,15 +70,33 @@ describe("trainer state machine", () => {
     s().playbackFinished();
     s().confirmNote(220);
     s().confirmNote(midiToFrequency(57 + 1));
-    s().answer("m2-asc");
+    s().answer("m2");
     expect(s().phase).toBe("SUCCESS");
     expect(s().score).toEqual({ correct: 1, total: 2, streak: 1 });
+  });
+
+  it("descending mode builds descending challenges", () => {
+    s().setDirection("desc");
+    s().startChallenge(() => 0);
+    expect(s().currentId).toBe("P5-desc");
+    expect(s().rootMidi).toBe(52); // lowest root that keeps the 5th below inside A2..A4
+    s().playbackFinished();
+    s().confirmNote(midiToFrequency(57));
+    s().confirmNote(midiToFrequency(50));
+    expect(s().phase).toBe("SUCCESS");
+  });
+
+  it("changing direction resets the current challenge", () => {
+    s().startChallenge(() => 0);
+    s().setDirection("desc");
+    expect(s().phase).toBe("IDLE");
+    expect(s().currentId).toBeNull();
   });
 
   it("ignores answers outside the IDENTIFY phase", () => {
     s().setSelection("random");
     s().startChallenge(() => 0);
-    s().answer("m2-asc");
+    s().answer("m2");
     expect(s().phase).toBe("PLAYING_INTERVAL");
   });
 });

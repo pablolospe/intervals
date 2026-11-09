@@ -1,8 +1,9 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
+  if (intervalId === "m2-asc") return "jaws";
   if (intervalId === "m3-desc") return "mccartney";
   if (intervalId === "TT-asc") return "homer";
   if (intervalId === "M6-asc") return "gardel";
@@ -16,6 +17,23 @@ interface PhotoConfig {
 }
 
 const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig; neutral: PhotoConfig }> = {
+  jaws: {
+    happy: {
+      src: "/images/jaws/happy.jpg",
+      alt: "Steven Spielberg riendo en la boca del tiburón (Jaws)",
+      objectPosition: "object-[60%_50%] scale-110",
+    },
+    sad: {
+      src: "/images/jaws/sad.jpg",
+      alt: "Jefe Brody tenso con el cigarrillo y el tiburón acechando",
+      objectPosition: "object-[60%_40%] scale-105",
+    },
+    neutral: {
+      src: "/images/jaws/sad.jpg",
+      alt: "Tiburón acechando (Jaws)",
+      objectPosition: "object-[60%_40%] scale-105",
+    },
+  },
   mccartney: {
     happy: {
       src: "/images/mccartney/happy.jpg",

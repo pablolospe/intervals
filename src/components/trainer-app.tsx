@@ -1,7 +1,7 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getInterval, INTERVALS } from "@/lib/audio/intervals-catalog";
+import { BASE_INTERVALS, getInterval } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
@@ -23,9 +23,11 @@ const btn = "btn px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm";
 const ghost = `${btn} btn-ghost`;
 
 export function TrainerApp() {
-  const { lang, selection, currentId, phase, evaluation, micError, score, setSelection, answer } = useTrainer();
+  const { lang, selection, direction, currentId, phase, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
   const { startChallenge, replay, playReference } = useTrainerAudio();
   const t = dict[lang];
+  /** Interval to return to when leaving surprise mode. */
+  const [lastPick, setLastPick] = useState(selection === "random" ? "P5" : selection);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -37,7 +39,9 @@ export function TrainerApp() {
   const isRandom = selection === "random";
   const revealed = !isRandom || finished; // surprise mode hides the answer until it is given
   const identifying = phase === "IDENTIFY";
-  const options = INTERVALS.map((i) => ({ id: i.id, label: i.name[lang], arrow: i.direction === "asc" ? "↑" : "↓" }));
+  const dirArrow = direction === "asc" ? "↑" : "↓";
+  const options = BASE_INTERVALS.map((b) => ({ id: b.id, label: b.name[lang], arrow: dirArrow }));
+  const asc = direction === "asc";
   const stepLabels = isRandom ? t.stepsRandom : t.steps;
   const order: Phase[] = isRandom
     ? ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "IDENTIFY", "SUCCESS"]
@@ -136,24 +140,95 @@ export function TrainerApp() {
 
         <div className="flex flex-col gap-3 md:overflow-y-auto [@media(max-height:480px)]:overflow-y-auto">
           <section aria-labelledby="pick">
-            <h2 id="pick" className="mb-1.5 text-xs font-medium text-zinc-300 sm:mb-2 sm:text-sm">
-              {t.pickInterval}
-            </h2>
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 md:grid-cols-2 lg:grid-cols-3">
-              {[{ id: "random", label: t.random, arrow: "" }, ...options].map((o) => (
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <h2 id="pick" className="text-xs font-medium text-zinc-300 sm:text-sm">
+                {isRandom ? t.modeRandom : t.pickInterval}
+              </h2>
+              <div role="radiogroup" aria-label={t.mode} className="flex shrink-0 rounded-full border border-zinc-600 bg-zinc-900 p-0.5 text-xs font-semibold sm:text-sm">
+                {([
+                  ["pick", t.modePick],
+                  ["random", t.random],
+                ] as const).map(([m, label]) => {
+                  const on = (m === "random") === isRandom;
+                  return (
+                    <button
+                      key={m}
+                      role="radio"
+                      aria-checked={on}
+                      disabled={busy}
+                      onClick={() => !on && setSelection(m === "random" ? "random" : lastPick)}
+                      className={`rounded-full px-3 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed sm:px-4 sm:py-1.5 ${
+                        on ? (m === "random" ? "bg-violet-400 text-zinc-950" : "bg-emerald-400 text-zinc-950") : "text-zinc-300 hover:text-zinc-50"
+                      }`}
+                    >
+                      {m === "random" ? "🎲 " : ""}
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="flex items-stretch gap-2 sm:gap-3">
+            <button
+              onClick={() => setDirection(asc ? "desc" : "asc")}
+              disabled={busy}
+              aria-label={`${t.direction}: ${asc ? t.ascending : t.descending}. ${t.switchDirection}`}
+              title={t.switchDirection}
+              className={`btn group w-16 shrink-0 flex-col gap-1 rounded-2xl border-2 px-1 py-2 sm:w-24 ${
+                asc
+                  ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_#047857] enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#047857]"
+                  : "border-violet-400 bg-violet-400/15 text-violet-200 shadow-[0_4px_0_0_#5b21b6] enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#5b21b6]"
+              }`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className={`h-10 w-10 transition-transform duration-300 sm:h-14 sm:w-14 ${asc ? "" : "rotate-180"}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.75}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 20V4M5 11l7-7 7 7" />
+              </svg>
+              <span className="text-[10px] font-semibold uppercase tracking-wide sm:text-xs">{asc ? t.ascending : t.descending}</span>
+            </button>
+            {isRandom ? (
+              <div className="flex flex-1 flex-col justify-center gap-1 rounded-2xl border border-violet-400/40 bg-violet-400/10 p-3 sm:p-4">
+                <p className="text-sm font-semibold text-violet-100 sm:text-base">
+                  <span aria-hidden>🎲 </span>
+                  {t.randomTitle}
+                </p>
+                <p className="text-xs text-violet-200/80 sm:text-sm">{t.randomHelp}</p>
+                {finished && def && (
+                  <p className="mt-1 text-xs text-violet-100 sm:text-sm">
+                    {t.wasIt}: <b>{def.name[lang]} {dirArrow}</b>
+                  </p>
+                )}
+              </div>
+            ) : (
+            <div className="grid flex-1 grid-cols-2 content-start gap-1.5 min-[460px]:grid-cols-3 sm:grid-cols-4 sm:gap-2 md:grid-cols-2">
+              {options.map((o) => (
                 <button
                   key={o.id}
-                  onClick={() => setSelection(o.id)}
+                  onClick={() => {
+                    setLastPick(o.id);
+                    setSelection(o.id);
+                  }}
+                  disabled={busy}
                   aria-pressed={selection === o.id}
-                  className={`truncate rounded-xl border px-2 py-1.5 text-left text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 [@media(max-height:600px)]:py-1 sm:px-3 sm:py-2 sm:text-sm ${
-                    selection === o.id || (finished && isRandom && o.id === currentId)
+                  className={`truncate rounded-xl border px-2 py-1.5 text-left text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed [@media(max-height:600px)]:py-1 sm:px-3 sm:py-2 sm:text-sm ${
+                    selection === o.id
                       ? "border-emerald-400 bg-emerald-400/15 text-emerald-100 shadow-[0_0_0_1px_rgba(52,211,153,0.4)]"
                       : "border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:border-zinc-400 hover:bg-zinc-700"
                   }`}
                 >
-                  {o.label} <span className="text-zinc-400">{o.arrow}</span>
+                  {o.label}
                 </button>
               ))}
+            </div>
+            )}
             </div>
           </section>
 

@@ -16,42 +16,93 @@ export interface ReferenceSong {
   motif: MotifNote[];
 }
 
+/** A directed interval: one quality (`base`) sung up or down. */
 export interface IntervalDef {
+  /** `${base}-${direction}`, e.g. "m3-desc". */
   id: string;
+  base: string;
   name: { es: string; en: string };
   semitones: number;
   direction: Direction;
   song: ReferenceSong;
 }
 
+/** An interval quality with one mnemonic song per direction. */
+export interface BaseInterval {
+  id: string;
+  name: { es: string; en: string };
+  semitones: number;
+  songs: Record<Direction, ReferenceSong>;
+}
+
 const n = (offset: number, beats = 1): MotifNote => ({ offset, beats });
 
-export const INTERVALS: readonly IntervalDef[] = [
-  { id: "m2-asc", name: { es: "2da menor", en: "Minor 2nd" }, semitones: 1, direction: "asc",
-    song: { title: "Jaws", motif: [n(0, 0.5), n(1, 0.5), n(0, 0.5), n(1, 0.5)] } },
-  { id: "M2-asc", name: { es: "2da mayor", en: "Major 2nd" }, semitones: 2, direction: "asc",
-    song: { title: "Happy Birthday", motif: [n(0, 0.75), n(0, 0.25), n(2), n(0), n(5), n(4, 2)] } },
-  { id: "m3-desc", name: { es: "3ra menor", en: "Minor 3rd" }, semitones: 3, direction: "desc",
-    song: { title: "Hey Jude", artist: "The Beatles", motif: [n(0, 1), n(-3, 2)] } },
-  { id: "M3-asc", name: { es: "3ra mayor", en: "Major 3rd" }, semitones: 4, direction: "asc",
-    song: { title: "When the Saints Go Marching In", motif: [n(0), n(4), n(5), n(7, 2)] } },
-  { id: "P4-asc", name: { es: "4ta justa", en: "Perfect 4th" }, semitones: 5, direction: "asc",
-    song: { title: "Bridal Chorus (Here Comes the Bride)", motif: [n(0), n(5, 2)] } },
-  { id: "TT-asc", name: { es: "Tritono", en: "Tritone" }, semitones: 6, direction: "asc",
-    song: { title: "The Simpsons", motif: [n(0), n(6), n(7, 2)] } },
-  { id: "P5-asc", name: { es: "5ta justa", en: "Perfect 5th" }, semitones: 7, direction: "asc",
-    song: { title: "Star Wars (Main Theme)", motif: [n(0), n(7, 2)] } },
-  { id: "m6-asc", name: { es: "6ta menor", en: "Minor 6th" }, semitones: 8, direction: "asc",
-    song: { title: "The Entertainer", artist: "Scott Joplin", motif: [n(0), n(8, 2)] } },
-  { id: "M6-asc", name: { es: "6ta mayor", en: "Major 6th" }, semitones: 9, direction: "asc",
-    song: { title: "El día que me quieras", artist: "Carlos Gardel", motif: [n(0), n(9, 2)] } },
-  { id: "m7-asc", name: { es: "7ma menor", en: "Minor 7th" }, semitones: 10, direction: "asc",
-    song: { title: "Somewhere (West Side Story)", motif: [n(0), n(10, 2)] } },
-  { id: "M7-asc", name: { es: "7ma mayor", en: "Major 7th" }, semitones: 11, direction: "asc",
-    song: { title: "Take On Me", artist: "a-ha", motif: [n(0), n(11, 2)] } },
-  { id: "P8-asc", name: { es: "8va justa", en: "Perfect octave" }, semitones: 12, direction: "asc",
-    song: { title: "Somewhere Over the Rainbow", motif: [n(0, 2), n(12, 2)] } },
+export const BASE_INTERVALS: readonly BaseInterval[] = [
+  { id: "m2", name: { es: "2da menor", en: "Minor 2nd" }, semitones: 1, songs: {
+    asc: { title: "Jaws", motif: [n(0, 0.75), n(1, 0.75), n(0, 0.5), n(1, 0.5), n(0, 0.35), n(1, 0.35), n(0, 0.2), n(1, 0.5)] },
+    desc: { title: "Para Elisa", artist: "Beethoven", motif: [n(0, 0.5), n(-1, 0.5), n(0, 0.5), n(-1, 0.5), n(0, 0.5), n(-5, 0.5), n(-2, 0.5), n(-4, 0.5), n(-7, 1.5)] },
+  } },
+  { id: "M2", name: { es: "2da mayor", en: "Major 2nd" }, semitones: 2, songs: {
+    asc: { title: "Happy Birthday", motif: [n(0, 0.75), n(0, 0.25), n(2), n(0), n(5), n(4, 2)] },
+    desc: { title: "Mary Had a Little Lamb", motif: [n(0, 0.75), n(-2, 0.25), n(-4, 0.5), n(-2, 0.5), n(0, 0.5), n(0, 0.5), n(0, 1)] },
+  } },
+  { id: "m3", name: { es: "3ra menor", en: "Minor 3rd" }, semitones: 3, songs: {
+    asc: { title: "Greensleeves", motif: [n(0, 1), n(3, 2), n(5, 1), n(7, 1.5), n(8, 0.5), n(7, 1), n(5, 2)] },
+    desc: { title: "Hey Jude", artist: "The Beatles", motif: [n(0, 1), n(-3, 1.5), n(-3, 0.5), n(-1, 0.5), n(0, 0.5), n(2, 2)] },
+  } },
+  { id: "M3", name: { es: "3ra mayor", en: "Major 3rd" }, semitones: 4, songs: {
+    asc: { title: "When the Saints Go Marching In", motif: [n(0), n(4), n(5), n(7, 2), n(0), n(4), n(5), n(7, 2)] },
+    desc: { title: "5ta Sinfonía", artist: "Beethoven", motif: [n(0, 0.5), n(0, 0.5), n(0, 0.5), n(-4, 2), n(-2, 0.5), n(-2, 0.5), n(-2, 0.5), n(-5, 2)] },
+  } },
+  { id: "P4", name: { es: "4ta justa", en: "Perfect 4th" }, semitones: 5, songs: {
+    asc: { title: "Bridal Chorus (Here Comes the Bride)", motif: [n(0, 1.5), n(5, 1.5), n(5, 0.5), n(5, 1.5), n(7, 0.5), n(4, 0.5), n(5, 2)] },
+    desc: { title: "Pequeña serenata nocturna", artist: "Mozart", motif: [n(0, 1), n(-5, 0.5), n(0, 1), n(-5, 0.5), n(0, 0.5), n(4, 0.5), n(7, 1.5)] },
+  } },
+  { id: "TT", name: { es: "Tritono", en: "Tritone" }, semitones: 6, songs: {
+    asc: { title: "The Simpsons", motif: [n(0, 1), n(6, 1), n(7, 1.5), n(9, 0.5), n(12, 1), n(9, 0.5), n(7, 1.5)] },
+    desc: { title: "Black Sabbath", artist: "Black Sabbath", motif: [n(0, 1), n(-6, 3), n(-12, 1), n(0, 1), n(-6, 3)] },
+  } },
+  { id: "P5", name: { es: "5ta justa", en: "Perfect 5th" }, semitones: 7, songs: {
+    asc: { title: "Star Wars (Main Theme)", motif: [n(0, 1), n(7, 1.5), n(5, 0.33), n(4, 0.33), n(2, 0.34), n(12, 1.5), n(7, 1.5)] },
+    desc: { title: "Los Picapiedras", motif: [n(0, 1), n(-7, 1), n(5, 1.5), n(2, 0.5), n(0, 1), n(-7, 1)] },
+  } },
+  { id: "m6", name: { es: "6ta menor", en: "Minor 6th" }, semitones: 8, songs: {
+    asc: { title: "The Entertainer", artist: "Scott Joplin", motif: [n(0, 0.75), n(8, 1), n(5, 0.5), n(8, 0.5), n(5, 0.5), n(8, 1.5)] },
+    desc: { title: "Love Story (Where Do I Begin)", motif: [n(0, 1.5), n(-8, 2.5)] },
+  } },
+  { id: "M6", name: { es: "6ta mayor", en: "Major 6th" }, semitones: 9, songs: {
+    asc: { title: "El día que me quieras", artist: "Carlos Gardel", motif: [n(0, 1), n(9, 1), n(9, 0.5), n(9, 0.5), n(8, 0.5), n(9, 2)] },
+    desc: { title: "Nobody Knows the Trouble I've Seen", motif: [n(0, 0.75), n(-9, 1.25), n(-7, 0.5), n(-5, 1.5)] },
+  } },
+  { id: "m7", name: { es: "7ma menor", en: "Minor 7th" }, semitones: 10, songs: {
+    asc: { title: "Somewhere (West Side Story)", motif: [n(0, 1.5), n(10, 1.5), n(9, 0.75), n(7, 0.75), n(5, 2)] },
+    desc: { title: "Watermelon Man", artist: "Herbie Hancock", motif: [n(0, 1), n(-10, 2)] },
+  } },
+  { id: "M7", name: { es: "7ma mayor", en: "Major 7th" }, semitones: 11, songs: {
+    asc: { title: "Take On Me", artist: "a-ha", motif: [n(0, 1), n(11, 1.5), n(11, 0.5), n(7, 0.5), n(4, 0.5), n(7, 1.5)] },
+    desc: { title: "I Love You", artist: "Cole Porter", motif: [n(0, 1.5), n(-11, 2.5)] },
+  } },
+  { id: "P8", name: { es: "8va justa", en: "Perfect octave" }, semitones: 12, songs: {
+    asc: { title: "Somewhere Over the Rainbow", motif: [n(0, 1.5), n(12, 1.5), n(11, 1), n(7, 0.5), n(9, 0.5), n(11, 1), n(12, 2)] },
+    desc: { title: "Willow Weep for Me", motif: [n(0, 1), n(-12, 3)] },
+  } },
 ];
+
+export const DIRECTIONS: readonly Direction[] = ["asc", "desc"];
+
+export const directedId = (base: string, direction: Direction) => `${base}-${direction}`;
+
+/** Every base interval in both directions (24 entries). */
+export const INTERVALS: readonly IntervalDef[] = BASE_INTERVALS.flatMap((b) =>
+  DIRECTIONS.map((direction) => ({
+    id: directedId(b.id, direction),
+    base: b.id,
+    name: b.name,
+    semitones: b.semitones,
+    direction,
+    song: b.songs[direction],
+  })),
+);
 
 export function getInterval(id: string): IntervalDef {
   const def = INTERVALS.find((i) => i.id === id);

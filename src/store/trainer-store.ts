@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getInterval, INTERVALS, pickRoot, signedSemitones } from "@/lib/audio/intervals-catalog";
+import { BASE_INTERVALS, directedId, getInterval, pickRoot, signedSemitones, type Direction } from "@/lib/audio/intervals-catalog";
 import { evaluateInterval, type IntervalEvaluation } from "@/lib/audio/interval-evaluator";
 import { centsOff, frequencyToMidi } from "@/lib/audio/music-math";
 import type { Lang } from "@/lib/i18n";
@@ -15,9 +15,11 @@ export interface Score {
 
 export interface TrainerState {
   lang: Lang;
-  /** An interval id from the catalog, or "random". */
+  /** A base interval id ("P5"), or "random". */
   selection: string;
-  /** Interval of the current challenge. */
+  /** Whether challenges go up or down. */
+  direction: Direction;
+  /** Directed interval of the current challenge ("P5-asc"). */
   currentId: string | null;
   phase: Phase;
   rootMidi: number | null;
@@ -29,10 +31,11 @@ export interface TrainerState {
 
   setLang: (lang: Lang) => void;
   setSelection: (id: string) => void;
+  setDirection: (direction: Direction) => void;
   setMicError: (v: boolean) => void;
   startChallenge: (rand?: () => number) => void;
-  /** Random mode only: the user names the interval after singing it. */
-  answer: (id: string) => void;
+  /** Random mode only: the user names the (base) interval after singing it. */
+  answer: (baseId: string) => void;
   replay: () => void;
   playbackFinished: () => void;
   confirmNote: (hz: number) => ConfirmResult;
@@ -44,6 +47,7 @@ const MIN_TARGET_SEPARATION_CENTS = 50;
 export const useTrainer = create<TrainerState>((set, get) => ({
   lang: "es",
   selection: "random",
+  direction: "asc",
   currentId: null,
   phase: "IDLE",
   rootMidi: null,
@@ -56,11 +60,14 @@ export const useTrainer = create<TrainerState>((set, get) => ({
   setLang: (lang) => set({ lang }),
   setSelection: (selection) =>
     set({ selection, currentId: null, phase: "IDLE", rootMidi: null, rootHz: null, evaluation: null }),
+  setDirection: (direction) =>
+    set({ direction, currentId: null, phase: "IDLE", rootMidi: null, rootHz: null, evaluation: null }),
   setMicError: (micError) => set({ micError }),
 
   startChallenge: (rand = Math.random) => {
-    const { selection } = get();
-    const id = selection === "random" ? INTERVALS[Math.floor(rand() * INTERVALS.length)].id : selection;
+    const { selection, direction } = get();
+    const base = selection === "random" ? BASE_INTERVALS[Math.floor(rand() * BASE_INTERVALS.length)].id : selection;
+    const id = directedId(base, direction);
     set({
       currentId: id,
       rootMidi: pickRoot(getInterval(id), rand),
@@ -108,12 +115,12 @@ export const useTrainer = create<TrainerState>((set, get) => ({
     return "ignored";
   },
 
-  answer: (id) => {
+  answer: (baseId) => {
     const { phase, currentId, score } = get();
     if (phase !== "IDENTIFY" || !currentId) return;
-    const correct = id === currentId;
+    const correct = getInterval(currentId).base === baseId;
     set({
-      answerId: id,
+      answerId: baseId,
       phase: correct ? "SUCCESS" : "MISS",
       score: {
         correct: score.correct + (correct ? 1 : 0),
