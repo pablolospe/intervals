@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { cellPool, getCell, grade, randomRhythm } from "@/lib/rhythm/cells";
 import { RhythmPlayer } from "@/lib/rhythm/rhythm-player";
 import { RhythmNotation } from "./rhythm-notation";
@@ -93,44 +94,65 @@ export function RhythmTrainer() {
           : `Elegí la célula del tiempo ${cursor + 1}.`;
 
   return (
-    <div className="flex flex-1 min-h-0 flex-col justify-between gap-2 sm:gap-3 overflow-hidden">
-      {/* Transport + settings */}
-      <section className="card flex flex-wrap items-center justify-between gap-2 p-2 sm:p-2.5 shrink-0">
-        <div className="flex flex-wrap items-center gap-2">
-          <button onClick={newRhythm} disabled={playing} className="btn btn-primary btn-sm">
-            <span aria-hidden>▶</span> {target ? "Otro ritmo" : "Escuchar ritmo"}
-          </button>
-          <button onClick={() => target && play(target)} disabled={!target || playing} className="btn btn-ghost btn-sm">
-            <span aria-hidden>↻</span> Repetir
-          </button>
-
-          <div role="group" aria-label="Tempo" className="flex items-center gap-1">
-            <button className="chip h-7 w-7 px-0! text-sm" onClick={() => setBpm((b) => Math.max(BPM_MIN, b - 5))} disabled={bpm <= BPM_MIN} aria-label="Más lento">
-              −
-            </button>
-            <span className="min-w-16 text-center text-xs font-semibold tabular-nums text-zinc-50">♩ = {bpm}</span>
-            <button className="chip h-7 w-7 px-0! text-sm" onClick={() => setBpm((b) => Math.min(BPM_MAX, b + 5))} disabled={bpm >= BPM_MAX} aria-label="Más rápido">
-              +
-            </button>
-          </div>
-
-          <div className="flex gap-1">
-            <button className="chip h-7 text-xs" aria-pressed={includeRests} onClick={() => setIncludeRests((v) => !v)}>
-              {includeRests ? "✓" : "○"} Silencios
-            </button>
-            <button className="chip h-7 text-xs" aria-pressed={metronome} onClick={() => setMetronome((v) => !v)}>
-              {metronome ? "✓" : "○"} Metrónomo
-            </button>
-          </div>
+    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-4 md:h-dvh md:overflow-hidden">
+      {/* Header with Suite link, title, and live stats */}
+      <header className="flex shrink-0 items-center justify-between gap-2">
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 text-xs font-medium text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-200"
+          >
+            <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
+            <span>Suite</span>
+          </Link>
+          <span className="text-zinc-700 hidden sm:inline">·</span>
+          <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl">
+            ritmo
+          </h1>
+          <p className="hidden text-xs text-zinc-400 md:block">Escuchá un compás de 4 tiempos y armalo eligiendo la célula de cada tiempo.</p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs" aria-label={`Aciertos ${stats.score} de ${stats.total}. Racha ${stats.streak}`}>
-          <span className="rounded-full border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-zinc-300">
-            Aciertos <b className="tabular-nums text-zinc-50">{stats.score}/{stats.total}</b>
-          </span>
-          <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-2.5 py-1 text-amber-200">
-            Racha <b className="tabular-nums text-amber-100">{stats.streak}</b>
-          </span>
+        <div className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 text-xs sm:px-3 sm:text-sm" aria-label={`Aciertos: ${stats.score}/${stats.total}. Racha: ${stats.streak}`}>
+          <span className="text-zinc-400 text-[11px] sm:text-xs">Aciertos</span>
+          <b className="tabular-nums text-zinc-100">{stats.score}/{stats.total}</b>
+          <span className="text-zinc-600">·</span>
+          <span className="text-zinc-400 text-[11px] sm:text-xs">Racha</span>
+          <b className="tabular-nums text-amber-300">{stats.streak}</b>
+        </div>
+      </header>
+
+      {/* Transport + settings */}
+      <section className="card flex flex-col gap-2 p-2.5 sm:p-3 shrink-0">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <button onClick={newRhythm} disabled={playing} className="btn btn-primary btn-sm px-3 text-xs sm:text-sm">
+              <span aria-hidden>▶</span> {target ? "Otro ritmo" : "Escuchar ritmo"}
+            </button>
+            <button onClick={() => target && play(target)} disabled={!target || playing} className="btn btn-ghost btn-sm px-3 text-xs sm:text-sm">
+              <span aria-hidden>↻</span> Repetir
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div role="group" aria-label="Tempo" className="flex items-center gap-1">
+              <button className="chip h-7 w-7 px-0! text-xs" onClick={() => setBpm((b) => Math.max(BPM_MIN, b - 5))} disabled={bpm <= BPM_MIN} aria-label="Más lento">
+                −
+              </button>
+              <span className="min-w-14 sm:min-w-16 text-center text-xs font-semibold tabular-nums text-zinc-50">♩ = {bpm}</span>
+              <button className="chip h-7 w-7 px-0! text-xs" onClick={() => setBpm((b) => Math.min(BPM_MAX, b + 5))} disabled={bpm >= BPM_MAX} aria-label="Más rápido">
+                +
+              </button>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button className="chip h-7 px-2.5 text-xs" aria-pressed={includeRests} onClick={() => setIncludeRests((v) => !v)}>
+                {includeRests ? "✓" : "○"} Silencios
+              </button>
+              <button className="chip h-7 px-2.5 text-xs" aria-pressed={metronome} onClick={() => setMetronome((v) => !v)}>
+                {metronome ? "✓" : "○"} Metrónomo
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -152,7 +174,7 @@ export function RhythmTrainer() {
             return (
               <div key={i} className="flex min-w-0 flex-col gap-1">
                 <span className={`flex items-center justify-between text-[11px] sm:text-xs font-medium ${active ? "text-emerald-300" : "text-zinc-400"}`}>
-                  Tiempo {i + 1}
+                  <span>Tiempo {i + 1}</span>
                   {res !== undefined && (
                     <span aria-hidden className={`grid h-4 w-4 place-items-center rounded-full text-[10px] font-bold ${res ? "bg-emerald-400 text-zinc-950" : "bg-red-500 text-white"}`}>
                       {res ? "✓" : "✗"}
@@ -164,14 +186,16 @@ export function RhythmTrainer() {
                   disabled={!target}
                   aria-label={`Tiempo ${i + 1}: ${id ? getCell(id).label : "vacío"}${res === undefined ? "" : res ? ", correcto" : ", incorrecto"}`}
                   aria-current={active || undefined}
-                  className={`paper flex h-14 sm:h-18 w-full items-center justify-center px-1 transition ${ring} disabled:cursor-not-allowed disabled:opacity-70 ${
+                  className={`paper flex h-13 sm:h-16 w-full items-center justify-center px-1 transition ${ring} disabled:cursor-not-allowed disabled:opacity-70 ${
                     id ? "" : "border-2 border-dashed border-zinc-300 bg-stone-100"
                   }`}
                 >
                   {id ? (
-                    <RhythmNotation ids={[id]} width={100} height={56} />
+                    <div className="flex h-10 sm:h-12 w-full items-center justify-center">
+                      <RhythmNotation ids={[id]} width={84} height={72} className="h-full w-auto" />
+                    </div>
                   ) : (
-                    <span className="text-2xl font-bold text-zinc-400">?</span>
+                    <span className="text-xl sm:text-2xl font-bold text-zinc-400">?</span>
                   )}
                 </button>
                 {res === false && target && (
@@ -187,7 +211,9 @@ export function RhythmTrainer() {
         {checked && target ? (
           <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 border-t border-zinc-800 pt-2">
             <div className="paper flex-1 min-w-50 px-2 py-0.5">
-              <RhythmNotation ids={target} width={320} height={60} line colors={resultColors} className="mx-auto max-w-sm" />
+              <div className="flex h-12 sm:h-14 w-full items-center justify-center">
+                <RhythmNotation ids={target} width={340} height={72} line colors={resultColors} className="h-full w-auto max-w-sm" />
+              </div>
             </div>
             <div className="flex gap-2 shrink-0">
               <button onClick={newRhythm} disabled={playing} className="btn btn-primary btn-sm">
@@ -222,14 +248,16 @@ export function RhythmTrainer() {
               onClick={() => pick(c.id)}
               disabled={!canPick}
               title={c.label}
-              className="paper group flex flex-col items-center justify-center p-1 ring-1 ring-zinc-300 transition hover:-translate-y-0.5 hover:ring-2 hover:ring-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 active:translate-y-0 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:ring-1 disabled:hover:ring-zinc-300"
+              className="paper group flex flex-col items-center gap-0.5 p-1 pb-1.5 ring-1 ring-zinc-300 transition hover:-translate-y-0.5 hover:ring-2 hover:ring-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 active:translate-y-0 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:ring-1 disabled:hover:ring-zinc-300"
             >
-              <RhythmNotation ids={[c.id]} width={76} height={46} />
-              <span className="truncate max-w-full px-0.5 text-center text-[10px] sm:text-[11px] font-medium leading-none text-zinc-700">{c.label}</span>
+              <div className="flex h-10 sm:h-11 w-full items-center justify-center">
+                <RhythmNotation ids={[c.id]} width={84} height={72} className="h-full w-auto" />
+              </div>
+              <span className="truncate max-w-full px-0.5 text-center text-[9.5px] sm:text-[10px] font-medium leading-none text-zinc-600">{c.label}</span>
             </button>
           ))}
         </div>
       </section>
-    </div>
+    </main>
   );
 }

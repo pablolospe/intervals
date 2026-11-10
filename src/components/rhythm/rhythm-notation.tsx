@@ -33,13 +33,18 @@ export function RhythmNotation({ ids, width, height = 80, colors, line = false, 
     const ctx = renderer.getContext() as SVGContext;
     ctx.setViewBox(0, 0, width, height);
     const svg = el.querySelector("svg");
-    if (svg) Object.assign(svg.style, { width: "100%", height: "auto", display: "block" });
+    if (svg) {
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      Object.assign(svg.style, { width: "100%", height: "100%", display: "block", margin: "0 auto" });
+    }
     ctx.setFillStyle(INK);
     ctx.setStrokeStyle(INK);
 
     // Invisible 5-line stave used only for positioning; notes sit on its middle line (b/4).
-    const pad = line ? 18 : 14;
-    const stave = new Stave(0, height - 90, width);
+    // VexFlow puts that line at stave.y + 60. We pin it at y=45: stems/beams reach up to ~y=10
+    // and short rests hang down to ~y=65, so use a height of ~72 to keep everything inside the box.
+    const pad = line ? 18 : 12;
+    const stave = new Stave(0, -15, width);
     stave.setNoteStartX(pad);
     const midY = stave.getYForLine(2);
 
@@ -72,10 +77,11 @@ export function RhythmNotation({ ids, width, height = 80, colors, line = false, 
 
     const voice = new Voice({ numBeats: ids.length, beatValue: 4 }).setMode(Voice.Mode.SOFT);
     voice.addTickables(all);
-    new Formatter().joinVoices([voice]).format([voice], width - pad * 2);
+    const formatWidth = Math.max(20, width - pad * 2 - 14);
+    new Formatter().joinVoices([voice]).format([voice], formatWidth);
     voice.draw(ctx, stave);
     beams.forEach((b) => b.setContext(ctx).draw());
   }, [ids, width, height, colors, line]);
 
-  return <div ref={host} aria-hidden className={`pointer-events-none w-full ${className ?? ""}`} />;
+  return <div ref={host} aria-hidden className={`pointer-events-none flex items-center justify-center ${className ?? "h-full w-full"}`} />;
 }
