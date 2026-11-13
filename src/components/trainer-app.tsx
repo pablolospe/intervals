@@ -9,16 +9,6 @@ import { IdentifyModal } from "./identify-modal";
 import { getMascotCharacter, Mascot, type Mood } from "./mascot";
 import { PitchCanvas } from "./pitch-canvas";
 
-const ANIM: Record<Phase, string> = {
-  IDLE: "",
-  PLAYING_INTERVAL: "anim-ring",
-  SINGING_ROOT: "anim-ring",
-  SINGING_TARGET: "anim-ring",
-  IDENTIFY: "",
-  SUCCESS: "anim-pop",
-  MISS: "anim-wiggle",
-};
-
 /** Small translucent pill that sits on top of the pitch view while it's in use. */
 const floating =
   "inline-flex items-center gap-1.5 rounded-full border border-zinc-600/80 bg-zinc-900/80 px-2.5 py-1 text-xs font-semibold text-zinc-100 backdrop-blur transition hover:border-zinc-400 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:opacity-40";
@@ -87,12 +77,6 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
       <div className="flex flex-col gap-2.5 md:grid md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:gap-3">
         <section className="flex w-full min-w-0 flex-col self-start rounded-2xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-xl backdrop-blur sm:rounded-3xl sm:p-5">
           <div className="mb-2 flex items-center gap-3 sm:mb-4 sm:gap-4">
-            <div
-              key={`${phase}-${score.total}`}
-              className={`[@media(max-height:480px)]:hidden h-12 w-12 shrink-0 overflow-hidden rounded-full bg-zinc-800 p-1 sm:h-20 sm:w-20 sm:p-1.5 ${ANIM[phase]}`}
-            >
-              <Mascot intervalId={currentId} revealed={revealed} mood={mood} />
-            </div>
             <div className="min-w-0">
               <p className="text-base font-semibold sm:text-xl">
                 {finished ? def?.name[lang] ?? "" : t.phase[phase]}
