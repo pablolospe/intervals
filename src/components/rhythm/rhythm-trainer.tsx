@@ -124,9 +124,9 @@ export function RhythmTrainer() {
         <button
           onClick={() => (target ? play(target) : newRhythm())}
           disabled={playing}
-          className={`btn btn-primary w-full font-extrabold ${target ? "gap-2 py-2.5 text-base sm:py-3 sm:text-lg" : "gap-3 py-4 text-xl sm:py-5 sm:text-2xl"}`}
+          className="btn btn-primary h-12 w-full gap-2 text-base font-extrabold sm:h-14 sm:text-lg"
         >
-          <span aria-hidden className={target ? "text-lg sm:text-xl" : "text-2xl sm:text-3xl"}>{target && !playing ? "↻" : "▶"}</span>
+          <span aria-hidden>{target && !playing ? "↻" : "▶"}</span>
           {playing ? "Sonando…" : target ? "Repetir" : "Escuchar ritmo"}
         </button>
 
