@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0c10;
+  --foreground: #f4f4f5;
 }
 
 @theme inline {
@@ -12,25 +12,44 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-body {
-  background:
-    radial-gradient(60rem 30rem at 15% -10%, rgba(52, 211, 153, 0.14), transparent 60%),
-    radial-gradient(50rem 30rem at 100% 0%, rgba(167, 139, 250, 0.16), transparent 60%),
-    #09090b;
-  background-attachment: fixed;
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  button:disabled,
+  [role="button"]:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
+:root {
+  --accent-edge: #0b6f6b;
+}
+
+/* Per-module palettes: the trainers are written with emerald-* utilities, so each
+   module re-maps that scale (and the key-button edge) to its own accent. */
+[data-theme="recognize"] {
+  --color-emerald-100: #ccfbf6; --color-emerald-200: #99f6ef; --color-emerald-300: #5eeadf;
+  --color-emerald-400: #14d6cc; --color-emerald-500: #0fb5ad; --color-emerald-600: #0d8f8a;
+  --accent-edge: #0b6f6b;
+}
+[data-theme="sing"] {
+  --color-emerald-100: #ffe3e0; --color-emerald-200: #ffc9c4; --color-emerald-300: #ff9f9a;
+  --color-emerald-400: #f4726f; --color-emerald-500: #e0504d; --color-emerald-600: #b93b39;
+  --accent-edge: #a93a38;
+}
+[data-theme="rhythm"] {
+  --color-emerald-100: #fff6d6; --color-emerald-200: #fff0b3; --color-emerald-300: #ffe27a;
+  --color-emerald-400: #ffcf3f; --color-emerald-500: #e6b422; --color-emerald-600: #b88f14;
+  --accent-edge: #a8820f;
 }
 
 @keyframes pop {
@@ -58,15 +77,16 @@ body {
 /* ---------- Design system: buttons, surfaces, paper ---------- */
 @layer components {
   .btn {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold
+      cursor-pointer
       transition-[background-color,border-color,color,box-shadow,transform] duration-150
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950
       disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none;
   }
   /* Raised "key" buttons: a solid bottom edge that squashes when pressed. */
   .btn-primary {
-    @apply bg-emerald-400 text-zinc-950 shadow-[0_4px_0_0_#047857] hover:bg-emerald-300
-      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#047857];
+    @apply bg-emerald-400 text-zinc-950 shadow-[0_4px_0_0_var(--accent-edge)] hover:bg-emerald-300
+      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_var(--accent-edge)];
   }
   .btn-accent {
     @apply bg-violet-400 text-zinc-950 shadow-[0_4px_0_0_#5b21b6] hover:bg-violet-300
@@ -81,18 +101,19 @@ body {
       enabled:active:translate-y-[2px] enabled:active:shadow-[0_1px_0_0_#09090b];
   }
   .btn-sm {
-    @apply rounded-lg px-3 py-1.5 text-xs sm:text-sm;
+    @apply rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold;
   }
   /* Small toggle-able pill (aria-pressed drives the selected look). */
   .chip {
-    @apply inline-flex select-none items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-100
+    @apply inline-flex select-none items-center justify-center gap-1 rounded-full border border-zinc-600 bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-100
+      cursor-pointer
       transition hover:border-zinc-400 hover:bg-zinc-700
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300
       disabled:cursor-not-allowed disabled:opacity-40
       aria-pressed:border-emerald-400 aria-pressed:bg-emerald-400/15 aria-pressed:text-emerald-200;
   }
   .card {
-    @apply rounded-2xl border border-zinc-800 bg-zinc-900/70 shadow-xl shadow-black/30 backdrop-blur;
+    @apply rounded-2xl sm:rounded-3xl border border-zinc-800 bg-zinc-900/60 shadow-xl shadow-black/30 backdrop-blur;
   }
   /* Light "sheet music" surface so notation reads at full contrast. */
   .paper {

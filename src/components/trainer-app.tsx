@@ -68,7 +68,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
   const canvasIdle = phase === "IDLE" || finished;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-5 md:h-dvh md:overflow-hidden">
+    <main data-theme={mode} className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-5 md:h-dvh md:overflow-hidden">
       <header className="flex shrink-0 items-center justify-between gap-2">
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
@@ -76,10 +76,10 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             className="group inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 text-xs font-medium text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-200"
           >
             <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
-            <span>Suite</span>
+            <span>BurpEars</span>
           </Link>
           <span className="text-zinc-700 hidden sm:inline">·</span>
-          <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-3xl">
+          <h1 className="text-xl font-extrabold tracking-tight text-emerald-400 sm:text-3xl">
             {mode === "recognize" ? "reconocer intervalos" : "cantar intervalos"}
           </h1>
           <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
@@ -161,7 +161,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             )}
           </div>
 
-          {micError && <p className="mt-2 rounded-lg bg-red-950/60 p-2 text-xs text-red-300 sm:text-sm">{t.micDenied}</p>}
+          {micError && <p className="mt-2 rounded-xl bg-red-950/60 p-2 text-xs text-red-300 sm:text-sm">{t.micDenied}</p>}
         </section>
 
         <div className="flex flex-col gap-3 md:overflow-y-auto [@media(max-height:480px)]:overflow-y-auto">
@@ -203,7 +203,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
               title={t.switchDirection}
               className={`btn group w-1/3 shrink-0 flex-col justify-center gap-1 rounded-2xl border-2 px-1 py-2 sm:w-28 ${
                 asc
-                  ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_#047857] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#047857]"
+                  ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_var(--accent-edge)] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_var(--accent-edge)]"
                   : "border-violet-400 bg-violet-400/15 text-violet-200 shadow-[0_4px_0_0_#5b21b6] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#5b21b6]"
               }`}
             >
@@ -288,7 +288,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                           playReference(idx);
                         }}
                         disabled={busy || !revealed}
-                        className={`rounded-lg px-2.5 py-1 text-xs font-medium transition ${
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition ${
                           isSel
                             ? "border border-violet-400 bg-violet-400/25 text-violet-100 shadow-sm"
                             : "border border-zinc-700 bg-zinc-800/60 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200"

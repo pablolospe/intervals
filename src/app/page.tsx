@@ -1,39 +1,35 @@
 import Link from "next/link";
+import { EarArt, MouthArt, RhythmArt } from "@/components/illustrations";
+import { SuiteShell } from "@/components/suite-shell";
+import { MODULES } from "@/lib/modules";
 
-const MODULES = [
-  { href: "/intervalos/reconocer", title: "Reconocer intervalos", desc: "Escuchá un intervalo sorpresa y adiviná cuál es." },
-  { href: "/intervalos/cantar", title: "Cantar intervalos", desc: "Elegí un intervalo y entrená el oído con canciones pegadizas y tu voz." },
-  { href: "/ritmo", title: "Células rítmicas", desc: "Escuchá un compás y adiviná las 4 células rítmicas que sonaron." },
-  { href: null, title: "Partitura", desc: "Escribí música dictando: “un tresillo de negras: do mi sol”." },
-];
+export const metadata = { title: "BurpEars — entrená tus orejas" };
+
+const ART = { recognize: EarArt, sing: MouthArt, rhythm: RhythmArt } as const;
 
 export default function Home() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-10 text-zinc-100">
-      <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-4xl font-bold text-transparent">
-        suite musical
-      </h1>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
-        {MODULES.map((m) =>
-          m.href ? (
-            <Link key={m.title} href={m.href} className="card group p-5 transition hover:-translate-y-0.5 hover:border-emerald-400/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
-              <h2 className="flex items-center justify-between text-lg font-semibold">
-                {m.title}
-                <span aria-hidden className="text-zinc-500 transition group-hover:translate-x-1 group-hover:text-emerald-300">→</span>
-              </h2>
-              <p className="mt-1 text-sm text-zinc-300">{m.desc}</p>
-            </Link>
-          ) : (
-            <div key={m.title} aria-disabled="true" className="card cursor-not-allowed p-5 opacity-50">
-              <h2 className="flex items-center justify-between text-lg font-semibold">
-                {m.title}
-                <span className="rounded-full border border-zinc-600 px-2 py-0.5 text-xs font-medium text-zinc-300">próximamente</span>
-              </h2>
-              <p className="mt-1 text-sm text-zinc-300">{m.desc}</p>
-            </div>
-          ),
-        )}
-      </div>
-    </main>
+    <SuiteShell>
+      <main className="flex-1 px-4 pb-10 md:px-8 md:py-8">
+        <ul className="mx-auto flex max-w-5xl snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible">
+          {MODULES.map((m) => {
+            const Art = ART[m.id];
+            return (
+              <li key={m.id} className="w-[82%] shrink-0 snap-center md:w-auto">
+                <div className="flex h-full flex-col items-center gap-3 rounded-[2.5rem] border-2 border-zinc-700/70 bg-[#0b0c10] p-6 text-center">
+                  <Art className="h-44 w-full" />
+                  <h2 className="text-3xl font-extrabold leading-tight text-white">{m.title}</h2>
+                  <p className="max-w-[16rem] flex-1 text-base text-zinc-300">{m.desc}</p>
+                  <Link href={m.href} style={{ background: m.color }} className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-lg font-bold text-zinc-950 transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+                    Comenzar <span aria-hidden>→</span>
+                  </Link>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="mx-auto mt-6 max-w-5xl text-center text-sm text-zinc-500">Partitura — próximamente</p>
+      </main>
+    </SuiteShell>
   );
 }

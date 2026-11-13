@@ -59,7 +59,7 @@ export function IdentifyModal({ open, labels, options, onAnswer }: Props) {
     const up = dir === "asc";
     const color = up
       ? on
-        ? "border-emerald-400 bg-emerald-400/20 text-emerald-100 shadow-[0_4px_0_0_#047857]"
+        ? "border-emerald-400 bg-emerald-400/20 text-emerald-100 shadow-[0_4px_0_0_var(--accent-edge)]"
         : "border-zinc-600 bg-zinc-800 text-zinc-200 hover:border-emerald-400/70"
       : on
         ? "border-violet-400 bg-violet-400/20 text-violet-100 shadow-[0_4px_0_0_#5b21b6]"
