@@ -25,13 +25,20 @@ const ghost = `${btn} btn-ghost`;
 const floating =
   "inline-flex items-center gap-1.5 rounded-full border border-zinc-600/80 bg-zinc-900/80 px-2.5 py-1 text-xs font-semibold text-zinc-100 backdrop-blur transition hover:border-zinc-400 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:opacity-40";
 
-export function TrainerApp() {
+export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
   const { lang, selection, direction, currentId, phase, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
   const { startChallenge, replay, playReference } = useTrainerAudio();
   const [selectedSongIndex, setSelectedSongIndex] = useState(0);
   const t = dict[lang];
   /** Interval to return to when leaving surprise mode. */
   const [lastPick, setLastPick] = useState(selection === "random" ? "P5" : selection);
+
+  useEffect(() => {
+    // The route decides the game: recognise = surprise interval, sing = chosen interval.
+    if (mode === "recognize") setSelection("random");
+    else if (useTrainer.getState().selection === "random") setSelection("P5");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
 
   useEffect(() => {
     setSelectedSongIndex(0);
@@ -44,7 +51,7 @@ export function TrainerApp() {
   const def = currentId ? getInterval(currentId) : null;
   const busy = phase === "PLAYING_INTERVAL";
   const finished = phase === "SUCCESS" || phase === "MISS";
-  const isRandom = selection === "random";
+  const isRandom = mode === "recognize";
   const revealed = !isRandom || finished; // surprise mode hides the answer until it is given
   const identifying = phase === "IDENTIFY";
   const options = BASE_INTERVALS.map((b) => ({ id: b.id, label: b.name[lang] }));
@@ -73,7 +80,7 @@ export function TrainerApp() {
           </Link>
           <span className="text-zinc-700 hidden sm:inline">·</span>
           <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-3xl">
-            {t.title}
+            {mode === "recognize" ? "reconocer intervalos" : "cantar intervalos"}
           </h1>
           <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
         </div>
@@ -163,7 +170,7 @@ export function TrainerApp() {
               <h2 id="pick" className="text-xs font-medium text-zinc-300 sm:text-sm">
                 {isRandom ? t.modeRandom : t.pickInterval}
               </h2>
-              <div role="radiogroup" aria-label={t.mode} className="flex shrink-0 rounded-full border border-zinc-600 bg-zinc-900 p-0.5 text-xs font-semibold sm:text-sm">
+              <div hidden role="radiogroup" aria-label={t.mode} className="flex shrink-0 rounded-full border border-zinc-600 bg-zinc-900 p-0.5 text-xs font-semibold sm:text-sm">
                 {([
                   ["pick", t.modePick],
                   ["random", t.random],

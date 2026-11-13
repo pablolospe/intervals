@@ -107,7 +107,7 @@ export function RhythmTrainer() {
           </Link>
           <span className="text-zinc-700 hidden sm:inline">·</span>
           <h1 className="bg-linear-to-r from-emerald-300 via-teal-200 to-violet-300 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl">
-            ritmo
+            células rítmicas
           </h1>
           <p className="hidden text-xs text-zinc-400 md:block">Escuchá un compás de 4 tiempos y armalo eligiendo la célula de cada tiempo.</p>
         </div>

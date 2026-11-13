@@ -1,5 +1,5 @@
-import { TrainerApp } from "@/components/trainer-app";
+import { redirect } from "next/navigation";
 
 export default function IntervalsPage() {
-  return <TrainerApp />;
+  redirect("/intervalos/cantar");
 }
