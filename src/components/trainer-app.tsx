@@ -19,8 +19,6 @@ const ANIM: Record<Phase, string> = {
   MISS: "anim-wiggle",
 };
 
-const btn = "btn px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm";
-const ghost = `${btn} btn-ghost`;
 /** Small translucent pill that sits on top of the pitch view while it's in use. */
 const floating =
   "inline-flex items-center gap-1.5 rounded-full border border-zinc-600/80 bg-zinc-900/80 px-2.5 py-1 text-xs font-semibold text-zinc-100 backdrop-blur transition hover:border-zinc-400 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:opacity-40";
@@ -264,14 +262,6 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between gap-2">
                 <h2 className="text-xs font-semibold text-violet-200 sm:text-sm">{t.helpTitle}</h2>
-                <button
-                  onClick={() => playReference(selectedSongIndex)}
-                  disabled={busy || !def || !revealed}
-                  className={`${ghost} py-1 px-3 text-xs`}
-                >
-                  <span aria-hidden className="mr-1">▶</span>
-                  {t.playReference}
-                </button>
               </div>
               <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.helpText}</p>
 
@@ -284,7 +274,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                 </p>
               </div>
 
-              {def && def.songs && def.songs.length > 1 && (
+              {def && revealed && def.songs && def.songs.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 pt-0.5">
                   {def.songs.map((s, idx) => {
                     const isSel = selectedSongIndex === idx;

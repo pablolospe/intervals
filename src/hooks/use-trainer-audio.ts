@@ -87,8 +87,10 @@ export function useTrainerAudio() {
   }, [playChallenge]);
 
   const playReference = useCallback((songIndex = 0) => {
-    const { currentId, rootMidi } = useTrainer.getState();
+    const { currentId, rootMidi, selection, phase } = useTrainer.getState();
     if (!currentId || rootMidi === null) return;
+    // Recognise mode: the reference song would give the answer away, so it stays locked until answered.
+    if (selection === "random" && phase !== "SUCCESS" && phase !== "MISS") return;
     playNotes(motifNotes(getInterval(currentId), rootMidi, songIndex), 100);
   }, [playNotes]);
 
