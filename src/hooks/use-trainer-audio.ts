@@ -48,6 +48,7 @@ export function useTrainerAudio() {
     (notes: SequenceNote[], bpm: number, onDone?: () => void) => {
       const { synth } = ensureAudio();
       window.clearTimeout(timerRef.current);
+      synth.stopAll(); // a new example cuts the previous one instead of layering on top
       mutedRef.current = true;
       stabRef.current.reset();
       resetLive();

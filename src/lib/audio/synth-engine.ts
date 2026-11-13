@@ -72,6 +72,8 @@ export interface SynthOptions {
 export class SynthEngine {
   private readonly master: GainNode;
   private readonly adsr: Adsr;
+  /** Scheduled/sounding voices, so a new playback can cut the previous one. */
+  private readonly active = new Set<{ gain: GainNode; oscs: OscillatorNode[] }>();
 
   constructor(private readonly ctx: BaseAudioContext, opts: SynthOptions = {}) {
     this.adsr = opts.adsr ?? RHODES_ADSR;
@@ -102,6 +104,8 @@ export class SynthEngine {
       ["sine", 1, 0.6],
       ["sine", 2, 0.15],
     ];
+    const voice = { gain, oscs: [] as OscillatorNode[] };
+    this.active.add(voice);
     for (const [type, mult, level] of voices) {
       const osc = ctx.createOscillator();
       osc.type = type;
@@ -111,9 +115,29 @@ export class SynthEngine {
       osc.connect(g).connect(filter);
       osc.start(when);
       osc.stop(stopAt);
+      voice.oscs.push(osc);
     }
+    voice.oscs[0].onended = () => this.active.delete(voice);
     filter.connect(gain).connect(this.master);
     return stopAt;
+  }
+
+  /** Silence everything scheduled or sounding, with a short fade to avoid clicks. */
+  stopAll(): void {
+    const now = this.ctx.currentTime;
+    for (const { gain, oscs } of this.active) {
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(0, now + 0.03);
+      for (const o of oscs) {
+        try {
+          o.stop(now + 0.04);
+        } catch {
+          /* already stopped */
+        }
+      }
+    }
+    this.active.clear();
   }
 
   /** Play a sequence starting at `startAt` (default: now + small lead). Returns total length in seconds. */

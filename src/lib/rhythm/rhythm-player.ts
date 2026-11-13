@@ -16,6 +16,7 @@ export class RhythmPlayer {
   private readonly ctx: AudioContext;
   private readonly synth: SynthEngine;
   private readonly clickBus: GainNode;
+  private readonly clicks = new Set<OscillatorNode>();
 
   constructor() {
     this.ctx = new AudioContext();
@@ -36,11 +37,27 @@ export class RhythmPlayer {
     osc.connect(g).connect(this.clickBus);
     osc.start(when);
     osc.stop(when + 0.05);
+    this.clicks.add(osc);
+    osc.onended = () => this.clicks.delete(osc);
+  }
+
+  /** Cut whatever is playing (notes and clicks). */
+  stop() {
+    this.synth.stopAll();
+    for (const osc of this.clicks) {
+      try {
+        osc.stop();
+      } catch {
+        /* already stopped */
+      }
+    }
+    this.clicks.clear();
   }
 
   /** Returns the total length in seconds (count-in included). */
   play(ids: string[], { bpm, countIn, metronome }: PlayOptions): number {
     void this.ctx.resume();
+    this.stop();
     const beat = 60 / bpm;
     const beats = ids.length;
     const t0 = this.ctx.currentTime + 0.08;
