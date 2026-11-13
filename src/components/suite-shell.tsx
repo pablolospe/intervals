@@ -31,12 +31,12 @@ export function SuiteShell({ children, active }: { children: React.ReactNode; ac
     </nav>
   );
   return (
-    <div className="min-h-dvh text-zinc-100 md:grid md:grid-cols-[13rem_1fr]">
+    <div className="min-h-dvh text-zinc-100 md:grid md:h-dvh md:grid-cols-[13rem_1fr] md:overflow-hidden">
       <aside className="hidden border-r border-zinc-800/80 p-5 md:flex md:flex-col md:gap-8">
         <Logo  />
         {nav}
       </aside>
-      <div className="flex flex-col">
+      <div className="flex min-h-0 min-w-0 flex-col">
         <header className="flex items-center justify-between p-4 md:hidden">
           <Logo />
           <button aria-label="Menú" aria-expanded={open} onClick={() => setOpen(!open)} className="rounded-full p-2 text-zinc-200 hover:bg-zinc-800">

@@ -1,6 +1,6 @@
 "use client";
+import { SuiteShell } from "@/components/suite-shell";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { BASE_INTERVALS, getInterval } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
@@ -66,18 +66,11 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
   const canvasIdle = phase === "IDLE" || finished;
 
   return (
-    <main data-theme={mode} className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-5 md:h-dvh md:overflow-hidden">
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 sm:flex-nowrap">
-        <div className="contents sm:flex sm:items-center sm:gap-3">
-          <Link
-            href="/"
-            className="group inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 text-xs font-medium text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-200"
-          >
-            <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
-            <span>BurpEars</span>
-          </Link>
-          <span className="text-zinc-700 hidden sm:inline">·</span>
-          <h1 className="order-last w-full text-2xl font-extrabold leading-tight tracking-tight text-emerald-400 sm:order-none sm:w-auto sm:text-3xl">
+    <SuiteShell active={mode}>
+    <main data-theme={mode} className="mx-auto flex min-h-0 w-full flex-1 max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-5 md:overflow-hidden">
+      <header className="flex shrink-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <h1 className="text-xl font-extrabold leading-tight tracking-tight text-emerald-400 sm:text-3xl">
             {mode === "recognize" ? "reconocer intervalos" : "cantar intervalos"}
           </h1>
           <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
@@ -348,5 +341,6 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
 
       <footer className="hidden text-center text-xs text-zinc-600 md:block">{t.footer}</footer>
     </main>
+    </SuiteShell>
   );
 }

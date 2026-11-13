@@ -54,7 +54,7 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - **Botones y bordes:** botones de píldora (`rounded-full`), tarjetas muy redondeadas (`rounded-3xl`). Los botones principales son tipo tecla (borde inferior sólido que se aplasta al presionar).
 - **Home:** carrusel de tarjetas (scroll horizontal con snap en celular, 3 columnas en escritorio). Cada tarjeta: ilustración, título, descripción y botón "Comenzar →" del color del módulo.
 - **Menú:** barra lateral en escritorio y hamburguesa en celular. Solo Inicio y los módulos; **Resultados y Ajustes no existen** y no se muestran.
-- Las pantallas de entrenamiento mantienen su layout de pantalla completa (sin barra lateral); se vuelve con "← BurpEars".
+- **El menú también está dentro de cada actividad** (`SuiteShell` envuelve los entrenadores): barra lateral fija en escritorio y tablet (con el módulo activo resaltado en su color) y hamburguesa en la barra superior en celular. Ya no hay botón "← BurpEars" en los entrenadores; el logo del menú lleva al inicio.
 - **Accesibilidad:** foco visible, `aria-*` en grupos de opciones, ilustraciones decorativas con `aria-hidden`, respetar `prefers-reduced-motion`.
 
 ## 4. Ilustraciones y marca
