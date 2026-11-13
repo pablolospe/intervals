@@ -100,25 +100,23 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             >
               <Mascot intervalId={currentId} revealed={revealed} mood={mood} />
             </div>
-            <div role="status" className="min-w-0">
-              <p className={`text-base font-semibold sm:text-xl ${phase === "SUCCESS" ? "text-emerald-300" : phase === "MISS" ? "text-amber-300" : ""}`}>
-                {t.phase[phase]}
+            <div className="min-w-0">
+              <p className="text-base font-semibold sm:text-xl">
+                {finished ? def?.name[lang] ?? "" : t.phase[phase]}
               </p>
               <p className="text-xs text-zinc-400 sm:text-sm">
-                {quip ??
-                  (def && !finished
+                {finished
+                  ? def
+                    ? def.direction === "asc"
+                      ? t.ascending
+                      : t.descending
+                    : ""
+                  : def
                     ? revealed
                       ? `${def.name[lang]} · ${def.direction === "asc" ? t.ascending : t.descending}`
                       : t.mystery
-                    : "")}
+                    : ""}
               </p>
-              {finished && def && evaluation && (
-                <p className="mt-0.5 text-xs text-zinc-500">
-                  {isRandom ? `${t.wasIt}: ` : ""}{def.name[lang]} ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
-                  {evaluation.errorCents >= 0 ? "+" : ""}
-                  {evaluation.errorCents.toFixed(0)} {t.cents}
-                </p>
-              )}
             </div>
           </div>
 
@@ -132,10 +130,30 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
           </ol>
 
           {/* Pitch view: action buttons float over it while it's idle, and shrink to the corner while singing. */}
-          <div className="relative h-36 shrink-0 sm:h-44 md:h-52 [@media(max-height:600px)]:h-28">
+          <div className={`relative shrink-0 ${finished ? "h-64 sm:h-64 md:h-72" : "h-36 sm:h-44 md:h-52 [@media(max-height:600px)]:h-28"}`}>
             <PitchCanvas idleLabel={t.idleLabel} />
             {canvasIdle ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 rounded-2xl bg-zinc-950/75 p-3 backdrop-blur-[2px] sm:flex-row sm:gap-3">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl bg-zinc-950/80 p-3 backdrop-blur-[2px]">
+                {finished && def && evaluation && quip && (
+                  <div
+                    role="status"
+                    className={`w-full max-w-md rounded-2xl border-2 px-4 py-3 text-center shadow-lg ${
+                      phase === "SUCCESS" ? "border-green-400 bg-green-500/15 text-green-100" : "border-red-400 bg-red-500/15 text-red-100"
+                    }`}
+                  >
+                    <p className={`flex items-center justify-center gap-2 text-xl font-extrabold sm:text-2xl ${phase === "SUCCESS" ? "text-green-300" : "text-red-300"}`}>
+                      <span aria-hidden>{phase === "SUCCESS" ? "✓" : "✕"}</span>
+                      {t.phase[phase]}
+                    </p>
+                    <p className="mt-0.5 text-sm opacity-90">{quip}</p>
+                    <p className="mt-1.5 text-xs font-medium opacity-80 sm:text-sm">
+                      {t.wasIt}: <b>{def.name[lang]}</b> ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
+                      {evaluation.errorCents >= 0 ? "+" : ""}
+                      {evaluation.errorCents.toFixed(0)} {t.cents}
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-col items-center gap-2.5 sm:flex-row sm:gap-3">
                 <button onClick={startChallenge} className="btn btn-primary px-5 py-3 text-base sm:px-6">
                   <span aria-hidden>▶</span> {mainLabel}
                 </button>
@@ -144,6 +162,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                     <span aria-hidden>↻</span> {t.replay}
                   </button>
                 )}
+                </div>
               </div>
             ) : (
               <div className="absolute right-2 top-2 flex gap-1.5">
