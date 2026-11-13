@@ -31,6 +31,10 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 ### Células rítmicas
 
 - Se escucha un compás de 4 tiempos y se arma eligiendo la célula de cada tiempo. Tiene cuenta previa y metrónomo opcional.
+- **Un solo botón grande para escuchar:** dice "Escuchar ritmo" al empezar y pasa a "Repetir" (mismo botón). Hasta que suena el primer ritmo, el compás y las células se ven atenuados y deshabilitados.
+- **No hay "Otro ritmo" mientras se adivina:** si estuviera a mano, sería más fácil reiniciar el ejemplo que probar. "Otro ritmo" y "Repetir" solo aparecen en el cartel de resultado, después de comprobar (verde si acierta, rojo si no, con la solución en notación y colores por tiempo).
+- **"Me rindo"** (junto a Comprobar y Borrar) salta directo a otro ritmo, pero **cuenta como error**: suma un intento y corta la racha. Así nunca es más fácil rendirse que probar. No muestra la solución.
+- El alto de la zona del compás es fijo (`min-h-52`) para que no salte al aparecer el cartel.
 
 ## 2. Audio
 

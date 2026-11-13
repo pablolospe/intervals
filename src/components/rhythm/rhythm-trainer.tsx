@@ -9,7 +9,6 @@ const BEATS = 4;
 // Dark enough to read on the light paper surface.
 const OK = "var(--accent-edge)";
 const BAD = "#dc2626";
-const OK_ONLY = [OK];
 const empty = () => Array<string | null>(BEATS).fill(null);
 const BPM_MIN = 50;
 const BPM_MAX = 130;
@@ -76,6 +75,13 @@ export function RhythmTrainer() {
     setStats((s) => ({ score: s.score + (ok ? 1 : 0), total: s.total + 1, streak: ok ? s.streak + 1 : 0 }));
   };
 
+  /** Giving up skips to another rhythm, but counts as a miss, so it is never easier than trying. */
+  const giveUp = () => {
+    if (!target) return;
+    setStats((st) => ({ ...st, total: st.total + 1, streak: 0 }));
+    newRhythm();
+  };
+
   const clear = () => {
     setAnswer(empty());
     setCursor(0);
@@ -91,7 +97,7 @@ export function RhythmTrainer() {
           : `${results!.filter(Boolean).length} de ${BEATS}. Escuchalo de nuevo y comparalo.`
         : filled
           ? "Todo completo. ¿Comprobamos?"
-          : `Elegí la célula del tiempo ${cursor + 1}.`;
+          : "";
 
   return (
     <SuiteShell active="rhythm">
@@ -113,26 +119,18 @@ export function RhythmTrainer() {
         </div>
       </header>
 
-      {/* Transport + settings */}
-      <section className="card flex flex-col gap-2 p-2.5 sm:p-3 shrink-0">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={newRhythm}
-              disabled={playing}
-              className="btn btn-primary px-5 py-2.5 text-sm font-bold sm:px-6 sm:py-3 sm:text-base"
-            >
-              <span aria-hidden>▶</span> {target ? "Otro ritmo" : "Escuchar ritmo"}
-            </button>
-            <button
-              onClick={() => target && play(target)}
-              disabled={!target || playing}
-              className="btn btn-ghost px-4 py-2.5 text-sm font-bold sm:px-5 sm:py-3 sm:text-base"
-            >
-              <span aria-hidden>↻</span> Repetir
-            </button>
-          </div>
+      {/* Listen: one big button that turns into "Repetir" once a rhythm exists. */}
+      <section className="card flex shrink-0 flex-col gap-3 p-3 sm:p-4">
+        <button
+          onClick={() => (target ? play(target) : newRhythm())}
+          disabled={playing}
+          className={`btn btn-primary w-full font-extrabold ${target ? "gap-2 py-2.5 text-base sm:py-3 sm:text-lg" : "gap-3 py-4 text-xl sm:py-5 sm:text-2xl"}`}
+        >
+          <span aria-hidden className={target ? "text-lg sm:text-xl" : "text-2xl sm:text-3xl"}>{target && !playing ? "↻" : "▶"}</span>
+          {playing ? "Sonando…" : target ? "Repetir" : "Escuchar ritmo"}
+        </button>
 
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <div role="group" aria-label="Tempo" className="flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-1.5 py-1">
               <button
@@ -177,12 +175,12 @@ export function RhythmTrainer() {
       </section>
 
       {/* Answer: one paper slot per beat */}
-      <section className="card flex flex-col justify-between p-2.5 sm:p-3 shrink-0" aria-labelledby="answer-title">
+      <section className={`card relative flex min-h-52 shrink-0 flex-col justify-between p-2.5 transition-opacity sm:p-3 ${target ? "" : "pointer-events-none opacity-40"}`} aria-labelledby="answer-title">
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
           <h2 id="answer-title" className="text-xs sm:text-sm font-semibold text-zinc-100">Tu compás</h2>
-          <p role="status" className={`text-xs sm:text-sm ${checked ? (allRight ? "font-semibold text-emerald-300" : "font-semibold text-red-300") : "text-zinc-300"}`}>
+          {hint && <p role="status" className={`text-xs sm:text-sm ${checked ? (allRight ? "font-semibold text-emerald-300" : "font-semibold text-red-300") : "text-zinc-300"}`}>
             {hint}
-          </p>
+          </p>}
         </div>
 
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
@@ -227,36 +225,51 @@ export function RhythmTrainer() {
           })}
         </div>
 
-        {checked && target ? (
-          <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 border-t border-zinc-800 pt-2">
-            <div className="paper flex-1 min-w-50 px-2 py-0.5">
-              <div className="flex h-12 sm:h-14 w-full items-center justify-center">
+        <div className="mt-2.5 flex gap-2 border-t border-zinc-800 pt-2">
+          <button onClick={check} disabled={!target || !filled} className="btn btn-accent btn-sm">
+            Comprobar
+          </button>
+          <button onClick={clear} disabled={!answer.some(Boolean)} className="btn btn-ghost btn-sm">
+            Borrar
+          </button>
+          <button onClick={giveUp} disabled={!target || playing} className="btn btn-ghost btn-sm ml-auto text-zinc-400">
+            Me rindo
+          </button>
+        </div>
+
+        {checked && target && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 overflow-y-auto rounded-3xl bg-zinc-950/90 p-3 backdrop-blur-[2px]">
+            <div
+              role="status"
+              className={`w-full max-w-md rounded-2xl border-2 px-3 py-2 text-center ${allRight ? "border-green-400 bg-green-500/15" : "border-red-400 bg-red-500/15"}`}
+            >
+              <p className={`flex items-center justify-center gap-2 text-xl font-extrabold sm:text-2xl ${allRight ? "text-green-300" : "text-red-300"}`}>
+                <span aria-hidden>{allRight ? "✓" : "✕"}</span>
+                {allRight ? "¡Clavado!" : "Uy, casi."}
+              </p>
+              <p className={`text-sm ${allRight ? "text-green-100" : "text-red-100"}`}>
+                {allRight ? "Ese ritmo no se te escapa." : `${results!.filter(Boolean).length} de ${BEATS} tiempos bien. Así era:`}
+              </p>
+            </div>
+            <div className="paper w-full max-w-md px-2 py-0.5">
+              <div className="flex h-12 w-full items-center justify-center sm:h-14">
                 <RhythmNotation ids={target} width={340} height={72} line colors={resultColors} className="h-full w-auto max-w-sm" />
               </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-              <button onClick={newRhythm} disabled={playing} className="btn btn-primary btn-sm">
+            <div className="flex items-center gap-2.5">
+              <button onClick={newRhythm} disabled={playing} className="btn btn-primary px-5 py-2.5 text-base font-bold">
                 <span aria-hidden>▶</span> Otro ritmo
               </button>
-              <button onClick={() => play(target)} disabled={playing} className="btn btn-ghost btn-sm">
-                <span aria-hidden>↻</span> Solución
+              <button onClick={() => play(target)} disabled={playing} className="btn btn-ghost px-4 py-2.5 text-base font-bold">
+                <span aria-hidden>↻</span> Repetir
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="mt-2.5 flex gap-2 border-t border-zinc-800 pt-2">
-            <button onClick={check} disabled={!target || !filled} className="btn btn-accent btn-sm">
-              Comprobar
-            </button>
-            <button onClick={clear} disabled={!answer.some(Boolean)} className="btn btn-ghost btn-sm">
-              Borrar
-            </button>
           </div>
         )}
       </section>
 
       {/* Palette */}
-      <section className="card p-2 sm:p-2.5 shrink-0" aria-labelledby="palette-title">
+      <section className={`card shrink-0 p-2 transition-opacity sm:p-2.5 ${target ? "" : "opacity-40"}`} aria-labelledby="palette-title">
         <h2 id="palette-title" className="mb-1.5 text-xs font-semibold text-zinc-200">
           Células rítmicas
         </h2>
