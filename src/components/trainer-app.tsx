@@ -148,11 +148,21 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                 )}
                 <div className="flex items-center gap-2.5 sm:gap-3">
                 <button onClick={startChallenge} className="btn btn-primary px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-base">
-                  <span aria-hidden>▶</span> {mainLabel}
+                  <span aria-hidden>▶</span>
+                  {phase === "IDLE" ? (
+                    mainLabel
+                  ) : (
+                    <>
+                      <span className="sm:hidden">{t.nextShort}</span>
+                      <span className="hidden sm:inline">{mainLabel}</span>
+                    </>
+                  )}
                 </button>
                 {def && (
                   <button onClick={replay} className="btn btn-ghost px-4 py-2.5 text-sm sm:px-5 sm:py-3 sm:text-base">
-                    <span aria-hidden>↻</span> {t.replay}
+                    <span aria-hidden>↻</span>
+                    <span className="sm:hidden">{t.replayShort}</span>
+                    <span className="hidden sm:inline">{t.replay}</span>
                   </button>
                 )}
                 </div>

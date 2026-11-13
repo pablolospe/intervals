@@ -1,16 +1,20 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { MODULES } from "@/lib/modules";
-import { LogoMark } from "./logo-mark";
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <Link href="/" aria-label="BurpEars" className={`inline-flex items-center gap-2 text-xl font-extrabold tracking-tight text-white ${className}`}>
-      <LogoMark className="h-9 w-auto" />
-      <span>
-        burp<span className="text-[#14d6cc]">ears</span>
-      </span>
+    <Link href="/" aria-label="BurpEars" className={`inline-flex items-center transition hover:opacity-90 ${className}`}>
+      <Image
+        src="/images/logo.png"
+        alt="BurpEars"
+        width={160}
+        height={153}
+        priority
+        className="h-12 w-auto md:h-20"
+      />
     </Link>
   );
 }
