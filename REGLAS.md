@@ -7,13 +7,13 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - **Nombre:** BurpEars (juego de palabras: *burpees* + *ears*, "ejercicio para las orejas"). Logo: oreja musculosa con vincha, flexionando el brazo.
 - **Idioma de la interfaz:** español rioplatense, con voseo ("Escuchá", "Elegí", "Adiviná").
 - **Módulos del home**, en este orden:
-  1. **Reconocer intervalos** → `/intervalos/reconocer` (turquesa)
+  1. **Adivinar intervalos** → `/intervalos/adivinar` (turquesa)
   2. **Cantar intervalos** → `/intervalos/cantar` (coral)
   3. **Células rítmicas** → `/ritmo` (amarillo). El módulo se llama "Células rítmicas", no "Ritmo".
   4. **Partitura** → **deshabilitada** ("próximamente"). `/partitura` redirige al home. El código del editor se conserva.
 - `/intervalos` redirige a `/intervalos/cantar`.
 
-### Reconocer intervalos (modo sorpresa)
+### Adivinar intervalos (modo sorpresa)
 
 - La app elige el intervalo **y su dirección** (ascendente/descendente) al azar; adivinar ambos es parte del juego.
 - El usuario escucha, canta raíz y objetivo, y después **nombra** el intervalo. El puntaje depende de nombrarlo, no de la afinación.
@@ -47,7 +47,7 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - **Paleta por módulo** (acento y sombra del botón):
   | Módulo | Acento | Borde del botón |
   |---|---|---|
-  | Reconocer | `#14d6cc` | `#0b6f6b` |
+  | Adivinar | `#14d6cc` | `#0b6f6b` |
   | Cantar | `#f4726f` | `#a93a38` |
   | Células rítmicas | `#ffcf3f` | `#a8820f` |
 - **Cómo se aplica el tema:** cada entrenador pone `data-theme` (`recognize` / `sing` / `rhythm`) en su `<main>`. En `globals.css` ese scope **remapea la escala `emerald-*`** de Tailwind y `--accent-edge`. Por eso el código usa `emerald-*` para "el color del módulo"; no hardcodear colores de acento.

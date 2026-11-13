@@ -70,8 +70,8 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
     <main data-theme={mode} className="mx-auto flex min-h-0 w-full flex-1 max-w-5xl flex-col gap-2.5 p-2.5 text-zinc-100 sm:gap-3 sm:p-5 md:overflow-hidden">
       <header className="flex shrink-0 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <h1 className="text-xl font-extrabold leading-tight tracking-tight text-emerald-400 sm:text-3xl">
-            {mode === "recognize" ? "reconocer intervalos" : "cantar intervalos"}
+          <h1 className="whitespace-nowrap text-xl font-extrabold leading-tight tracking-tight text-emerald-400 sm:text-3xl">
+            {mode === "recognize" ? "adivinar intervalos" : "cantar intervalos"}
           </h1>
           <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
         </div>

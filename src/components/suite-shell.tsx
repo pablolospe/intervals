@@ -37,17 +37,23 @@ export function SuiteShell({ children, active }: { children: React.ReactNode; ac
   return (
     <div className="min-h-dvh text-zinc-100 md:grid md:h-dvh md:grid-cols-[13rem_1fr] md:overflow-hidden">
       <aside className="hidden border-r border-zinc-800/80 p-5 md:flex md:flex-col md:gap-8">
-        <Logo  />
+        <Logo className="justify-center" />
         {nav}
       </aside>
       <div className="flex min-h-0 min-w-0 flex-col">
-        <header className="flex items-center justify-between p-4 md:hidden">
+        <header className="relative z-40 flex items-center justify-between p-4 md:hidden">
           <Logo />
           <button aria-label="Menú" aria-expanded={open} onClick={() => setOpen(!open)} className="rounded-full p-2 text-zinc-200 hover:bg-zinc-800">
             <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
           </button>
+          {open && (
+            <>
+              {/* Backdrop: tap outside to close. The panel floats over the content instead of pushing it down. */}
+              <button aria-label="Cerrar menú" tabIndex={-1} onClick={() => setOpen(false)} className="fixed inset-0 -z-10 cursor-default bg-black/50" />
+              <div className="absolute inset-x-4 top-full rounded-2xl border border-zinc-800 bg-zinc-900 p-3 shadow-2xl shadow-black/60">{nav}</div>
+            </>
+          )}
         </header>
-        {open && <div className="mx-4 mb-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-3 md:hidden">{nav}</div>}
         {children}
       </div>
     </div>
