@@ -92,7 +92,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
       </header>
 
       <div className="flex flex-col gap-2.5 md:grid md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:gap-3">
-        <section className="flex flex-col self-start rounded-2xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-xl backdrop-blur sm:rounded-3xl sm:p-5">
+        <section className="flex w-full min-w-0 flex-col self-start rounded-2xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-xl backdrop-blur sm:rounded-3xl sm:p-5">
           <div className="mb-2 flex items-center gap-3 sm:mb-4 sm:gap-4">
             <div
               key={`${phase}-${score.total}`}
@@ -130,14 +130,14 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
           </ol>
 
           {/* Pitch view: action buttons float over it while it's idle, and shrink to the corner while singing. */}
-          <div className={`relative shrink-0 ${finished ? "h-64 sm:h-64 md:h-72" : "h-36 sm:h-44 md:h-52 [@media(max-height:600px)]:h-28"}`}>
+          <div className="relative h-52 shrink-0 sm:h-56 md:h-60 [@media(max-height:600px)]:h-44">
             <PitchCanvas idleLabel={t.idleLabel} />
             {canvasIdle ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl bg-zinc-950/80 p-3 backdrop-blur-[2px]">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 overflow-y-auto rounded-2xl bg-zinc-950/80 p-3 backdrop-blur-[2px]">
                 {finished && def && evaluation && quip && (
                   <div
                     role="status"
-                    className={`w-full max-w-md rounded-2xl border-2 px-4 py-3 text-center shadow-lg ${
+                    className={`w-full max-w-md rounded-2xl border-2 px-3 py-2 text-center shadow-lg sm:px-4 sm:py-3 ${
                       phase === "SUCCESS" ? "border-green-400 bg-green-500/15 text-green-100" : "border-red-400 bg-red-500/15 text-red-100"
                     }`}
                   >
@@ -153,12 +153,12 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                     </p>
                   </div>
                 )}
-                <div className="flex flex-col items-center gap-2.5 sm:flex-row sm:gap-3">
-                <button onClick={startChallenge} className="btn btn-primary px-5 py-3 text-base sm:px-6">
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                <button onClick={startChallenge} className="btn btn-primary px-4 py-2.5 text-sm sm:px-6 sm:py-3 sm:text-base">
                   <span aria-hidden>▶</span> {mainLabel}
                 </button>
                 {def && (
-                  <button onClick={replay} className="btn btn-ghost px-5 py-3 text-base">
+                  <button onClick={replay} className="btn btn-ghost px-4 py-2.5 text-sm sm:px-5 sm:py-3 sm:text-base">
                     <span aria-hidden>↻</span> {t.replay}
                   </button>
                 )}
