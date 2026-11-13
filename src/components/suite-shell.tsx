@@ -41,7 +41,7 @@ export function SuiteShell({ children, active }: { children: React.ReactNode; ac
         {nav}
       </aside>
       <div className="flex min-h-0 min-w-0 flex-col">
-        <header className="relative z-40 flex items-center justify-between p-4 md:hidden">
+        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-zinc-800/60 bg-[#0b0c10]/90 px-4 py-3 backdrop-blur md:hidden">
           <Logo />
           <button aria-label="Menú" aria-expanded={open} onClick={() => setOpen(!open)} className="rounded-full p-2 text-zinc-200 hover:bg-zinc-800">
             <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
