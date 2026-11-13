@@ -297,12 +297,14 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "El día que me quieras",
           artist: "Carlos Gardel",
-          motif: [n(0, 1), n(9, 1), n(9, 0.5), n(9, 0.5), n(8, 0.5), n(9, 2)],
+          // do la la la sol sib la — "El-dí-a-que-me-quie-ras"
+          motif: [n(0, 0.75), n(9, 1.25), n(9, 0.5), n(9, 0.5), n(7, 0.5), n(10, 1.25), n(9, 2)],
         },
         {
           title: "My Way",
           artist: "Frank Sinatra",
-          motif: [n(0, 1.5), n(9, 2), n(8, 1), n(7, 1), n(5, 2)],
+          // do la do la sol la — "And-now-the-end-is-near"
+          motif: [n(0, 0.5), n(9, 2), n(12, 0.5), n(9, 1), n(7, 0.5), n(9, 2)],
         },
       ],
       desc: [

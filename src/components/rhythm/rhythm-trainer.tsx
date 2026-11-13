@@ -290,6 +290,10 @@ export function RhythmTrainer() {
           ))}
         </div>
       </section>
+      <p className="flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-700 px-3 py-2 text-center text-xs text-zinc-300 sm:text-sm">
+        <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-zinc-950">Próximamente</span>
+        Subdivisión ternaria
+      </p>
     </main>
     </SuiteShell>
   );

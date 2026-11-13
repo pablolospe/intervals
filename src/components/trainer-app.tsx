@@ -6,7 +6,7 @@ import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
 import { IdentifyModal } from "./identify-modal";
-import { Mascot, type Mood } from "./mascot";
+import { getMascotCharacter, Mascot, type Mood } from "./mascot";
 import { PitchCanvas } from "./pitch-canvas";
 
 const ANIM: Record<Phase, string> = {
@@ -130,20 +130,27 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                 {finished && def && evaluation && quip && (
                   <div
                     role="status"
-                    className={`w-full max-w-md rounded-2xl border-2 px-3 py-2 text-center shadow-lg sm:px-4 sm:py-3 ${
+                    className={`flex w-full max-w-md items-center gap-3 rounded-2xl border-2 p-2.5 shadow-lg sm:gap-4 sm:p-3 ${
                       phase === "SUCCESS" ? "border-green-400 bg-green-500/15 text-green-100" : "border-red-400 bg-red-500/15 text-red-100"
                     }`}
                   >
-                    <p className={`flex items-center justify-center gap-2 text-xl font-extrabold sm:text-2xl ${phase === "SUCCESS" ? "text-green-300" : "text-red-300"}`}>
-                      <span aria-hidden>{phase === "SUCCESS" ? "✓" : "✕"}</span>
-                      {t.phase[phase]}
-                    </p>
-                    <p className="mt-0.5 text-sm opacity-90">{quip}</p>
-                    <p className="mt-1.5 text-xs font-medium opacity-80 sm:text-sm">
-                      {t.wasIt}: <b>{def.name[lang]}</b> ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
-                      {evaluation.errorCents >= 0 ? "+" : ""}
-                      {evaluation.errorCents.toFixed(0)} {t.cents}
-                    </p>
+                    {getMascotCharacter(currentId) && (
+                      <div className={`h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 shadow-lg sm:h-28 sm:w-28 ${phase === "SUCCESS" ? "border-green-400" : "border-red-400"}`}>
+                        <Mascot intervalId={currentId} revealed mood={mood} />
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1 text-center">
+                      <p className={`flex items-center justify-center gap-2 text-xl font-extrabold sm:text-2xl ${phase === "SUCCESS" ? "text-green-300" : "text-red-300"}`}>
+                        <span aria-hidden>{phase === "SUCCESS" ? "✓" : "✕"}</span>
+                        {t.phase[phase]}
+                      </p>
+                      <p className="mt-0.5 text-sm opacity-90">{quip}</p>
+                      <p className="mt-1.5 text-xs font-medium opacity-80 sm:text-sm">
+                        {t.wasIt}: <b>{def.name[lang]}</b> ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
+                        {evaluation.errorCents >= 0 ? "+" : ""}
+                        {evaluation.errorCents.toFixed(0)} {t.cents}
+                      </p>
+                    </div>
                   </div>
                 )}
                 <div className="flex items-center gap-2.5 sm:gap-3">
