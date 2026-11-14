@@ -1,10 +1,10 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
   if (intervalId === "m2-asc") return "jaws";
-  if (intervalId === "m2-desc") return "beethoven";
+  if (intervalId === "m2-desc" || intervalId === "M3-desc") return "beethoven";
   if (intervalId === "m3-asc") return "deep-purple";
   if (intervalId === "m3-desc" || intervalId === "M2-desc") return "mccartney";
   if (intervalId === "P4-desc") return "mozart";
@@ -14,6 +14,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "M6-asc") return "gardel";
   if (intervalId === "M6-desc") return "radiohead";
   if (intervalId === "m7-asc") return "abba";
+  if (intervalId === "M7-asc") return "aha";
   return null;
 }
 
@@ -207,9 +208,9 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
   abba: {
     label: "ABBA",
     happy: {
-      src: "/images/abba/happy.jpg",
+      src: "/images/abba/happy.jpg?v=2",
       alt: "ABBA sonriendo",
-      objectPosition: "object-[48%_38%] scale-110",
+      objectPosition: "object-[50%_22%] scale-105",
     },
     sad: {
       src: "/images/abba/sad.jpg",
@@ -217,9 +218,27 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       objectPosition: "object-center scale-105",
     },
     neutral: {
-      src: "/images/abba/happy.jpg",
+      src: "/images/abba/happy.jpg?v=2",
       alt: "ABBA",
-      objectPosition: "object-[48%_38%] scale-110",
+      objectPosition: "object-[50%_22%] scale-105",
+    },
+  },
+  aha: {
+    label: "Morten Harket · a-ha",
+    happy: {
+      src: "/images/aha/happy.jpg",
+      alt: "Morten Harket sonriendo en estilo boceto (a-ha — Take On Me)",
+      objectPosition: "object-[50%_38%] scale-105",
+    },
+    sad: {
+      src: "/images/aha/sad.jpg",
+      alt: "Morten Harket serio en estilo boceto (a-ha — Take On Me)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/aha/happy.jpg",
+      alt: "Morten Harket (a-ha — Take On Me)",
+      objectPosition: "object-[50%_38%] scale-105",
     },
   },
 };
@@ -227,6 +246,16 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
 export function getMascotLabel(intervalId: string | null | undefined): string | null {
   const ch = getMascotCharacter(intervalId);
   return ch ? CHARACTERS[ch].label : null;
+}
+
+export function getMascotReaction(
+  intervalId: string | null | undefined,
+  mood: "happy" | "sad",
+  fallback?: string,
+): string | null {
+  const name = getMascotLabel(intervalId) ?? fallback;
+  if (!name) return null;
+  return mood === "happy" ? `Pusiste contento a ${name}` : `${name} está triste`;
 }
 
 function CharacterPhoto({ character, mood }: { character: MascotCharacter; mood: Mood }) {

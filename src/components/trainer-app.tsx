@@ -6,7 +6,7 @@ import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
 import { IdentifyModal } from "./identify-modal";
-import { getMascotCharacter, getMascotLabel, Mascot, type Mood } from "./mascot";
+import { getMascotCharacter, getMascotReaction, Mascot, type Mood } from "./mascot";
 import { PitchCanvas } from "./pitch-canvas";
 
 /** Small translucent pill that sits on top of the pitch view while it's in use. */
@@ -128,7 +128,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                         {t.phase[phase]}
                       </p>
                       <p className="mt-0.5 text-sm font-semibold opacity-95">
-                        {getMascotLabel(currentId) ?? def.song.artist ?? def.song.title}
+                        {getMascotReaction(currentId, phase === "SUCCESS" ? "happy" : "sad", def.song.artist ?? def.song.title)}
                       </p>
                       <p className="mt-1.5 text-xs font-medium opacity-80 sm:text-sm">
                         {t.wasIt}: <b>{def.name[lang]}</b> ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}

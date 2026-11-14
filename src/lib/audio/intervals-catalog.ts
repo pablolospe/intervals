@@ -311,7 +311,8 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "No Surprises",
           artist: "Radiohead",
-          motif: [n(0, 1), n(-9, 1.5), n(-7, 0.5), n(-5, 1), n(-7, 2)],
+          // siii reeee, re | si si la sol | siiiii doooo (do grave)
+          motif: [n(0, 2), n(-9, 1.5), n(-9, 0.5), n(0, 0.5), n(0, 1), n(-2, 1), n(-4, 1.5), n(0, 2), n(-11, 1.5)],
         },
         {
           title: "Nobody Knows the Trouble I've Seen",
