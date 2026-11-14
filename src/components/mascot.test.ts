@@ -19,6 +19,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotCharacter("m7-asc")).toBe("abba");
     expect(getMascotCharacter("M7-asc")).toBe("aha");
     expect(getMascotCharacter("P8-asc")).toBe("judy");
+    expect(getMascotCharacter("P8-desc")).toBe("gieco");
   });
 
   it("returns null for intervals without mascot", () => {
@@ -40,6 +41,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotLabel("M7-asc")).toBe("Morten de A-ha");
     expect(getMascotLabel("TT-desc")).toBe("Eddie de Pearl Jam");
     expect(getMascotLabel("P8-asc")).toBe("Judy Garland");
+    expect(getMascotLabel("P8-desc")).toBe("León Gieco");
     expect(getMascotLabel("P4-asc")).toBeNull();
     expect(getMascotLabel(null)).toBeNull();
   });

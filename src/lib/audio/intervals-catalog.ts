@@ -401,6 +401,12 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
       ],
       desc: [
         {
+          title: "Todos los días un poco",
+          artist: "León Gieco",
+          // sol(agudo) sol(grave), do(central), sol(agudo) || mi la do
+          motif: [n(0, 1), n(-12, 1), n(-7, 1), n(0, 1.5), n(-3, 0.5), n(-10, 1), n(-7, 2)],
+        },
+        {
           title: "Doogie Howser, M.D.",
           artist: "Mike Post",
           motif: [n(0, 1), n(-12, 2), n(-10, 1), n(-12, 2)],

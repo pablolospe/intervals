@@ -1,5 +1,5 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
@@ -17,6 +17,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "m7-asc") return "abba";
   if (intervalId === "M7-asc") return "aha";
   if (intervalId === "P8-asc") return "judy";
+  if (intervalId === "P8-desc") return "gieco";
   return null;
 }
 
@@ -277,6 +278,24 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       src: "/images/pearl-jam/happy.jpg",
       alt: "Eddie Vedder (Pearl Jam — Even Flow)",
       objectPosition: "object-[58%_35%] scale-105",
+    },
+  },
+  gieco: {
+    label: "León Gieco",
+    happy: {
+      src: "/images/gieco/happy.jpg",
+      alt: "León Gieco sonriendo (Todos los días un poco)",
+      objectPosition: "object-[52%_42%] scale-110",
+    },
+    sad: {
+      src: "/images/gieco/sad.jpg",
+      alt: "León Gieco serio con anteojos (Todos los días un poco)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/gieco/happy.jpg",
+      alt: "León Gieco (Todos los días un poco)",
+      objectPosition: "object-[52%_42%] scale-110",
     },
   },
 };
