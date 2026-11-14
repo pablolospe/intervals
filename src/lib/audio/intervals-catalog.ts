@@ -107,6 +107,11 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
     songs: {
       asc: [
         {
+          title: "Smoke on the Water",
+          artist: "Deep Purple",
+          motif: [n(0, 1), n(3, 1), n(5, 1.5), n(0, 1), n(3, 1), n(6, 0.5), n(5, 1.5)],
+        },
+        {
           title: "Greensleeves",
           motif: [n(0, 1), n(3, 2), n(5, 1), n(7, 1.5), n(8, 0.5), n(7, 1), n(5, 2)],
         },
@@ -114,11 +119,6 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
           title: "Arrullo (Canción de cuna)",
           artist: "Brahms",
           motif: [n(0, 0.75), n(0, 0.25), n(3, 2), n(0, 0.75), n(0, 0.25), n(3, 2)],
-        },
-        {
-          title: "Smoke on the Water",
-          artist: "Deep Purple",
-          motif: [n(0, 1), n(3, 1), n(5, 1.5), n(0, 1), n(3, 1), n(6, 0.5), n(5, 1.5)],
         },
       ],
       desc: [
@@ -327,14 +327,14 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
     songs: {
       asc: [
         {
-          title: "Somewhere (West Side Story)",
-          artist: "Leonard Bernstein",
-          motif: [n(0, 1.5), n(10, 1.5), n(9, 0.75), n(7, 0.75), n(5, 2)],
-        },
-        {
           title: "The Winner Takes It All",
           artist: "ABBA",
           motif: [n(0, 1), n(10, 1.5), n(9, 0.5), n(7, 1), n(5, 2)],
+        },
+        {
+          title: "Somewhere (West Side Story)",
+          artist: "Leonard Bernstein",
+          motif: [n(0, 1.5), n(10, 1.5), n(9, 0.75), n(7, 0.75), n(5, 2)],
         },
       ],
       desc: [

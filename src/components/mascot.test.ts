@@ -1,14 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { getMascotCharacter } from "./mascot";
+import { getMascotCharacter, getMascotLabel } from "./mascot";
 
 describe("getMascotCharacter", () => {
   it("maps intervals to their respective mascot characters", () => {
     expect(getMascotCharacter("m2-asc")).toBe("jaws");
+    expect(getMascotCharacter("m2-desc")).toBe("beethoven");
+    expect(getMascotCharacter("m3-asc")).toBe("deep-purple");
     expect(getMascotCharacter("m3-desc")).toBe("mccartney");
+    expect(getMascotCharacter("M2-desc")).toBe("mccartney");
+    expect(getMascotCharacter("P4-desc")).toBe("mozart");
     expect(getMascotCharacter("TT-asc")).toBe("homer");
     expect(getMascotCharacter("P5-asc")).toBe("luke");
     expect(getMascotCharacter("P5-desc")).toBe("flintstones");
     expect(getMascotCharacter("M6-asc")).toBe("gardel");
+    expect(getMascotCharacter("M6-desc")).toBe("radiohead");
+    expect(getMascotCharacter("m7-asc")).toBe("abba");
   });
 
   it("returns null for intervals without mascot", () => {
@@ -17,6 +23,17 @@ describe("getMascotCharacter", () => {
     expect(getMascotCharacter("P4-asc")).toBeNull();
     expect(getMascotCharacter(null)).toBeNull();
     expect(getMascotCharacter(undefined)).toBeNull();
+  });
+
+  it("returns artist/band labels for mapped intervals and null otherwise", () => {
+    expect(getMascotLabel("m2-desc")).toBe("Ludwig van Beethoven");
+    expect(getMascotLabel("m3-asc")).toBe("Ritchie Blackmore · Deep Purple");
+    expect(getMascotLabel("P4-desc")).toBe("Wolfgang Amadeus Mozart");
+    expect(getMascotLabel("M2-desc")).toBe("Paul McCartney · The Beatles");
+    expect(getMascotLabel("M6-desc")).toBe("Thom Yorke · Radiohead");
+    expect(getMascotLabel("m7-asc")).toBe("ABBA");
+    expect(getMascotLabel("P4-asc")).toBeNull();
+    expect(getMascotLabel(null)).toBeNull();
   });
 });
 

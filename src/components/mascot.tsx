@@ -1,14 +1,19 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
   if (intervalId === "m2-asc") return "jaws";
-  if (intervalId === "m3-desc") return "mccartney";
+  if (intervalId === "m2-desc") return "beethoven";
+  if (intervalId === "m3-asc") return "deep-purple";
+  if (intervalId === "m3-desc" || intervalId === "M2-desc") return "mccartney";
+  if (intervalId === "P4-desc") return "mozart";
   if (intervalId === "TT-asc") return "homer";
   if (intervalId === "P5-asc") return "luke";
   if (intervalId === "P5-desc") return "flintstones";
   if (intervalId === "M6-asc") return "gardel";
+  if (intervalId === "M6-desc") return "radiohead";
+  if (intervalId === "m7-asc") return "abba";
   return null;
 }
 
@@ -18,8 +23,9 @@ interface PhotoConfig {
   objectPosition: string;
 }
 
-const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig; neutral: PhotoConfig }> = {
+const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; sad: PhotoConfig; neutral: PhotoConfig }> = {
   jaws: {
+    label: "Tiburón (Jaws) · John Williams",
     happy: {
       src: "/images/jaws/happy.jpg",
       alt: "Steven Spielberg riendo en la boca del tiburón (Jaws)",
@@ -37,6 +43,7 @@ const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig
     },
   },
   mccartney: {
+    label: "Paul McCartney · The Beatles",
     happy: {
       src: "/images/mccartney/happy.jpg",
       alt: "Paul McCartney sonriendo (Hey Jude)",
@@ -54,6 +61,7 @@ const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig
     },
   },
   gardel: {
+    label: "Carlos Gardel",
     happy: {
       src: "/images/gardel/happy.jpg",
       alt: "Carlos Gardel sonriendo con el sombrero",
@@ -71,6 +79,7 @@ const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig
     },
   },
   homer: {
+    label: "Homero Simpson · Los Simpson",
     happy: {
       src: "/images/homer/happy.jpg",
       alt: "Homero Simpson festejando (The Simpsons)",
@@ -88,6 +97,7 @@ const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig
     },
   },
   luke: {
+    label: "Luke Skywalker · Star Wars",
     happy: {
       src: "/images/luke/happy.jpg",
       alt: "Luke Skywalker sonriendo (Star Wars)",
@@ -105,6 +115,7 @@ const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig
     },
   },
   flintstones: {
+    label: "Pedro Picapiedra · Los Picapiedras",
     happy: {
       src: "/images/flintstones/happy.jpg",
       alt: "Pedro Picapiedra sonriendo (Los Picapiedras)",
@@ -121,7 +132,102 @@ const CHARACTERS: Record<MascotCharacter, { happy: PhotoConfig; sad: PhotoConfig
       objectPosition: "object-[55%_45%] scale-100",
     },
   },
+  beethoven: {
+    label: "Ludwig van Beethoven",
+    happy: {
+      src: "/images/beethoven/happy.jpg",
+      alt: "Ludwig van Beethoven sonriendo (Para Elisa)",
+      objectPosition: "object-[52%_22%] scale-125",
+    },
+    sad: {
+      src: "/images/beethoven/sad.jpg",
+      alt: "Ludwig van Beethoven serio con el ceño fruncido (Para Elisa)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/beethoven/sad.jpg",
+      alt: "Ludwig van Beethoven (Para Elisa)",
+      objectPosition: "object-center scale-105",
+    },
+  },
+  "deep-purple": {
+    label: "Ritchie Blackmore · Deep Purple",
+    happy: {
+      src: "/images/deep-purple/happy.jpg",
+      alt: "Ritchie Blackmore tocando con entusiasmo (Deep Purple — Smoke on the Water)",
+      objectPosition: "object-[46%_28%] scale-110",
+    },
+    sad: {
+      src: "/images/deep-purple/sad.jpg",
+      alt: "Ritchie Blackmore serio (Deep Purple — Smoke on the Water)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/deep-purple/happy.jpg",
+      alt: "Ritchie Blackmore (Deep Purple — Smoke on the Water)",
+      objectPosition: "object-[46%_28%] scale-110",
+    },
+  },
+  mozart: {
+    label: "Wolfgang Amadeus Mozart",
+    happy: {
+      src: "/images/mozart/happy.jpg",
+      alt: "Wolfgang Amadeus Mozart sonriendo (Pequeña serenata nocturna)",
+      objectPosition: "object-[50%_35%] scale-110",
+    },
+    sad: {
+      src: "/images/mozart/sad.jpg",
+      alt: "Wolfgang Amadeus Mozart llorando (Pequeña serenata nocturna)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/mozart/happy.jpg",
+      alt: "Wolfgang Amadeus Mozart (Pequeña serenata nocturna)",
+      objectPosition: "object-[50%_35%] scale-110",
+    },
+  },
+  radiohead: {
+    label: "Thom Yorke · Radiohead",
+    happy: {
+      src: "/images/radiohead/happy.jpg",
+      alt: "Thom Yorke sonriendo (Radiohead — No Surprises)",
+      objectPosition: "object-[50%_25%] scale-110",
+    },
+    sad: {
+      src: "/images/radiohead/sad.jpg",
+      alt: "Thom Yorke furioso (Radiohead — No Surprises)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/radiohead/happy.jpg",
+      alt: "Thom Yorke (Radiohead — No Surprises)",
+      objectPosition: "object-[50%_25%] scale-110",
+    },
+  },
+  abba: {
+    label: "ABBA",
+    happy: {
+      src: "/images/abba/happy.jpg",
+      alt: "ABBA sonriendo",
+      objectPosition: "object-[48%_38%] scale-110",
+    },
+    sad: {
+      src: "/images/abba/sad.jpg",
+      alt: "ABBA triste",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/abba/happy.jpg",
+      alt: "ABBA",
+      objectPosition: "object-[48%_38%] scale-110",
+    },
+  },
 };
+
+export function getMascotLabel(intervalId: string | null | undefined): string | null {
+  const ch = getMascotCharacter(intervalId);
+  return ch ? CHARACTERS[ch].label : null;
+}
 
 function CharacterPhoto({ character, mood }: { character: MascotCharacter; mood: Mood }) {
   const cfg = CHARACTERS[character][mood];

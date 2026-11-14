@@ -6,7 +6,7 @@ import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
 import { IdentifyModal } from "./identify-modal";
-import { getMascotCharacter, Mascot, type Mood } from "./mascot";
+import { getMascotCharacter, getMascotLabel, Mascot, type Mood } from "./mascot";
 import { PitchCanvas } from "./pitch-canvas";
 
 /** Small translucent pill that sits on top of the pitch view while it's in use. */
@@ -49,7 +49,6 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
     ? ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "IDENTIFY", "SUCCESS"]
     : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "SUCCESS"];
   const stepIndex = phase === "MISS" ? order.length - 1 : order.indexOf(phase);
-  const quip = phase === "SUCCESS" ? t.success[score.total % t.success.length] : phase === "MISS" ? t.miss[score.total % t.miss.length] : null;
   const mood: Mood = phase === "SUCCESS" ? "happy" : phase === "MISS" ? "sad" : "neutral";
   const mainLabel = phase === "IDLE" ? t.newChallenge : t.next;
   /** The pitch view only matters while listening/singing; otherwise it hosts the main actions. */
@@ -111,7 +110,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             <PitchCanvas idleLabel={t.idleLabel} />
             {canvasIdle ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 overflow-y-auto rounded-2xl bg-zinc-950/80 p-3 backdrop-blur-[2px]">
-                {finished && def && evaluation && quip && (
+                {finished && def && evaluation && (
                   <div
                     role="status"
                     className={`flex w-full max-w-md items-center gap-3 rounded-2xl border-2 p-2.5 shadow-lg sm:gap-4 sm:p-3 ${
@@ -128,7 +127,9 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                         <span aria-hidden>{phase === "SUCCESS" ? "✓" : "✕"}</span>
                         {t.phase[phase]}
                       </p>
-                      <p className="mt-0.5 text-sm opacity-90">{quip}</p>
+                      <p className="mt-0.5 text-sm font-semibold opacity-95">
+                        {getMascotLabel(currentId) ?? def.song.artist ?? def.song.title}
+                      </p>
                       <p className="mt-1.5 text-xs font-medium opacity-80 sm:text-sm">
                         {t.wasIt}: <b>{def.name[lang]}</b> ({def.direction === "asc" ? t.ascending : t.descending}) · {t.error}{" "}
                         {evaluation.errorCents >= 0 ? "+" : ""}
