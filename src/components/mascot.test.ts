@@ -44,7 +44,7 @@ describe("getMascotCharacter", () => {
 
   it("formats happy and sad artist reaction messages with optional fallback", () => {
     expect(getMascotReaction("M6-desc", "happy")).toBe("Pusiste feliz a Thom Yorke · Radiohead");
-    expect(getMascotReaction("M6-desc", "sad")).toBe("Thom Yorke de Radiohead está triste");
+    expect(getMascotReaction("M6-desc", "sad")).toBe("Thom Yorke de Radiohead está enojado!");
     expect(getMascotReaction("P8-asc", "happy")).toBe("Pusiste feliz a Judy Garland");
     expect(getMascotReaction("P4-asc", "happy", "Wagner")).toBe("Pusiste feliz a Wagner");
     expect(getMascotReaction("P4-asc", "sad", "Wagner")).toBe("Wagner está triste");
