@@ -216,14 +216,14 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
       ],
       desc: [
         {
-          title: "Black Sabbath",
-          artist: "Black Sabbath",
-          motif: [n(0, 1), n(-6, 3), n(-12, 1), n(0, 1), n(-6, 3)],
-        },
-        {
           title: "Even Flow",
           artist: "Pearl Jam",
           motif: [n(0, 1), n(-6, 1.5), n(-7, 1), n(-5, 1.5)],
+        },
+        {
+          title: "Black Sabbath",
+          artist: "Black Sabbath",
+          motif: [n(0, 1), n(-6, 3), n(-12, 1), n(0, 1), n(-6, 3)],
         },
       ],
     },

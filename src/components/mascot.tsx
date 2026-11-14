@@ -1,5 +1,5 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
@@ -9,6 +9,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "m3-desc" || intervalId === "M2-desc") return "mccartney";
   if (intervalId === "P4-desc") return "mozart";
   if (intervalId === "TT-asc") return "homer";
+  if (intervalId === "TT-desc") return "pearl-jam";
   if (intervalId === "P5-asc") return "luke";
   if (intervalId === "P5-desc") return "flintstones";
   if (intervalId === "M6-asc") return "gardel";
@@ -258,6 +259,24 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       src: "/images/judy/happy.jpg",
       alt: "Judy Garland (El mago de Oz — Over the Rainbow)",
       objectPosition: "object-[46%_28%] scale-105",
+    },
+  },
+  "pearl-jam": {
+    label: "Eddie de Pearl Jam",
+    happy: {
+      src: "/images/pearl-jam/happy.jpg",
+      alt: "Eddie Vedder riendo (Pearl Jam — Even Flow)",
+      objectPosition: "object-[58%_35%] scale-105",
+    },
+    sad: {
+      src: "/images/pearl-jam/sad.jpg",
+      alt: "Eddie Vedder cabizbajo con la mano en la cara (Pearl Jam — Even Flow)",
+      objectPosition: "object-[48%_28%] scale-105",
+    },
+    neutral: {
+      src: "/images/pearl-jam/happy.jpg",
+      alt: "Eddie Vedder (Pearl Jam — Even Flow)",
+      objectPosition: "object-[58%_35%] scale-105",
     },
   },
 };
