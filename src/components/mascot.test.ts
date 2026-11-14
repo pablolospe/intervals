@@ -17,6 +17,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotCharacter("M6-desc")).toBe("radiohead");
     expect(getMascotCharacter("m7-asc")).toBe("abba");
     expect(getMascotCharacter("M7-asc")).toBe("aha");
+    expect(getMascotCharacter("P8-asc")).toBe("judy");
   });
 
   it("returns null for intervals without mascot", () => {
@@ -33,17 +34,19 @@ describe("getMascotCharacter", () => {
     expect(getMascotLabel("m3-asc")).toBe("Ritchie Blackmore · Deep Purple");
     expect(getMascotLabel("P4-desc")).toBe("Wolfgang Amadeus Mozart");
     expect(getMascotLabel("M2-desc")).toBe("Paul McCartney · The Beatles");
-    expect(getMascotLabel("M6-desc")).toBe("Thom Yorke · Radiohead");
-    expect(getMascotLabel("m7-asc")).toBe("ABBA");
-    expect(getMascotLabel("M7-asc")).toBe("Morten Harket · a-ha");
+    expect(getMascotLabel("M6-desc")).toBe("Thom Yorke de Radiohead");
+    expect(getMascotLabel("m7-asc")).toBe("Agnetha de ABBA");
+    expect(getMascotLabel("M7-asc")).toBe("Morten de A-ha");
+    expect(getMascotLabel("P8-asc")).toBe("Judy Garland");
     expect(getMascotLabel("P4-asc")).toBeNull();
     expect(getMascotLabel(null)).toBeNull();
   });
 
   it("formats happy and sad artist reaction messages with optional fallback", () => {
-    expect(getMascotReaction("M6-desc", "happy")).toBe("Pusiste contento a Thom Yorke · Radiohead");
-    expect(getMascotReaction("M6-desc", "sad")).toBe("Thom Yorke · Radiohead está triste");
-    expect(getMascotReaction("P4-asc", "happy", "Wagner")).toBe("Pusiste contento a Wagner");
+    expect(getMascotReaction("M6-desc", "happy")).toBe("Pusiste feliz a Thom Yorke · Radiohead");
+    expect(getMascotReaction("M6-desc", "sad")).toBe("Thom Yorke de Radiohead está triste");
+    expect(getMascotReaction("P8-asc", "happy")).toBe("Pusiste feliz a Judy Garland");
+    expect(getMascotReaction("P4-asc", "happy", "Wagner")).toBe("Pusiste feliz a Wagner");
     expect(getMascotReaction("P4-asc", "sad", "Wagner")).toBe("Wagner está triste");
     expect(getMascotReaction("P4-asc", "happy")).toBeNull();
   });

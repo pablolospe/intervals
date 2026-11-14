@@ -6,7 +6,7 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 - **Registro en el código:** `src/components/mascot.tsx` (`getMascotCharacter` y `CHARACTERS`).
 - **Formato:** cuadrado o casi cuadrado, con la cara centrada: se recorta en círculo.
 
-## Ya tienen imagen (14 de 24)
+## Ya tienen imagen (15 de 24)
 
 | Intervalo | Personaje |
 |---|---|
@@ -24,8 +24,9 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 6ta mayor desc | Radiohead (No Surprises) |
 | 7ma menor asc | ABBA (*The Winner Takes It All*) |
 | 7ma mayor asc | a-ha (*Take On Me*) |
+| 8va justa asc | Judy Garland (*Somewhere Over the Rainbow*) |
 
-## Faltan (10)
+## Faltan (9)
 
 | Intervalo | Canciones | Personaje sugerido |
 |---|---|---|
@@ -37,7 +38,6 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 6ta menor desc | Love Story (Francis Lai) · Chega de Saudade (Tom Jobim) | Tom Jobim |
 | 7ma menor desc | Watermelon Man (Herbie Hancock) · Blanca Navidad | Papá Noel (ilustración) |
 | 7ma mayor desc | I Love You (Cole Porter) · Have Yourself a Merry Little Christmas | Cole Porter |
-| 8va justa asc | Somewhere Over the Rainbow (Judy Garland) · Singin' in the Rain (Gene Kelly) | Judy Garland o Gene Kelly |
 | 8va justa desc | Doogie Howser, M.D. (Mike Post) · Willow Weep for Me | Doogie Howser |
 
 ## Quién consigue cada imagen

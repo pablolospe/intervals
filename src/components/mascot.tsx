@@ -1,5 +1,5 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
@@ -15,6 +15,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "M6-desc") return "radiohead";
   if (intervalId === "m7-asc") return "abba";
   if (intervalId === "M7-asc") return "aha";
+  if (intervalId === "P8-asc") return "judy";
   return null;
 }
 
@@ -206,7 +207,7 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
     },
   },
   abba: {
-    label: "ABBA",
+    label: "Agnetha de ABBA",
     happy: {
       src: "/images/abba/happy.jpg?v=2",
       alt: "ABBA sonriendo",
@@ -241,6 +242,24 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       objectPosition: "object-[50%_38%] scale-105",
     },
   },
+  judy: {
+    label: "Judy Garland",
+    happy: {
+      src: "/images/judy/happy.jpg",
+      alt: "Judy Garland sonriendo con Toto (El mago de Oz — Over the Rainbow)",
+      objectPosition: "object-[46%_28%] scale-105",
+    },
+    sad: {
+      src: "/images/judy/sad.jpg",
+      alt: "Judy Garland triste (El mago de Oz — Over the Rainbow)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/judy/happy.jpg",
+      alt: "Judy Garland (El mago de Oz — Over the Rainbow)",
+      objectPosition: "object-[46%_28%] scale-105",
+    },
+  },
 };
 
 export function getMascotLabel(intervalId: string | null | undefined): string | null {
@@ -255,7 +274,7 @@ export function getMascotReaction(
 ): string | null {
   const name = getMascotLabel(intervalId) ?? fallback;
   if (!name) return null;
-  return mood === "happy" ? `Pusiste contento a ${name}` : `${name} está triste`;
+  return mood === "happy" ? `Pusiste feliz a ${name}` : `${name} está triste`;
 }
 
 function CharacterPhoto({ character, mood }: { character: MascotCharacter; mood: Mood }) {
