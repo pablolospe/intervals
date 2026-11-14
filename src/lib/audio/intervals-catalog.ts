@@ -159,6 +159,12 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
           title: "Swing Low, Sweet Chariot",
           motif: [n(0, 1.5), n(-4, 1.5), n(0, 1), n(-4, 2)],
         },
+        {
+          title: "Águas de Março",
+          artist: "Tom Jobim",
+          // "É pau, é pe-dra, é o fim do ca-mi-nho" (3ra mayor desc: 0 -> -4)
+          motif: [n(0, 0.5), n(-4, 1), n(0, 0.5), n(-4, 0.5), n(-4, 1), n(0, 0.5), n(0, 0.5), n(-2, 0.5), n(-4, 0.5), n(-5, 0.5), n(-7, 1.5)],
+        },
       ],
     },
   },
@@ -276,14 +282,14 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
       ],
       desc: [
         {
-          title: "Love Story (Where Do I Begin)",
-          artist: "Francis Lai",
-          motif: [n(0, 1.5), n(-8, 2.5)],
-        },
-        {
           title: "Chega de Saudade",
           artist: "Tom Jobim",
           motif: [n(0, 1.5), n(-8, 2), n(-7, 1), n(-8, 2)],
+        },
+        {
+          title: "Love Story (Where Do I Begin)",
+          artist: "Francis Lai",
+          motif: [n(0, 1.5), n(-8, 2.5)],
         },
       ],
     },

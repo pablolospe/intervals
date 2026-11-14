@@ -14,6 +14,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotCharacter("TT-desc")).toBe("pearl-jam");
     expect(getMascotCharacter("P5-asc")).toBe("luke");
     expect(getMascotCharacter("P5-desc")).toBe("flintstones");
+    expect(getMascotCharacter("m6-desc")).toBe("jobim");
     expect(getMascotCharacter("M6-asc")).toBe("gardel");
     expect(getMascotCharacter("M6-desc")).toBe("radiohead");
     expect(getMascotCharacter("m7-asc")).toBe("abba");
@@ -36,6 +37,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotLabel("m3-asc")).toBe("Ritchie Blackmore · Deep Purple");
     expect(getMascotLabel("P4-desc")).toBe("Wolfgang Amadeus Mozart");
     expect(getMascotLabel("M2-desc")).toBe("Paul McCartney · The Beatles");
+    expect(getMascotLabel("m6-desc")).toBe("Tom Jobim");
     expect(getMascotLabel("M6-desc")).toBe("Thom Yorke de Radiohead");
     expect(getMascotLabel("m7-asc")).toBe("Agnetha de ABBA");
     expect(getMascotLabel("M7-asc")).toBe("Morten de A-ha");

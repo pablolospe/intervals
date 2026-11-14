@@ -62,7 +62,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
           <h1 className="whitespace-nowrap text-xl font-extrabold leading-tight tracking-tight text-emerald-400 sm:text-3xl">
             {mode === "recognize" ? "adivinar intervalos" : "cantar intervalos"}
           </h1>
-          <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p>
+          {/* <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p> */}
         </div>
         <div className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 text-xs sm:px-3 sm:text-sm" aria-label={`${t.score}: ${score.correct}/${score.total}. ${t.streak}: ${score.streak}`}>
           <span className="hidden text-zinc-400 sm:inline">{t.score}</span>

@@ -1,5 +1,5 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
@@ -12,6 +12,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "TT-desc") return "pearl-jam";
   if (intervalId === "P5-asc") return "luke";
   if (intervalId === "P5-desc") return "flintstones";
+  if (intervalId === "m6-desc") return "jobim";
   if (intervalId === "M6-asc") return "gardel";
   if (intervalId === "M6-desc") return "radiohead";
   if (intervalId === "m7-asc") return "abba";
@@ -296,6 +297,24 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       src: "/images/gieco/happy.jpg",
       alt: "León Gieco (Todos los días un poco)",
       objectPosition: "object-[52%_42%] scale-110",
+    },
+  },
+  jobim: {
+    label: "Tom Jobim",
+    happy: {
+      src: "/images/jobim/happy.jpg",
+      alt: "Tom Jobim sonriendo (Chega de Saudade)",
+      objectPosition: "object-center scale-105",
+    },
+    sad: {
+      src: "/images/jobim/sad.jpg",
+      alt: "Tom Jobim serio (Chega de Saudade)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/jobim/happy.jpg",
+      alt: "Tom Jobim (Chega de Saudade)",
+      objectPosition: "object-center scale-105",
     },
   },
 };

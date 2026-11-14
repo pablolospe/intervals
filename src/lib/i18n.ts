@@ -3,7 +3,7 @@ export type Lang = "es" | "en";
 export const dict = {
   es: {
     title: "intervals",
-    tagline: "Tu oído, pero con canciones pegadizas.",
+    tagline: "Hacé felices a los artistas",
     pickInterval: "¿Qué intervalo querés entrenar?",
     random: "Sorpresa",
     newChallenge: "Nuevo desafío",
@@ -30,7 +30,7 @@ export const dict = {
     identifyTitle: "¿Cuál era el intervalo?",
     wasIt: "Era",
     phase: {
-      IDLE: "Calentá la garganta y apretá el botón verde.",
+      IDLE: "Calentá la garganta y apretá el botón",
       PLAYING_INTERVAL: "Orejas paradas… ya viene el intervalo.",
       SINGING_ROOT: "Cantá la primera nota y bancala firme.",
       SINGING_TARGET: "Ahora el salto: cantá la segunda nota.",
