@@ -3,28 +3,8 @@ type Props = { className?: string };
 
 export function EarArt({ className }: Props) {
   return (
-    <svg viewBox="0 0 240 200" aria-hidden className={className} fill="none">
-      <defs>
-    <linearGradient id="ear.blobGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#157f78"/><stop offset="1" stopColor="#0a4d4c"/></linearGradient>
-    <linearGradient id="ear.skinGrad" x1="0.1" y1="0" x2="0.9" y2="1"><stop offset="0" stopColor="#fde8d4"/><stop offset="1" stopColor="#f5cba8"/></linearGradient>
-  </defs>
-  <g id="ear.blob">
-    <path id="ear.blobShape" d="M50 118C32 86 44 46 84 34C116 25 146 38 152 68C157 92 140 104 134 124C128 146 120 166 98 174C74 182 56 160 50 118Z" fill="url(#ear.blobGrad)"/>
-    <path id="ear.stem" d="M78 150c-4 14-12 28-24 38M54 176c-6-4-12-4-16 0" stroke="#14b8b0" strokeWidth="2.5" strokeLinecap="round" opacity=".8"/>
-  </g>
-  <g id="ear.body" strokeLinejoin="round" strokeLinecap="round">
-    <path id="ear.outer" d="M120 178c-24 0-34-20-30-44 4-24-4-46 8-72 11-26 44-36 68-22 26 15 30 48 16 72-10 18-26 28-30 44-3 12-12 22-32 22z" fill="url(#ear.skinGrad)"/>
-    <path id="ear.helix" d="M118 76c10-18 38-18 46 2 7 18-4 32-14 44" stroke="#1a1a1f" strokeWidth="3.5" fill="none"/>
-    <path id="ear.antihelix" d="M116 98c-6-12 2-22 12-22" stroke="#1a1a1f" strokeWidth="3.5" fill="none"/>
-    <path id="ear.concha" d="M124 114c-6 10 2 24 16 22 6-1 10-4 12-8l-8-10c-4-6-14-10-20-4z" fill="#eebd9a" stroke="#1a1a1f" strokeWidth="3"/>
-    <path id="ear.tragus" d="M102 120c-8-2-10 10-4 16 5 4 12 2 12-4" stroke="#1a1a1f" strokeWidth="3.5" fill="none"/>
-    <path id="ear.lobeShade" d="M112 168c8 6 22 6 30-4" stroke="#e6ac84" strokeWidth="4" fill="none" opacity=".7"/>
-  </g>
-  <path id="ear.blobOverlap" d="M94 62c-12 6-18 24-14 48 3 18 8 34 4 52 14-6 22-26 22-48 0-28-2-44-12-52z" fill="#0f6b66" opacity=".45"/>
-  <g id="ear.waves" stroke="#14d6cc" strokeWidth="6" strokeLinecap="round">
-    <path d="M194 56l16-10"/><path d="M200 86h22"/><path d="M194 116l16 10"/>
-  </g>
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/images/ear.png" alt="" aria-hidden className={`object-contain select-none ${className ?? ""}`} />
   );
 }
 

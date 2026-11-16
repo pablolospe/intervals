@@ -8,37 +8,37 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 
 ## Ya tienen imagen (22 de 24)
 
-| Intervalo      | Personaje                                             |
-| -------------- | ----------------------------------------------------- |
-| 2da menor asc  | Tiburón (Jaws) · John Williams                      |
-| 2da menor desc | Ludwig van Beethoven (Para Elisa)                     |
-| 2da mayor asc  | La torta (Cumpleaños feliz)                           |
-| 2da mayor desc | Paul McCartney · The Beatles (Yesterday)             |
-| 3ra menor asc  | Ritchie Blackmore · Deep Purple (Smoke on the Water) |
-| 3ra menor desc | Paul McCartney · The Beatles (Hey Jude)              |
-| 3ra mayor asc  | Louis Armstrong (When the Saints Go Marching In)      |
-| 3ra mayor desc | Ludwig van Beethoven (5ta Sinfonía)                  |
-| 4ta justa asc  | La novia (Marcha nupcial · Wagner)                    |
-| 4ta justa desc | Wolfgang Amadeus Mozart (Pequeña serenata nocturna)  |
-| Tritono asc    | Homero Simpson · Los Simpson                         |
-| Tritono desc   | Eddie de Pearl Jam (Even Flow)                        |
-| 5ta justa asc  | Luke Skywalker · Star Wars                           |
-| 5ta justa desc | Pedro Picapiedra · Los Picapiedras                   |
-| 6ta menor asc  | John Lennon (In My Life · The Beatles)                |
-| 6ta menor desc | Tom Jobim (Chega de Saudade)                          |
-| 6ta mayor asc  | Carlos Gardel (El día que me quieras)                |
-| 6ta mayor desc | Thom Yorke · Radiohead (No Surprises)                |
-| 7ma menor asc  | Agnetha de ABBA (The Winner Takes It All)             |
-| 7ma mayor asc  | Morten Harket · a-ha (Take On Me)                    |
-| 8va justa asc  | Judy Garland (Somewhere Over the Rainbow)             |
-| 8va justa desc | León Gieco (Todos los días un poco)                 |
+| Intervalo      | Personaje                                             | Checkear melodía                                                                 |
+| -------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 2da menor asc  | Tiburón (Jaws) · John Williams                      | [ ] Tiburón (Jaws) · [ ] La Pantera Rosa                                         |
+| 2da menor desc | Ludwig van Beethoven (Para Elisa)                     | [ ] Para Elisa · [ ] Fly Me to the Moon                                          |
+| 2da mayor asc  | La torta (Cumpleaños feliz)                           | [ ] Cumpleaños feliz · [ ] Martinillo (Frère Jacques)                            |
+| 2da mayor desc | Paul McCartney · The Beatles (Yesterday)             | [ ] Yesterday · [ ] Mary Had a Little Lamb                                       |
+| 3ra menor asc  | Ritchie Blackmore · Deep Purple (Smoke on the Water) | [ ] Smoke on the Water · [ ] Greensleeves · [ ] Arrullo (Canción de cuna)        |
+| 3ra menor desc | Paul McCartney · The Beatles (Hey Jude)              | [ ] Hey Jude · [ ] Te quiero yo (Barney)                                         |
+| 3ra mayor asc  | Louis Armstrong (When the Saints Go Marching In)      | [ ] When the Saints Go Marching In · [ ] Kumbaya                                 |
+| 3ra mayor desc | Ludwig van Beethoven (5ta Sinfonía)                  | [ ] 5ta Sinfonía · [ ] Swing Low, Sweet Chariot · [ ] Águas de Março             |
+| 4ta justa asc  | La novia (Marcha nupcial · Wagner)                    | [ ] Bridal Chorus · [ ] A Hard Day's Night · [ ] Himno Nacional Argentino        |
+| 4ta justa desc | Wolfgang Amadeus Mozart (Pequeña serenata nocturna)  | [ ] Pequeña serenata nocturna · [ ] Born Free                                    |
+| Tritono asc    | Homero Simpson · Los Simpson                         | [ ] The Simpsons · [ ] Maria (West Side Story)                                   |
+| Tritono desc   | Eddie de Pearl Jam (Even Flow)                        | [x] Even Flow · [ ] Black Sabbath                                                |
+| 5ta justa asc  | Luke Skywalker · Star Wars                           | [ ] Star Wars · [ ] Estrellita                                                   |
+| 5ta justa desc | Pedro Picapiedra · Los Picapiedras                   | [ ] Los Picapiedras · [ ] Game of Thrones                                        |
+| 6ta menor asc  | John Lennon (In My Life · The Beatles)                | [x] In My Life (intro) · [ ] The Entertainer · [ ] Conquest of Paradise          |
+| 6ta menor desc | Tom Jobim (Chega de Saudade)                          | [ ] Chega de Saudade · [ ] Love Story                                            |
+| 6ta mayor asc  | Carlos Gardel (El día que me quieras)                | [x] El día que me quieras · [x] My Way                                           |
+| 6ta mayor desc | Thom Yorke · Radiohead (No Surprises)                | [x] No Surprises · [ ] Nobody Knows the Trouble I've Seen                        |
+| 7ma menor asc  | Agnetha de ABBA (The Winner Takes It All)             | [ ] The Winner Takes It All · [ ] Somewhere (West Side Story)                    |
+| 7ma mayor asc  | Morten Harket · a-ha (Take On Me)                    | [ ] Take On Me · [ ] Superman                                                    |
+| 8va justa asc  | Judy Garland (Somewhere Over the Rainbow)             | [ ] Somewhere Over the Rainbow · [ ] Singin' in the Rain                         |
+| 8va justa desc | León Gieco (Todos los días un poco)                 | [x] Todos los días un poco · [ ] Doogie Howser, M.D. · [ ] Willow Weep for Me    |
 
 ## Faltan (2)
 
-| Intervalo      | Canciones                                                         | Personaje sugerido                         |
-| -------------- | ----------------------------------------------------------------- | ------------------------------------------ |
-| 7ma menor desc | Watermelon Man (Herbie Hancock) · Blanca Navidad                 | Herbie Hancock o Papá Noel (ilustración) |
-| 7ma mayor desc | I Love You (Cole Porter) · Have Yourself a Merry Little Christmas | Cole Porter                                |
+| Intervalo      | Canciones                                                         | Personaje sugerido                         | Checkear melodía                                                     |
+| -------------- | ----------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------- |
+| 7ma menor desc | Watermelon Man (Herbie Hancock) · Blanca Navidad                 | Herbie Hancock o Papá Noel (ilustración) | [ ] Watermelon Man · [ ] Blanca Navidad (White Christmas)            |
+| 7ma mayor desc | I Love You (Cole Porter) · Have Yourself a Merry Little Christmas | Cole Porter                                | [ ] I Love You · [ ] Have Yourself a Merry Little Christmas          |
 
 ## Quién consigue cada imagen
 
