@@ -142,6 +142,7 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
       asc: [
         {
           title: "When the Saints Go Marching In",
+          artist: "Louis Armstrong",
           motif: [n(0), n(4), n(5), n(7, 2), n(0), n(4), n(5), n(7, 2)],
         },
         {
@@ -269,6 +270,12 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
     semitones: 8,
     songs: {
       asc: [
+        {
+          title: "In My Life (intro)",
+          artist: "The Beatles",
+          // do# la sol# mi la — riff de guitarra introductorio (6ta menor asc: 0 -> +8)
+          motif: [n(0, 1), n(8, 1.5), n(7, 0.35), n(3, 0.4), n(8, 2)],
+        },
         {
           title: "The Entertainer",
           artist: "Scott Joplin",

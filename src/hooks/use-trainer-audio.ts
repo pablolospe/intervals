@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef } from "react";
-import { getInterval, intervalNotes, motifNotes } from "@/lib/audio/intervals-catalog";
+import { directedId, getInterval, intervalNotes, motifNotes } from "@/lib/audio/intervals-catalog";
 import { MicPitchSource } from "@/lib/audio/mic-pitch-source";
 import { NoteStabilizer } from "@/lib/audio/note-stabilizer";
 import { SynthEngine, type SequenceNote } from "@/lib/audio/synth-engine";
@@ -87,11 +87,12 @@ export function useTrainerAudio() {
   }, [playChallenge]);
 
   const playReference = useCallback((songIndex = 0) => {
-    const { currentId, rootMidi, selection, phase } = useTrainer.getState();
-    if (!currentId || rootMidi === null) return;
+    const { currentId, rootMidi, selection, direction, phase } = useTrainer.getState();
     // Recognise mode: the reference song would give the answer away, so it stays locked until answered.
     if (selection === "random" && phase !== "SUCCESS" && phase !== "MISS") return;
-    playNotes(motifNotes(getInterval(currentId), rootMidi, songIndex), 100);
+    const id = currentId ?? (selection !== "random" ? directedId(selection, direction) : null);
+    if (!id) return;
+    playNotes(motifNotes(getInterval(id), rootMidi ?? 60, songIndex), 100);
   }, [playNotes]);
 
   useEffect(

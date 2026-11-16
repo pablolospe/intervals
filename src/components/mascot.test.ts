@@ -5,10 +5,13 @@ describe("getMascotCharacter", () => {
   it("maps intervals to their respective mascot characters", () => {
     expect(getMascotCharacter("m2-asc")).toBe("jaws");
     expect(getMascotCharacter("m2-desc")).toBe("beethoven");
+    expect(getMascotCharacter("M2-asc")).toBe("cake");
     expect(getMascotCharacter("m3-asc")).toBe("deep-purple");
     expect(getMascotCharacter("m3-desc")).toBe("mccartney");
     expect(getMascotCharacter("M2-desc")).toBe("mccartney");
+    expect(getMascotCharacter("M3-asc")).toBe("armstrong");
     expect(getMascotCharacter("M3-desc")).toBe("beethoven");
+    expect(getMascotCharacter("P4-asc")).toBe("bride");
     expect(getMascotCharacter("P4-desc")).toBe("mozart");
     expect(getMascotCharacter("TT-asc")).toBe("homer");
     expect(getMascotCharacter("TT-desc")).toBe("pearl-jam");
@@ -24,17 +27,20 @@ describe("getMascotCharacter", () => {
   });
 
   it("returns null for intervals without mascot", () => {
-    expect(getMascotCharacter("M2-asc")).toBeNull();
+    expect(getMascotCharacter("m7-desc")).toBeNull();
     expect(getMascotCharacter("m6-asc")).toBeNull();
-    expect(getMascotCharacter("P4-asc")).toBeNull();
+    expect(getMascotCharacter("M7-desc")).toBeNull();
     expect(getMascotCharacter(null)).toBeNull();
     expect(getMascotCharacter(undefined)).toBeNull();
   });
 
   it("returns artist/band labels for mapped intervals and null otherwise", () => {
     expect(getMascotLabel("m2-desc")).toBe("Ludwig van Beethoven");
+    expect(getMascotLabel("M2-asc")).toBe("la torta");
     expect(getMascotLabel("M3-desc")).toBe("Ludwig van Beethoven");
     expect(getMascotLabel("m3-asc")).toBe("Ritchie Blackmore · Deep Purple");
+    expect(getMascotLabel("M3-asc")).toBe("Louis Armstrong");
+    expect(getMascotLabel("P4-asc")).toBe("la novia");
     expect(getMascotLabel("P4-desc")).toBe("Wolfgang Amadeus Mozart");
     expect(getMascotLabel("M2-desc")).toBe("Paul McCartney · The Beatles");
     expect(getMascotLabel("m6-desc")).toBe("Tom Jobim");
@@ -44,7 +50,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotLabel("TT-desc")).toBe("Eddie de Pearl Jam");
     expect(getMascotLabel("P8-asc")).toBe("Judy Garland");
     expect(getMascotLabel("P8-desc")).toBe("León Gieco");
-    expect(getMascotLabel("P4-asc")).toBeNull();
+    expect(getMascotLabel("m6-asc")).toBeNull();
     expect(getMascotLabel(null)).toBeNull();
   });
 
@@ -52,9 +58,11 @@ describe("getMascotCharacter", () => {
     expect(getMascotReaction("M6-desc", "happy")).toBe("Pusiste feliz a Thom Yorke · Radiohead");
     expect(getMascotReaction("M6-desc", "sad")).toBe("Thom Yorke de Radiohead está enojado!");
     expect(getMascotReaction("P8-asc", "happy")).toBe("Pusiste feliz a Judy Garland");
-    expect(getMascotReaction("P4-asc", "happy", "Wagner")).toBe("Pusiste feliz a Wagner");
-    expect(getMascotReaction("P4-asc", "sad", "Wagner")).toBe("Wagner está triste");
-    expect(getMascotReaction("P4-asc", "happy")).toBeNull();
+    expect(getMascotReaction("P4-asc", "happy")).toBe("Pusiste feliz a la novia");
+    expect(getMascotReaction("P4-asc", "sad")).toBe("La novia está triste");
+    expect(getMascotReaction("m6-asc", "happy", "Wagner")).toBe("Pusiste feliz a Wagner");
+    expect(getMascotReaction("m6-asc", "sad", "Wagner")).toBe("Wagner está triste");
+    expect(getMascotReaction("m6-asc", "happy")).toBeNull();
   });
 });
 

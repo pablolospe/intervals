@@ -1,12 +1,13 @@
 "use client";
 import { SuiteShell } from "@/components/suite-shell";
 import { useEffect, useState } from "react";
-import { BASE_INTERVALS, getInterval } from "@/lib/audio/intervals-catalog";
+import { BASE_INTERVALS, directedId, getInterval, signedSemitones } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
 import { IdentifyModal } from "./identify-modal";
 import { getMascotCharacter, getMascotReaction, Mascot, type Mood } from "./mascot";
+import { MiniPiano } from "./mini-piano";
 import { PitchCanvas } from "./pitch-canvas";
 
 /** Small translucent pill that sits on top of the pitch view while it's in use. */
@@ -14,7 +15,7 @@ const floating =
   "inline-flex items-center gap-1.5 rounded-full border border-zinc-600/80 bg-zinc-900/80 px-2.5 py-1 text-xs font-semibold text-zinc-100 backdrop-blur transition hover:border-zinc-400 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:opacity-40";
 
 export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
-  const { lang, selection, direction, currentId, phase, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
+  const { lang, selection, direction, currentId, phase, rootMidi, rootHz, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
   const { startChallenge, replay, playReference } = useTrainerAudio();
   const [selectedSongIndex, setSelectedSongIndex] = useState(0);
   const t = dict[lang];
@@ -30,7 +31,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
 
   useEffect(() => {
     setSelectedSongIndex(0);
-  }, [currentId]);
+  }, [currentId, selection, direction]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -40,6 +41,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
   const busy = phase === "PLAYING_INTERVAL";
   const finished = phase === "SUCCESS" || phase === "MISS";
   const isRandom = mode === "recognize";
+  const activeDef = def ?? (!isRandom && selection !== "random" ? getInterval(directedId(selection, direction)) : null);
   const revealed = !isRandom || finished; // surprise mode hides the answer until it is given
   const identifying = phase === "IDENTIFY";
   const options = BASE_INTERVALS.map((b) => ({ id: b.id, label: b.name[lang] }));
@@ -106,10 +108,12 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
           </ol>
 
           {/* Pitch view: action buttons float over it while it's idle, and shrink to the corner while singing. */}
-          <div className="relative h-52 shrink-0 sm:h-56 md:h-60 [@media(max-height:600px)]:h-44">
-            <PitchCanvas idleLabel={t.idleLabel} />
+          <div className="relative min-h-40 shrink-0 sm:min-h-52 md:min-h-56 [@media(max-height:600px)]:min-h-40">
+            <div className="absolute inset-0">
+              <PitchCanvas idleLabel={t.idleLabel} />
+            </div>
             {canvasIdle ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 overflow-y-auto rounded-2xl bg-zinc-950/80 p-3 backdrop-blur-[2px]">
+              <div className="relative z-10 flex min-h-40 flex-col items-center justify-center gap-2.5 rounded-2xl bg-zinc-950/80 p-3 backdrop-blur-[2px] sm:min-h-52 sm:gap-3 md:min-h-56 [@media(max-height:600px)]:min-h-40">
                 {finished && def && evaluation && (
                   <div
                     role="status"
@@ -118,12 +122,12 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                     }`}
                   >
                     {getMascotCharacter(currentId) && (
-                      <div className={`h-24 w-24 shrink-0 overflow-hidden rounded-full border-4 shadow-lg sm:h-28 sm:w-28 ${phase === "SUCCESS" ? "border-green-400" : "border-red-400"}`}>
+                      <div className={`h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 shadow-lg sm:h-28 sm:w-28 ${phase === "SUCCESS" ? "border-green-400" : "border-red-400"}`}>
                         <Mascot intervalId={currentId} revealed mood={mood} />
                       </div>
                     )}
                     <div className="min-w-0 flex-1 text-center">
-                      <p className={`flex items-center justify-center gap-2 text-xl font-extrabold sm:text-2xl ${phase === "SUCCESS" ? "text-green-300" : "text-red-300"}`}>
+                      <p className={`flex items-center justify-center gap-2 text-lg font-extrabold sm:text-2xl ${phase === "SUCCESS" ? "text-green-300" : "text-red-300"}`}>
                         <span aria-hidden>{phase === "SUCCESS" ? "✓" : "✕"}</span>
                         {t.phase[phase]}
                       </p>
@@ -173,10 +177,20 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             )}
           </div>
 
+          <MiniPiano
+            rootMidi={rootMidi ?? (!isRandom && activeDef ? 60 : null)}
+            rootHz={rootHz}
+            semitones={activeDef ? signedSemitones(activeDef) : null}
+            revealed={revealed}
+            phase={phase}
+            evaluation={evaluation}
+            lang={lang}
+          />
+
           {micError && <p className="mt-2 rounded-xl bg-red-950/60 p-2 text-xs text-red-300 sm:text-sm">{t.micDenied}</p>}
         </section>
 
-        <div className="flex flex-col gap-3 md:overflow-y-auto [@media(max-height:480px)]:overflow-y-auto">
+        <div className="flex flex-col gap-2.5 sm:gap-3 md:overflow-y-auto [@media(max-height:480px)]:overflow-y-auto">
           <section aria-labelledby="pick">
             <div className="mb-2 flex items-center justify-between gap-2">
               <h2 id="pick" className="text-xs font-medium text-zinc-300 sm:text-sm">
@@ -213,7 +227,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
               disabled={busy}
               aria-label={`${t.direction}: ${asc ? t.ascending : t.descending}. ${t.switchDirection}`}
               title={t.switchDirection}
-              className={`btn group w-1/3 shrink-0 flex-col justify-center gap-1 rounded-2xl border-2 px-1 py-2 sm:w-28 ${
+              className={`btn group w-20 shrink-0 flex-col justify-center gap-1 rounded-2xl border-2 px-1 py-2 sm:w-28 ${
                 asc
                   ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_var(--accent-edge)] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_var(--accent-edge)]"
                   : "border-violet-400 bg-violet-400/15 text-violet-200 shadow-[0_4px_0_0_#5b21b6] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#5b21b6]"
@@ -222,7 +236,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
               <svg
                 viewBox="0 0 24 24"
                 aria-hidden
-                className={`h-10 w-10 transition-transform duration-300 sm:h-14 sm:w-14 ${asc ? "" : "rotate-180"}`}
+                className={`h-7 w-7 transition-transform duration-300 sm:h-14 sm:w-14 ${asc ? "" : "rotate-180"}`}
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2.75}
@@ -248,7 +262,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                 )}
               </div>
             ) : (
-            <div className="grid w-2/3 flex-1 grid-cols-2 content-start gap-1.5 sm:gap-2">
+            <div className="grid min-w-0 flex-1 grid-cols-3 content-start gap-1.5 sm:grid-cols-2 sm:gap-2">
               {options.map((o) => (
                 <button
                   key={o.id}
@@ -272,25 +286,16 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-2.5 sm:p-4">
+          <section className={`${!isRandom || finished ? "order-first md:order-none" : ""} rounded-2xl border border-violet-400/20 bg-violet-400/5 p-2.5 sm:p-4`}>
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between gap-2">
                 <h2 className="text-xs font-semibold text-violet-200 sm:text-sm">{t.helpTitle}</h2>
               </div>
               <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.helpText}</p>
 
-              <div className="flex items-center gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-200/90">
-                <span className="grid h-8 w-8 sm:h-9 sm:w-9 shrink-0 place-items-center rounded-full bg-amber-100 text-xl sm:text-2xl shadow-sm select-none" role="img" aria-label="Perezoso">
-                  🦥
-                </span>
-                <p className="leading-snug">
-                  Algunos ejemplos aún no han sido revisados por el desarrollador.
-                </p>
-              </div>
-
-              {def && revealed && def.songs && def.songs.length > 0 && (
+              {activeDef && revealed && activeDef.songs && activeDef.songs.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 pt-0.5">
-                  {def.songs.map((s, idx) => {
+                  {activeDef.songs.map((s, idx) => {
                     const isSel = selectedSongIndex === idx;
                     return (
                       <button
@@ -314,6 +319,15 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                   })}
                 </div>
               )}
+
+              <div className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/10 px-2.5 py-1.5 text-[11px] text-amber-200/90 sm:gap-3 sm:px-3 sm:py-2 sm:text-xs">
+                <span className="grid h-6 w-6 sm:h-9 sm:w-9 shrink-0 place-items-center rounded-full bg-amber-100 text-base sm:text-2xl shadow-sm select-none" role="img" aria-label="Perezoso">
+                  🦥
+                </span>
+                <p className="leading-snug">
+                  Algunos ejemplos aún no han sido revisados por el desarrollador.
+                </p>
+              </div>
 
               {def && (finished || (phase === "SINGING_TARGET" && !isRandom)) && (
                 <p className="mt-0.5 text-xs text-violet-200 sm:text-sm">

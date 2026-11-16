@@ -1,12 +1,15 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim" | "armstrong" | "bride" | "cake";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
   if (intervalId === "m2-asc") return "jaws";
   if (intervalId === "m2-desc" || intervalId === "M3-desc") return "beethoven";
+  if (intervalId === "M2-asc") return "cake";
   if (intervalId === "m3-asc") return "deep-purple";
   if (intervalId === "m3-desc" || intervalId === "M2-desc") return "mccartney";
+  if (intervalId === "M3-asc") return "armstrong";
+  if (intervalId === "P4-asc") return "bride";
   if (intervalId === "P4-desc") return "mozart";
   if (intervalId === "TT-asc") return "homer";
   if (intervalId === "TT-desc") return "pearl-jam";
@@ -317,6 +320,60 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       objectPosition: "object-center scale-105",
     },
   },
+  armstrong: {
+    label: "Louis Armstrong",
+    happy: {
+      src: "/images/armstrong/happy.jpg",
+      alt: "Louis Armstrong sonriendo con su trompeta (When the Saints Go Marching In)",
+      objectPosition: "object-center scale-105",
+    },
+    sad: {
+      src: "/images/armstrong/sad.jpg",
+      alt: "Louis Armstrong agarrándose la cara (When the Saints Go Marching In)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/armstrong/happy.jpg",
+      alt: "Louis Armstrong (When the Saints Go Marching In)",
+      objectPosition: "object-center scale-105",
+    },
+  },
+  bride: {
+    label: "la novia",
+    happy: {
+      src: "/images/bride/happy.jpg",
+      alt: "Novia sonriendo emocionada en el altar (Marcha nupcial)",
+      objectPosition: "object-center scale-105",
+    },
+    sad: {
+      src: "/images/bride/sad.jpg",
+      alt: "Novia llorando en el altar (Marcha nupcial)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/bride/happy.jpg",
+      alt: "Novia en el altar (Marcha nupcial)",
+      objectPosition: "object-center scale-105",
+    },
+  },
+  cake: {
+    label: "la torta",
+    happy: {
+      src: "/images/cake/happy.jpg",
+      alt: "Torta de cumpleaños sonriendo (Cumpleaños feliz)",
+      objectPosition: "object-center scale-105",
+    },
+    sad: {
+      src: "/images/cake/sad.jpg",
+      alt: "Torta de cumpleaños llorando (Cumpleaños feliz)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/cake/happy.jpg",
+      alt: "Torta de cumpleaños (Cumpleaños feliz)",
+      objectPosition: "object-center scale-105",
+    },
+  },
 };
 
 export function getMascotLabel(intervalId: string | null | undefined): string | null {
@@ -331,7 +388,9 @@ export function getMascotReaction(
 ): string | null {
   const name = getMascotLabel(intervalId) ?? fallback;
   if (!name) return null;
-  return mood === "happy" ? `Pusiste feliz a ${name}` : `${name} está triste`;
+  return mood === "happy"
+    ? `Pusiste feliz a ${name}`
+    : `${name.charAt(0).toUpperCase()}${name.slice(1)} está triste`;
 }
 
 function CharacterPhoto({ character, mood }: { character: MascotCharacter; mood: Mood }) {
