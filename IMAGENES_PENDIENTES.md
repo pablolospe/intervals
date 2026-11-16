@@ -6,7 +6,7 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 - **Registro en el código:** `src/components/mascot.tsx` (`getMascotCharacter` y `CHARACTERS`).
 - **Formato:** cuadrado o casi cuadrado, con la cara centrada: se recorta en círculo.
 
-## Ya tienen imagen (21 de 24)
+## Ya tienen imagen (22 de 24)
 
 | Intervalo      | Personaje                                             |
 | -------------- | ----------------------------------------------------- |
@@ -24,6 +24,7 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | Tritono desc   | Eddie de Pearl Jam (Even Flow)                        |
 | 5ta justa asc  | Luke Skywalker · Star Wars                           |
 | 5ta justa desc | Pedro Picapiedra · Los Picapiedras                   |
+| 6ta menor asc  | John Lennon (In My Life · The Beatles)                |
 | 6ta menor desc | Tom Jobim (Chega de Saudade)                          |
 | 6ta mayor asc  | Carlos Gardel (El día que me quieras)                |
 | 6ta mayor desc | Thom Yorke · Radiohead (No Surprises)                |
@@ -32,11 +33,10 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 8va justa asc  | Judy Garland (Somewhere Over the Rainbow)             |
 | 8va justa desc | León Gieco (Todos los días un poco)                 |
 
-## Faltan (3)
+## Faltan (2)
 
 | Intervalo      | Canciones                                                         | Personaje sugerido                         |
 | -------------- | ----------------------------------------------------------------- | ------------------------------------------ |
-| 6ta menor asc  | In My Life – introducción (The Beatles) · The Entertainer (Joplin) · Conquest of Paradise (Vangelis) | John Lennon / The Beatles, Scott Joplin o Vangelis |
 | 7ma menor desc | Watermelon Man (Herbie Hancock) · Blanca Navidad                 | Herbie Hancock o Papá Noel (ilustración) |
 | 7ma mayor desc | I Love You (Cole Porter) · Have Yourself a Merry Little Christmas | Cole Porter                                |
 

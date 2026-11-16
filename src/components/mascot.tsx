@@ -1,5 +1,5 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim" | "armstrong" | "bride" | "cake";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim" | "armstrong" | "bride" | "cake" | "lennon";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
@@ -15,6 +15,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "TT-desc") return "pearl-jam";
   if (intervalId === "P5-asc") return "luke";
   if (intervalId === "P5-desc") return "flintstones";
+  if (intervalId === "m6-asc") return "lennon";
   if (intervalId === "m6-desc") return "jobim";
   if (intervalId === "M6-asc") return "gardel";
   if (intervalId === "M6-desc") return "radiohead";
@@ -371,6 +372,24 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
     neutral: {
       src: "/images/cake/happy.jpg",
       alt: "Torta de cumpleaños (Cumpleaños feliz)",
+      objectPosition: "object-center scale-105",
+    },
+  },
+  lennon: {
+    label: "John Lennon",
+    happy: {
+      src: "/images/lennon/happy.jpg",
+      alt: "John Lennon sonriendo (The Beatles — In My Life)",
+      objectPosition: "object-center scale-105",
+    },
+    sad: {
+      src: "/images/lennon/sad.jpg",
+      alt: "John Lennon serio (The Beatles — In My Life)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/lennon/happy.jpg",
+      alt: "John Lennon (The Beatles — In My Life)",
       objectPosition: "object-center scale-105",
     },
   },
