@@ -18,6 +18,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
   const { lang, selection, direction, currentId, phase, rootMidi, rootHz, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
   const { startChallenge, replay, playReference } = useTrainerAudio();
   const [selectedSongIndex, setSelectedSongIndex] = useState(0);
+  const [pickOpen, setPickOpen] = useState(false);
   const t = dict[lang];
   /** Interval to return to when leaving surprise mode. */
   const [lastPick, setLastPick] = useState(selection === "random" ? "P5" : selection);
@@ -191,63 +192,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
         </section>
 
         <div className="flex flex-col gap-2.5 sm:gap-3 md:overflow-y-auto [@media(max-height:480px)]:overflow-y-auto">
-          <section aria-labelledby="pick">
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <h2 id="pick" className="text-xs font-medium text-zinc-300 sm:text-sm">
-                {isRandom ? t.modeRandom : t.pickInterval}
-              </h2>
-              <div hidden role="radiogroup" aria-label={t.mode} className="flex shrink-0 rounded-full border border-zinc-600 bg-zinc-900 p-0.5 text-xs font-semibold sm:text-sm">
-                {([
-                  ["pick", t.modePick],
-                  ["random", t.random],
-                ] as const).map(([m, label]) => {
-                  const on = (m === "random") === isRandom;
-                  return (
-                    <button
-                      key={m}
-                      role="radio"
-                      aria-checked={on}
-                      disabled={busy}
-                      onClick={() => !on && setSelection(m === "random" ? "random" : lastPick)}
-                      className={`rounded-full px-3 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed sm:px-4 sm:py-1.5 ${
-                        on ? (m === "random" ? "bg-violet-400 text-zinc-950" : "bg-emerald-400 text-zinc-950") : "text-zinc-300 hover:text-zinc-50"
-                      }`}
-                    >
-                      {m === "random" ? "🎲 " : ""}
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="flex items-stretch gap-2 sm:gap-3">
-            {!isRandom && (
-            <button
-              onClick={() => setDirection(asc ? "desc" : "asc")}
-              disabled={busy}
-              aria-label={`${t.direction}: ${asc ? t.ascending : t.descending}. ${t.switchDirection}`}
-              title={t.switchDirection}
-              className={`btn group w-20 shrink-0 flex-col justify-center gap-1 rounded-2xl border-2 px-1 py-2 sm:w-28 ${
-                asc
-                  ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_var(--accent-edge)] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_var(--accent-edge)]"
-                  : "border-violet-400 bg-violet-400/15 text-violet-200 shadow-[0_4px_0_0_#5b21b6] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#5b21b6]"
-              }`}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden
-                className={`h-7 w-7 transition-transform duration-300 sm:h-14 sm:w-14 ${asc ? "" : "rotate-180"}`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.75}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 20V4M5 11l7-7 7 7" />
-              </svg>
-              <span className="text-[10px] font-bold uppercase tracking-tight sm:text-xs sm:tracking-wide">{asc ? t.ascending : t.descending}</span>
-            </button>
-            )}
+          <section aria-label={isRandom ? t.modeRandom : t.pickInterval}>
             {isRandom ? (
               <div className="flex flex-1 flex-col justify-center gap-1 rounded-2xl border border-violet-400/40 bg-violet-400/10 p-3 sm:p-4">
                 <p className="text-sm font-semibold text-violet-100 sm:text-base">
@@ -262,31 +207,84 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                 )}
               </div>
             ) : (
-            <div className="grid min-w-0 flex-1 grid-cols-3 content-start gap-1.5 sm:grid-cols-2 sm:gap-2">
-              {options.map((o) => (
+              <div className="flex items-center gap-2.5 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-3 shadow-lg backdrop-blur sm:gap-3.5 sm:rounded-3xl sm:p-4">
                 <button
-                  key={o.id}
-                  onClick={() => {
-                    setLastPick(o.id);
-                    setSelection(o.id);
-                  }}
+                  type="button"
+                  onClick={() => setDirection(asc ? "desc" : "asc")}
                   disabled={busy}
-                  aria-pressed={selection === o.id}
-                  className={`truncate rounded-xl border px-1.5 py-1.5 text-center text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed [@media(max-height:600px)]:py-1 sm:px-3 sm:py-2 sm:text-left sm:text-sm ${
-                    selection === o.id
-                      ? "border-emerald-400 bg-emerald-400/15 text-emerald-100 shadow-[0_0_0_1px_rgba(52,211,153,0.4)]"
-                      : "border-zinc-700 bg-zinc-800/80 text-zinc-100 hover:border-zinc-400 hover:bg-zinc-700"
+                  aria-label={`${t.direction}: ${asc ? t.ascending : t.descending}. ${t.switchDirection}`}
+                  title={t.switchDirection}
+                  className={`btn h-12 w-12 shrink-0 rounded-2xl border-2 p-0 sm:h-14 sm:w-14 ${
+                    asc
+                      ? "border-emerald-400 bg-emerald-400/15 text-emerald-200 shadow-[0_4px_0_0_var(--accent-edge)] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_var(--accent-edge)]"
+                      : "border-violet-400 bg-violet-400/15 text-violet-200 shadow-[0_4px_0_0_#5b21b6] enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#5b21b6]"
                   }`}
                 >
-                  {o.label}
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                    className={`h-6 w-6 transition-transform duration-300 sm:h-7 sm:w-7 ${asc ? "" : "rotate-180"}`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.75}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M12 20V4M5 11l7-7 7 7" />
+                  </svg>
                 </button>
-              ))}
-            </div>
+
+                <button
+                  type="button"
+                  onClick={() => setPickOpen(true)}
+                  disabled={busy}
+                  className="group min-w-0 flex-1 rounded-xl px-1 py-0.5 text-left transition hover:bg-zinc-800/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed"
+                >
+                  <p className="truncate text-[10px] font-semibold uppercase tracking-wider text-zinc-400 sm:text-[11px]">
+                    {lang === "es" ? "Intervalo" : "Interval"}
+                    <span className="hidden sm:inline">{lang === "es" ? " a cantar" : " to sing"}</span>
+                    {activeDef
+                      ? ` · ${activeDef.semitones} ${
+                          lang === "es"
+                            ? activeDef.semitones === 1
+                              ? "semitono"
+                              : "semitonos"
+                            : activeDef.semitones === 1
+                              ? "semitone"
+                              : "semitones"
+                        }`
+                      : ""}
+                  </p>
+                  <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                    <span className="truncate text-lg font-extrabold leading-tight tracking-tight text-white transition-colors group-hover:text-emerald-200 sm:text-2xl">
+                      {activeDef?.name[lang] ?? options.find((o) => o.id === selection)?.label ?? ""}
+                    </span>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold sm:text-xs ${
+                        asc ? "bg-emerald-400/15 text-emerald-300" : "bg-violet-400/15 text-violet-300"
+                      }`}
+                    >
+                      {asc ? t.ascending : t.descending} {asc ? "↑" : "↓"}
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPickOpen(true)}
+                  disabled={busy}
+                  className="btn shrink-0 gap-1.5 rounded-xl border border-emerald-400/60 bg-emerald-400/15 px-3 py-2 text-xs font-bold text-emerald-200 shadow-[0_3px_0_0_var(--accent-edge)] transition hover:bg-emerald-400/25 enabled:active:translate-y-0.5 enabled:active:shadow-[0_1px_0_0_var(--accent-edge)] disabled:cursor-not-allowed sm:px-4 sm:py-2.5 sm:text-sm"
+                >
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                  </svg>
+                  {lang === "es" ? "Cambiar" : "Change"}
+                </button>
+              </div>
             )}
-            </div>
           </section>
 
-          <section className={`${!isRandom || finished ? "order-first md:order-none" : ""} rounded-2xl border border-violet-400/20 bg-violet-400/5 p-2.5 sm:p-4`}>
+          <section className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-2.5 sm:p-4">
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between gap-2">
                 <h2 className="text-xs font-semibold text-violet-200 sm:text-sm">{t.helpTitle}</h2>
@@ -340,20 +338,43 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
         </div>
       </div>
 
-      <IdentifyModal
-        open={identifying}
-        labels={{
-          title: t.identifyTitle,
-          subtitle: t.phase.IDENTIFY,
-          direction: t.guessDirection,
-          interval: t.guessInterval,
-          ascending: t.ascending,
-          descending: t.descending,
-          submit: t.submitGuess,
-        }}
-        options={options}
-        onAnswer={answer}
-      />
+      {isRandom ? (
+        <IdentifyModal
+          open={identifying}
+          labels={{
+            title: t.identifyTitle,
+            direction: t.guessDirection,
+            interval: t.guessInterval,
+            ascending: t.ascending,
+            descending: t.descending,
+            submit: t.submitGuess,
+          }}
+          options={options}
+          onAnswer={answer}
+        />
+      ) : (
+        <IdentifyModal
+          open={pickOpen}
+          labels={{
+            title: t.pickInterval,
+            direction: t.direction,
+            interval: t.guessInterval,
+            ascending: t.ascending,
+            descending: t.descending,
+            submit: lang === "es" ? "Seleccionar" : "Select",
+          }}
+          options={options}
+          initialDirection={direction}
+          initialInterval={selection === "random" ? lastPick : selection}
+          onClose={() => setPickOpen(false)}
+          onAnswer={(id, dir) => {
+            setLastPick(id);
+            setSelection(id);
+            setDirection(dir);
+            setPickOpen(false);
+          }}
+        />
+      )}
 
       <footer className="hidden text-center text-xs text-zinc-600 md:block">{t.footer}</footer>
     </main>
