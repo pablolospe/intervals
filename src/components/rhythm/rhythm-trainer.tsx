@@ -1,7 +1,7 @@
 "use client";
 import { SuiteShell } from "@/components/suite-shell";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { cellPool, getCell, grade, randomRhythm } from "@/lib/rhythm/cells";
+import { cellPool, getCell, grade, randomRhythm, type Subdivision } from "@/lib/rhythm/cells";
 import { RhythmPlayer } from "@/lib/rhythm/rhythm-player";
 import { RhythmNotation } from "./rhythm-notation";
 
@@ -19,6 +19,7 @@ export function RhythmTrainer() {
   const [cursor, setCursor] = useState(0);
   const [checked, setChecked] = useState(false);
   const [bpm, setBpm] = useState(80);
+  const [subdivision, setSubdivision] = useState<Subdivision>("binary");
   const [includeRests, setIncludeRests] = useState(true);
   const [metronome, setMetronome] = useState(true);
   const [playing, setPlaying] = useState(false);
@@ -34,7 +35,7 @@ export function RhythmTrainer() {
     [],
   );
 
-  const pool = useMemo(() => cellPool(includeRests), [includeRests]);
+  const pool = useMemo(() => cellPool(includeRests, subdivision), [includeRests, subdivision]);
   const results = useMemo(() => (checked && target ? grade(answer, target) : null), [checked, answer, target]);
   const resultColors = useMemo(() => results?.map((r) => (r ? OK : BAD)), [results]);
   const allRight = results?.every(Boolean) ?? false;
@@ -47,6 +48,18 @@ export function RhythmTrainer() {
     setPlaying(true);
     const secs = player.current.play(ids, { bpm, countIn: true, metronome });
     timer.current = window.setTimeout(() => setPlaying(false), secs * 1000);
+  };
+
+  const switchSubdivision = (next: Subdivision) => {
+    if (next === subdivision) return;
+    window.clearTimeout(timer.current);
+    player.current?.stop();
+    setPlaying(false);
+    setSubdivision(next);
+    setTarget(null);
+    setAnswer(empty());
+    setCursor(0);
+    setChecked(false);
   };
 
   const newRhythm = () => {
@@ -130,7 +143,30 @@ export function RhythmTrainer() {
           {playing ? "Sonando…" : target ? "Repetir" : "Escuchar ritmo"}
         </button>
 
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          <div role="radiogroup" aria-label="Subdivisión" className="flex items-center rounded-full border border-zinc-800 bg-zinc-900/80 p-0.5 text-xs font-semibold">
+            {([
+              ["binary", "Binaria", "2/4 · 4/4"],
+              ["ternary", "Ternaria", "6/8 · 12/8"],
+            ] as const).map(([mode, label, meter]) => {
+              const on = subdivision === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => switchSubdivision(mode)}
+                  className={`rounded-full px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 ${
+                    on ? "bg-emerald-400 text-zinc-950 shadow-sm" : "text-zinc-300 hover:text-white"
+                  }`}
+                >
+                  {label} <span className={`hidden sm:inline ${on ? "text-zinc-900/80" : "text-zinc-500"}`}>{meter}</span>
+                </button>
+              );
+            })}
+          </div>
+
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <div role="group" aria-label="Tempo" className="flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-1.5 py-1">
               <button
@@ -142,7 +178,7 @@ export function RhythmTrainer() {
                 −
               </button>
               <span className="min-w-14 sm:min-w-16 text-center text-xs font-semibold tabular-nums text-zinc-50">
-                ♩ = {bpm}
+                {subdivision === "ternary" ? "♩." : "♩"} = {bpm}
               </span>
               <button
                 className="chip h-7 w-7 px-0! text-xs font-bold"
@@ -290,9 +326,9 @@ export function RhythmTrainer() {
           ))}
         </div>
       </section>
-      <p className="flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-700 px-3 py-2 text-center text-xs text-zinc-300 sm:text-sm">
+      <p className="flex shrink-0 flex-wrap items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-700 px-3 py-2 text-center text-xs text-zinc-300 sm:text-sm">
         <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-zinc-950">Próximamente</span>
-        Subdivisión ternaria
+        Reconocer tipos de compases: binarios (2/4, 3/4, 4/4) · ternarios (6/8, 9/8, 12/8) · irregulares (5/4, 7/4…)
       </p>
     </main>
     </SuiteShell>

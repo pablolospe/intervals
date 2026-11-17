@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Beam, Formatter, Fraction, Renderer, Stave, StaveNote, SVGContext, Voice } from "vexflow";
-import { getCell, vexDuration } from "@/lib/rhythm/cells";
+import { Beam, Dot, Formatter, Fraction, Renderer, Stave, StaveNote, SVGContext, Voice } from "vexflow";
+import { getCell, isDotted, vexDuration } from "@/lib/rhythm/cells";
 
 /** Near-black ink: notation is drawn on the light `.paper` surface. */
 export const INK = "#18181b";
@@ -52,13 +52,28 @@ export function RhythmNotation({ ids, width, height = 80, colors, line = false, 
     const beams: Beam[] = [];
     ids.forEach((id, i) => {
       const c = colors?.[i];
-      const notes = getCell(id).slots.map((s) => {
-        const sn = new StaveNote({ keys: ["b/4"], duration: vexDuration(s), stemDirection: 1 });
-        if (c) sn.setStyle({ fillStyle: c, strokeStyle: c });
+      const cell = getCell(id);
+      const isTernary = cell.subdivision === "ternary";
+      const notes = cell.slots.map((s) => {
+        const dotted = isDotted(s);
+        const sn = new StaveNote({
+          keys: ["b/4"],
+          duration: vexDuration(s),
+          dots: dotted ? 1 : 0,
+          stemDirection: 1,
+        });
+        if (dotted) Dot.buildAndAttach([sn], { all: true });
+        if (c) {
+          sn.setStyle({ fillStyle: c, strokeStyle: c });
+          if (dotted) Dot.getDots(sn).forEach((d) => d.setStyle({ fillStyle: c, strokeStyle: c }));
+        }
         return sn;
       });
       all.push(...notes);
-      const cellBeams = Beam.generateBeams(notes, { stemDirection: 1, groups: [new Fraction(1, 4)] });
+      const cellBeams = Beam.generateBeams(notes, {
+        stemDirection: 1,
+        groups: [new Fraction(isTernary ? 3 : 1, isTernary ? 8 : 4)],
+      });
       if (c) cellBeams.forEach((b) => b.setStyle({ fillStyle: c, strokeStyle: c }));
       beams.push(...cellBeams);
     });
@@ -75,7 +90,10 @@ export function RhythmNotation({ ids, width, height = 80, colors, line = false, 
       ctx.stroke();
     }
 
-    const voice = new Voice({ numBeats: ids.length, beatValue: 4 }).setMode(Voice.Mode.SOFT);
+    const firstIsTernary = ids.length > 0 && getCell(ids[0]).subdivision === "ternary";
+    const voice = new Voice(
+      firstIsTernary ? { numBeats: ids.length * 3, beatValue: 8 } : { numBeats: ids.length, beatValue: 4 },
+    ).setMode(Voice.Mode.SOFT);
     voice.addTickables(all);
     const formatWidth = Math.max(20, width - pad * 2 - 14);
     new Formatter().joinVoices([voice]).format([voice], formatWidth);

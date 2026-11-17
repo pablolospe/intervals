@@ -40,6 +40,14 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 7ma menor desc | Watermelon Man (Herbie Hancock) · Blanca Navidad                 | Herbie Hancock o Papá Noel (ilustración) | [ ] Watermelon Man · [ ] Blanca Navidad (White Christmas)            |
 | 7ma mayor desc | I Love You (Cole Porter) · Have Yourself a Merry Little Christmas | Cole Porter                                | [ ] I Love You · [ ] Have Yourself a Merry Little Christmas          |
 
+## Próximas secciones pendientes
+
+- **Reconocer tipos de compases**: módulo para identificar auditivamente el compás:
+  - Binarios: `2/4`, `3/4`, `4/4`
+  - Ternarios (compuestos): `6/8`, `9/8`, `12/8`
+  - Irregulares / raros: `5/4`, `7/4`, `5/8`, `7/8`, etc.
+- **Partitura**: lectura musical básica.
+
 ## Quién consigue cada imagen
 
 - **Ilustraciones propias** (las puede hacer el asistente en el estilo del logo, con versión feliz y triste, sin problemas de derechos): torta con velitas, Papá Noel, novia y trompeta.

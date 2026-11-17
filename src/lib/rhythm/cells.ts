@@ -1,13 +1,16 @@
-/** Rhythmic cells that each fill exactly one quarter-note beat, measured in sixteenths. */
+/** Rhythmic cells that each fill one beat: 4 sixteenths in binary, or 6 sixteenths in ternary (dotted quarter). */
+
+export type Subdivision = "binary" | "ternary";
 
 export interface Slot {
-  units: 1 | 2 | 4; // sixteenths
+  units: 1 | 2 | 3 | 4 | 6; // sixteenths (3 = dotted 8th, 6 = dotted quarter)
   rest: boolean;
 }
 
 export interface RhythmCell {
   id: string;
   label: string;
+  subdivision?: Subdivision;
   slots: Slot[];
 }
 
@@ -30,7 +33,23 @@ export const CELLS: RhythmCell[] = [
   { id: "16r-16-16-16", label: "Silencio de semi + 3 semis", slots: [r(1), n(1), n(1), n(1)] },
 ];
 
-const BY_ID = new Map(CELLS.map((c) => [c.id, c]));
+export const TERNARY_CELLS: RhythmCell[] = [
+  { id: "qd", label: "Negra con puntillo", subdivision: "ternary", slots: [n(6)] },
+  { id: "8-8-8", label: "3 corcheas", subdivision: "ternary", slots: [n(2), n(2), n(2)] },
+  { id: "q-8", label: "Negra + corchea", subdivision: "ternary", slots: [n(4), n(2)] },
+  { id: "8-q", label: "Corchea + negra", subdivision: "ternary", slots: [n(2), n(4)] },
+  { id: "8d-16-8", label: "Corchea punt. + semi + corchea", subdivision: "ternary", slots: [n(3), n(1), n(2)] },
+  { id: "8-8-16-16", label: "2 corcheas + 2 semis", subdivision: "ternary", slots: [n(2), n(2), n(1), n(1)] },
+  // with rests
+  { id: "qdr", label: "Silencio de negra punt.", subdivision: "ternary", slots: [r(6)] },
+  { id: "8r-8-8", label: "Silencio + 2 corcheas", subdivision: "ternary", slots: [r(2), n(2), n(2)] },
+  { id: "8-8r-8", label: "Corchea + silencio + corchea", subdivision: "ternary", slots: [n(2), r(2), n(2)] },
+  { id: "8-8-8r", label: "2 corcheas + silencio", subdivision: "ternary", slots: [n(2), n(2), r(2)] },
+  { id: "qr-8", label: "Silencio de negra + corchea", subdivision: "ternary", slots: [r(4), n(2)] },
+  { id: "8r-q", label: "Silencio + negra", subdivision: "ternary", slots: [r(2), n(4)] },
+];
+
+const BY_ID = new Map([...CELLS, ...TERNARY_CELLS].map((c) => [c.id, c]));
 
 export function getCell(id: string): RhythmCell {
   const c = BY_ID.get(id);
@@ -40,16 +59,19 @@ export function getCell(id: string): RhythmCell {
 
 export const hasRest = (c: RhythmCell) => c.slots.some((s) => s.rest);
 
-export function cellPool(includeRests: boolean): RhythmCell[] {
-  return includeRests ? CELLS : CELLS.filter((c) => !hasRest(c));
+export function cellPool(includeRests: boolean, subdivision: Subdivision = "binary"): RhythmCell[] {
+  const list = subdivision === "ternary" ? TERNARY_CELLS : CELLS;
+  return includeRests ? list : list.filter((c) => !hasRest(c));
 }
+
+const isFullRest = (id: string) => id === "qr" || id === "qdr";
 
 /** Random measure of `beats` cells. Never more than one whole-beat rest, and never starting with one. */
 export function randomRhythm(pool: RhythmCell[], beats = 4, rng: () => number = Math.random): string[] {
   for (;;) {
     const ids = Array.from({ length: beats }, () => pool[Math.floor(rng() * pool.length)].id);
-    const fullRests = ids.filter((id) => id === "qr").length;
-    if (fullRests <= 1 && ids[0] !== "qr") return ids;
+    const fullRests = ids.filter(isFullRest).length;
+    if (fullRests <= 1 && !isFullRest(ids[0])) return ids;
   }
 }
 
@@ -65,12 +87,14 @@ export interface Hit {
 
 /** Onsets of the sounding (non-rest) slots at `bpm`. Notes are slightly detached so lengths stay audible. */
 export function planRhythm(ids: string[], bpm: number, articulation = 0.85): Hit[] {
-  const sixteenth = 60 / bpm / 4;
   const hits: Hit[] = [];
   let t = 0;
   for (const id of ids) {
-    for (const s of getCell(id).slots) {
-      const len = s.units * sixteenth;
+    const cell = getCell(id);
+    const beatUnits = cell.subdivision === "ternary" ? 6 : 4;
+    const unitSec = 60 / bpm / beatUnits;
+    for (const s of cell.slots) {
+      const len = s.units * unitSec;
       if (!s.rest) hits.push({ start: t, duration: len * articulation });
       t += len;
     }
@@ -78,8 +102,12 @@ export function planRhythm(ids: string[], bpm: number, articulation = 0.85): Hit
   return hits;
 }
 
-/** VexFlow duration code for a slot ("q", "8r", "16", ...). */
+/** VexFlow duration code for a slot ("q", "8r", "16", ...). Dotted units also return base "q"/"8". */
 export function vexDuration(s: Slot): string {
-  const base = s.units === 4 ? "q" : s.units === 2 ? "8" : "16";
+  const base = s.units === 4 || s.units === 6 ? "q" : s.units === 2 || s.units === 3 ? "8" : "16";
   return s.rest ? `${base}r` : base;
+}
+
+export function isDotted(s: Slot): boolean {
+  return s.units === 3 || s.units === 6;
 }

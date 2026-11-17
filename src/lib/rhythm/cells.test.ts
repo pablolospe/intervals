@@ -1,16 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { CELLS, cellPool, grade, hasRest, planRhythm, randomRhythm, vexDuration } from "./cells";
+import { CELLS, TERNARY_CELLS, cellPool, grade, hasRest, isDotted, planRhythm, randomRhythm, vexDuration } from "./cells";
 
 describe("rhythm cells", () => {
   it("every cell fills exactly one beat and ids are unique", () => {
     for (const c of CELLS) expect(c.slots.reduce((s, x) => s + x.units, 0)).toBe(4);
-    expect(new Set(CELLS.map((c) => c.id)).size).toBe(CELLS.length);
+    for (const c of TERNARY_CELLS) expect(c.slots.reduce((s, x) => s + x.units, 0)).toBe(6);
+    const all = [...CELLS, ...TERNARY_CELLS];
+    expect(new Set(all.map((c) => c.id)).size).toBe(all.length);
   });
 
-  it("pool without rests excludes rest cells", () => {
+  it("pool without rests excludes rest cells in both binary and ternary", () => {
     expect(cellPool(false).some(hasRest)).toBe(false);
     expect(cellPool(false)).toHaveLength(6);
     expect(cellPool(true)).toHaveLength(CELLS.length);
+    expect(cellPool(false, "ternary").some(hasRest)).toBe(false);
+    expect(cellPool(false, "ternary")).toHaveLength(6);
+    expect(cellPool(true, "ternary")).toHaveLength(TERNARY_CELLS.length);
   });
 
   it("random rhythm has 4 beats, at most one full rest, never on beat 1", () => {
@@ -21,6 +26,11 @@ describe("rhythm cells", () => {
       expect(ids).toHaveLength(4);
       expect(ids[0]).not.toBe("qr");
       expect(ids.filter((i) => i === "qr").length).toBeLessThanOrEqual(1);
+
+      const tIds = randomRhythm(cellPool(true, "ternary"), 4, rng);
+      expect(tIds).toHaveLength(4);
+      expect(tIds[0]).not.toBe("qdr");
+      expect(tIds.filter((i) => i === "qdr").length).toBeLessThanOrEqual(1);
     }
   });
 
@@ -31,12 +41,24 @@ describe("rhythm cells", () => {
     expect(hits.map((h) => h.duration)).toEqual([0.5, 0.25, 0.25, 0.5]);
   });
 
+  it("plans ternary onsets over a 6-unit dotted beat", () => {
+    // 60 bpm -> dotted quarter = 1s, unit = 1/6s
+    const hits = planRhythm(["8-8-8", "8r-q"], 60, 1);
+    expect(hits.map((h) => h.start)).toEqual([0, 1 / 3, 2 / 3, 1 + 1 / 3]);
+    expect(hits.map((h) => h.duration)).toEqual([1 / 3, 1 / 3, 1 / 3, 2 / 3]);
+  });
+
   it("grades beat by beat", () => {
     expect(grade(["q", "8-8", null, "qr"], ["q", "16x4", "q", "qr"])).toEqual([true, false, false, true]);
   });
 
-  it("maps slots to vexflow durations", () => {
+  it("maps slots to vexflow durations and dotted flags", () => {
     expect(vexDuration({ units: 2, rest: true })).toBe("8r");
     expect(vexDuration({ units: 1, rest: false })).toBe("16");
+    expect(vexDuration({ units: 6, rest: true })).toBe("qr");
+    expect(vexDuration({ units: 3, rest: false })).toBe("8");
+    expect(isDotted({ units: 6, rest: true })).toBe(true);
+    expect(isDotted({ units: 3, rest: false })).toBe(true);
+    expect(isDotted({ units: 4, rest: false })).toBe(false);
   });
 });

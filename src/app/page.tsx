@@ -28,7 +28,9 @@ export default function Home() {
             );
           })}
         </ul>
-        <p className="mx-auto mt-6 max-w-5xl text-center text-sm text-zinc-500">Partitura — próximamente</p>
+        <p className="mx-auto mt-6 max-w-5xl text-center text-sm text-zinc-500">
+          Reconocer tipos de compases (binarios 2/4, 3/4, 4/4 · ternarios 6/8, 9/8, 12/8 · irregulares 5/4, 7/4) · Partitura — próximamente
+        </p>
       </main>
     </SuiteShell>
   );
