@@ -40,8 +40,9 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 7ma menor desc | Watermelon Man (Herbie Hancock) · Blanca Navidad                 | Herbie Hancock o Papá Noel (ilustración) | [ ] Watermelon Man · [ ] Blanca Navidad (White Christmas)            |
 | 7ma mayor desc | I Love You (Cole Porter) · Have Yourself a Merry Little Christmas | Cole Porter                                | [ ] I Love You · [ ] Have Yourself a Merry Little Christmas          |
 
-## Próximas secciones pendientes
+## Próximas secciones y mejoras pendientes
 
+- **Mejorar el switch binario/ternario** en Células rítmicas (definir diseño/comportamiento).
 - **Reconocer tipos de compases**: módulo para identificar auditivamente el compás:
   - Binarios: `2/4`, `3/4`, `4/4`
   - Ternarios (compuestos): `6/8`, `9/8`, `12/8`

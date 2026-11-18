@@ -41,19 +41,32 @@ export function RhythmNotation({ ids, width, height = 80, colors, line = false, 
     ctx.setStrokeStyle(INK);
 
     // Invisible 5-line stave used only for positioning; notes sit on its middle line (b/4).
-    // VexFlow puts that line at stave.y + 60. We pin it at y=45: stems/beams reach up to ~y=10
-    // and short rests hang down to ~y=65, so use a height of ~72 to keep everything inside the box.
-    const pad = line ? 18 : 12;
-    const stave = new Stave(0, -15, width);
+    // VexFlow puts that line at stave.y + 60. Pinning at y=-19 puts midY=41 so stems reach ~y=6
+    // and proportional duration bars sit cleanly below rests at y=height-8.
+    const pad = line ? 14 : 8;
+    const stave = new Stave(0, -19, width);
     stave.setNoteStartX(pad);
     const midY = stave.getYForLine(2);
 
+    const xStart = line ? 10 : 6;
+    const xEnd = width - xStart;
+    const beatGap = ids.length > 1 ? 5 : 0;
+    const beatW = (xEnd - xStart) / ids.length;
+    const innerBeatW = beatW - beatGap;
+    const slotGap = 2;
+
     const all: StaveNote[] = [];
     const beams: Beam[] = [];
+    const entries: { sn: StaveNote; slotX: number; barW: number; rest: boolean; color: string }[] = [];
+
     ids.forEach((id, i) => {
       const c = colors?.[i];
       const cell = getCell(id);
       const isTernary = cell.subdivision === "ternary";
+      const beatUnits = isTernary ? 6 : 4;
+      const beatX = xStart + i * beatW;
+      let cursorUnits = 0;
+
       const notes = cell.slots.map((s) => {
         const dotted = isDotted(s);
         const sn = new StaveNote({
@@ -67,6 +80,17 @@ export function RhythmNotation({ ids, width, height = 80, colors, line = false, 
           sn.setStyle({ fillStyle: c, strokeStyle: c });
           if (dotted) Dot.getDots(sn).forEach((d) => d.setStyle({ fillStyle: c, strokeStyle: c }));
         }
+
+        const slotX = beatX + (cursorUnits / beatUnits) * innerBeatW;
+        const slotW = (s.units / beatUnits) * innerBeatW;
+        entries.push({
+          sn,
+          slotX,
+          barW: Math.max(3, slotW - slotGap),
+          rest: s.rest,
+          color: c ?? INK,
+        });
+        cursorUnits += s.units;
         return sn;
       });
       all.push(...notes);
@@ -97,8 +121,41 @@ export function RhythmNotation({ ids, width, height = 80, colors, line = false, 
     voice.addTickables(all);
     const formatWidth = Math.max(20, width - pad * 2 - 14);
     new Formatter().joinVoices([voice]).format([voice], formatWidth);
+
+    // Snap each notehead/rest to its exact proportional time onset so notes align 1:1 with duration bars below.
+    for (const entry of entries) {
+      entry.sn.setStave(stave);
+      const tc = entry.sn.getTickContext();
+      tc.setX(tc.getX() + (entry.slotX - entry.sn.getAbsoluteX()));
+    }
+
     voice.draw(ctx, stave);
     beams.forEach((b) => b.setContext(ctx).draw());
+
+    // Proportional duration bars aligned below each note or rest.
+    const barY = height - 8;
+    for (const entry of entries) {
+      if (entry.rest) {
+        ctx.save();
+        ctx.setStrokeStyle(entry.color);
+        ctx.setLineWidth(1.5);
+        ctx.setLineDash([3, 2]);
+        ctx.beginPath();
+        ctx.moveTo(entry.slotX, barY + 1.5);
+        ctx.lineTo(entry.slotX + entry.barW, barY + 1.5);
+        ctx.stroke();
+        ctx.restore();
+      } else {
+        ctx.rect(entry.slotX, barY - 1.5, 1.8, 6, { rx: 0.9, ry: 0.9, fill: entry.color, stroke: "none" });
+        ctx.rect(entry.slotX, barY, entry.barW, 3, {
+          rx: 1.5,
+          ry: 1.5,
+          fill: entry.color,
+          opacity: 0.75,
+          stroke: "none",
+        });
+      }
+    }
   }, [ids, width, height, colors, line]);
 
   return <div ref={host} aria-hidden className={`pointer-events-none flex items-center justify-center ${className ?? "h-full w-full"}`} />;
