@@ -343,7 +343,8 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "The Winner Takes It All",
           artist: "ABBA",
-          motif: [n(0, 1), n(10, 1.5), n(9, 0.5), n(7, 1), n(5, 2)],
+          // do do sib sib la laaaa
+          motif: [n(0, 0.75), n(0, 0.75), n(10, 0.75), n(10, 0.75), n(9, 0.75), n(9, 2)],
         },
         {
           title: "Somewhere (West Side Story)",

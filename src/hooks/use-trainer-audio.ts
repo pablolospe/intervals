@@ -24,10 +24,16 @@ export function useTrainerAudio() {
       synthRef.current = new SynthEngine(ctx);
       const mic = new MicPitchSource(ctx);
       mic.subscribe((frame) => {
+        if (mutedRef.current) {
+          live.frequency = null;
+          live.progress = 0;
+          live.buffer = null;
+          return;
+        }
         live.buffer = frame.buffer;
         live.frequency = frame.frequency;
         const { phase, rootHz, confirmNote } = useTrainer.getState();
-        if (mutedRef.current || (phase !== "SINGING_ROOT" && phase !== "SINGING_TARGET")) {
+        if (phase !== "SINGING_ROOT" && phase !== "SINGING_TARGET") {
           live.progress = 0;
           return;
         }

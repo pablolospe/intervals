@@ -94,7 +94,7 @@ El servidor renderiza con los valores por defecto y no puede leer localStorage. 
 
 ---
 
-## Fase 2: PWA instalable (manifest + íconos)
+## Fase 2: PWA instalable (manifest + íconos) ✅ (hecha; falta probar en celu real)
 
 Next 16 soporta el manifest de forma nativa. Guía: `node_modules/next/dist/docs/01-app/02-guides/progressive-web-apps.md` y `03-api-reference/03-file-conventions/01-metadata/manifest.md`.
 

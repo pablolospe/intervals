@@ -73,7 +73,14 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - **Hidratación:** los stores usan `skipHydration`; `<StoreHydrator />` (en `layout.tsx`) los carga después de montar y pide `navigator.storage.persist()`. Mientras no esté cargado (`useHydrated()`), los contadores se ven atenuados. Los componentes no deben leer `localStorage` directamente.
 - El almacenamiento va por `safe-storage.ts`: si `localStorage` falla (modo privado, cuota), cae a memoria sin romper la app.
 
-## 5. Ilustraciones y marca
+## 5. PWA (instalable)
+
+- **Manifest:** `src/app/manifest.ts` (Next lo sirve en `/manifest.webmanifest`). `display: standalone`, `orientation: portrait`, `background_color` y `theme_color` = `#0b0c10`. Si cambia el fondo de la app, cambiarlo en el manifest y en `viewport.themeColor` (`layout.tsx`).
+- **Íconos:** `public/icons/icon-192.png` y `icon-512.png` (el logo sobre transparente, como el favicon) e `icon-maskable-512.png` (logo al ~62 % centrado sobre `#0b0c10`, para el recorte circular de Android). `src/app/icon.png` y `src/app/apple-icon.png` los enlaza Next solo; el de Apple es opaco (iOS pinta de negro lo transparente). Todos salen de `public/images/favicon.png`; si cambia el logo, regenerarlos desde ahí.
+- **iOS:** `appleWebApp` en el `metadata` con barra de estado `black` (opaca): la página queda debajo de la barra y no hace falta `safe-area`. Si algún día se pasa a `black-translucent`, hay que agregar `viewportFit: "cover"` y padding con `env(safe-area-inset-*)`.
+- **Micrófono:** necesita HTTPS (en `localhost` también vale). En iPhone instalado, `getUserMedia` es lo más frágil: probarlo siempre en un dispositivo real.
+
+## 6. Ilustraciones y marca
 
 - Estilo: mancha de color con degradé + figura con trazo oscuro fino (3,5 px sobre `viewBox` 240 px), destellos y un hilito curvo abajo a la izquierda.
 - Piel `#fde8d4 → #f3c4a0`, contorno `#1a1a1f`, notas crema `#fff6ec`.
@@ -81,7 +88,7 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - **Proceso para dibujar o editar SVG:** usar la skill `vector-illustration`, con IDs semánticos (`ear.helix`, `mouth.tongue`), validar con `validate_svg.py` y **mirar el render** sobre el fondo oscuro de la app (no solo sobre blanco). Comparar contra la imagen de diseño de referencia.
 - En esta máquina no hay `rsvg-convert` ni CairoSVG; se renderiza con `qlmanage -t -s <px> -o <dir> archivo.svg`. No instalar herramientas sin avisar.
 
-## 6. Código
+## 7. Código
 
 - **Next.js 16 con cambios incompatibles:** leer la guía correspondiente en `node_modules/next/dist/docs/` antes de escribir código de Next (ver `AGENTS.md`).
 - Los componentes y datos compartidos entre servidor y cliente no se exportan desde un archivo `"use client"` si el servidor los usa (por eso `MODULES` está en `src/lib/modules.ts`).
@@ -89,12 +96,12 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - El estado vive en Zustand (`src/store/trainer-store.ts`, `src/store/rhythm-store.ts`); el audio, en clases sin React (`src/lib/audio`, `src/lib/rhythm`).
 - Para documentación de librerías, consultar Context7 antes que memoria.
 
-## 7. Verificación antes de dar algo por hecho
+## 8. Verificación antes de dar algo por hecho
 
 - `npx tsc --noEmit`, `npx eslint src`, `npx vitest run` y `pnpm build` deben pasar. Hoy `eslint` tiene 3 errores previos (`set-state-in-effect` en `identify-modal.tsx` y `trainer-app.tsx`, y `refs` en `pitch-canvas.tsx`) y `mascot.test.ts` tiene 2 tests rotos por textos de mascota; ninguno es de cambios recientes.
 - Los cambios visuales y de audio se prueban en `pnpm dev`; type-check y tests no cubren cómo se ve ni cómo suena.
 
-## 8. Trabajo con el asistente
+## 9. Trabajo con el asistente
 
 - Preguntar cuando hay una decisión de diseño con varias lecturas razonables; si no, avanzar con el criterio más conservador y avisarlo.
 - Los commits terminan con la línea de atribución indicada por la configuración de Claude Code.

@@ -199,15 +199,17 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
             )}
           </div>
 
-          <MiniPiano
-            rootMidi={rootMidi ?? (!isRandom && activeDef ? 60 : null)}
-            rootHz={rootHz}
-            semitones={activeDef ? signedSemitones(activeDef) : null}
-            revealed={revealed}
-            phase={phase}
-            evaluation={evaluation}
-            lang={lang}
-          />
+          {!isRandom && (
+            <MiniPiano
+              rootMidi={rootMidi ?? (activeDef ? 60 : null)}
+              rootHz={rootHz}
+              semitones={activeDef ? signedSemitones(activeDef) : null}
+              revealed={revealed}
+              phase={phase}
+              evaluation={evaluation}
+              lang={lang}
+            />
+          )}
 
           {micError && <p className="mt-2 rounded-xl bg-red-950/60 p-2 text-xs text-red-300 sm:text-sm">{t.micDenied}</p>}
         </section>
