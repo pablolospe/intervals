@@ -1,5 +1,5 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim" | "armstrong" | "bride" | "cake" | "lennon";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim" | "armstrong" | "bride" | "cake" | "lennon" | "gershwin";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
@@ -20,6 +20,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "M6-asc") return "gardel";
   if (intervalId === "M6-desc") return "radiohead";
   if (intervalId === "m7-asc") return "abba";
+  if (intervalId === "m7-desc") return "gershwin";
   if (intervalId === "M7-asc") return "aha";
   if (intervalId === "P8-asc") return "judy";
   if (intervalId === "P8-desc") return "gieco";
@@ -391,6 +392,24 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       src: "/images/lennon/happy.jpg",
       alt: "John Lennon (The Beatles — In My Life)",
       objectPosition: "object-center scale-105",
+    },
+  },
+  gershwin: {
+    label: "George Gershwin",
+    happy: {
+      src: "/images/gershwin/happy.jpg",
+      alt: "George Gershwin sonriendo con su pipa (An American in Paris)",
+      objectPosition: "object-[50%_25%] scale-105",
+    },
+    sad: {
+      src: "/images/gershwin/sad.webp",
+      alt: "George Gershwin serio (An American in Paris)",
+      objectPosition: "object-[50%_30%] scale-105",
+    },
+    neutral: {
+      src: "/images/gershwin/happy.jpg",
+      alt: "George Gershwin (An American in Paris)",
+      objectPosition: "object-[50%_25%] scale-105",
     },
   },
 };

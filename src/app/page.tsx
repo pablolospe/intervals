@@ -10,7 +10,7 @@ const ART = { recognize: EarArt, sing: MouthArt, rhythm: RhythmArt } as const;
 export default function Home() {
   return (
     <SuiteShell>
-      <main className="flex-1 px-4 pb-10 md:px-8 md:py-8">
+      <main className="flex-1 px-4 pb-10 md:overflow-y-auto md:px-8 md:py-8">
         <ul className="mx-auto flex max-w-5xl snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible">
           {MODULES.map((m) => {
             const Art = ART[m.id];
@@ -28,9 +28,32 @@ export default function Home() {
             );
           })}
         </ul>
-        <p className="mx-auto mt-6 max-w-5xl text-center text-sm text-zinc-500">
-          Reconocer tipos de compases (binarios 2/4, 3/4, 4/4 · ternarios 6/8, 9/8, 12/8 · irregulares 5/4, 7/4) · Partitura — próximamente
-        </p>
+        <section aria-label="Próximos módulos" className="mx-auto mt-4 max-w-5xl md:mt-6">
+          <div className="flex flex-col items-start justify-between gap-3 rounded-3xl border-2 border-dashed border-zinc-700/80 bg-zinc-900/40 p-5 sm:flex-row sm:items-center sm:px-6">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="rounded-full bg-zinc-800 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-300 ring-1 ring-amber-300/30">
+                  Próximamente
+                </span>
+                <h2 className="text-lg font-extrabold text-zinc-100 sm:text-xl">
+                  Reconocer tipos de compases
+                </h2>
+              </div>
+              <p className="text-sm text-zinc-400">
+                Binarios (2/4, 3/4, 4/4) · ternarios (6/8, 9/8, 12/8) · irregulares (5/4, 7/4…)
+              </p>
+            </div>
+            <span
+              aria-disabled="true"
+              className="inline-flex shrink-0 items-center rounded-full border border-zinc-700/80 bg-zinc-900/80 px-4 py-2 text-xs font-semibold text-zinc-500"
+            >
+              En desarrollo
+            </span>
+          </div>
+          <p className="mt-4 text-center text-xs text-zinc-500">
+            Partitura — próximamente
+          </p>
+        </section>
       </main>
     </SuiteShell>
   );

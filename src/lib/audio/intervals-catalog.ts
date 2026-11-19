@@ -353,6 +353,15 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
       ],
       desc: [
         {
+          title: "An American in Paris",
+          artist: "George Gershwin",
+          motif: [
+            n(0, 0.5), n(-10, 0.5), n(-8, 1.5),
+            n(0, 0.5), n(-10, 0.5), n(-8, 1.5),
+            n(0, 0.5), n(-10, 0.5), n(-8, 0.5), n(2, 0.5), n(0, 0.5), n(-10, 0.5), n(-8, 1.5),
+          ],
+        },
+        {
           title: "Watermelon Man",
           artist: "Herbie Hancock",
           motif: [n(0, 1), n(-10, 2)],
@@ -409,7 +418,8 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "Singin' in the Rain",
           artist: "Gene Kelly",
-          motif: [n(0, 1), n(12, 1.5), n(9, 1), n(7, 1), n(4, 2)],
+          // Do, Do(agudo, largo), la, sol, fa, re
+          motif: [n(0, 0.75), n(12, 2), n(9, 0.75), n(7, 0.75), n(5, 0.75), n(2, 2)],
         },
       ],
       desc: [

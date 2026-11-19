@@ -133,21 +133,25 @@ export function RhythmTrainer() {
       </header>
 
       {/* Listen: one big button that turns into "Repetir" once a rhythm exists. */}
-      <section className="card flex shrink-0 flex-col gap-3 p-3 sm:p-4">
+      <section className="card flex shrink-0 flex-col gap-2.5 p-2.5 sm:gap-3 sm:p-4 xl:flex-row xl:items-center xl:justify-between">
         <button
           onClick={() => (target ? play(target) : newRhythm())}
           disabled={playing}
-          className="btn btn-primary h-12 w-full gap-2 text-base font-extrabold sm:h-14 sm:text-lg"
+          className="btn btn-primary h-11 w-full gap-2 text-base font-extrabold sm:h-12 sm:w-auto sm:min-w-56 sm:self-center sm:px-8 xl:shrink-0"
         >
           <span aria-hidden>{target && !playing ? "↻" : "▶"}</span>
           {playing ? "Sonando…" : target ? "Repetir" : "Escuchar ritmo"}
         </button>
 
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-          <div role="radiogroup" aria-label="Subdivisión" className="flex items-center rounded-full border border-zinc-800 bg-zinc-900/80 p-0.5 text-xs font-semibold">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-3 xl:justify-end">
+          <div
+            role="radiogroup"
+            aria-label="Subdivisión"
+            className="grid w-full grid-cols-2 rounded-full border border-zinc-800 bg-zinc-950/70 p-0.5 text-xs font-semibold sm:inline-flex sm:w-auto"
+          >
             {([
-              ["binary", "Binaria", "2/4 · 4/4"],
-              ["ternary", "Ternaria", "6/8 · 12/8"],
+              ["binary", "Binaria", "(4/4)"],
+              ["ternary", "Ternaria", "(12/8)"],
             ] as const).map(([mode, label, meter]) => {
               const on = subdivision === mode;
               return (
@@ -157,31 +161,31 @@ export function RhythmTrainer() {
                   role="radio"
                   aria-checked={on}
                   onClick={() => switchSubdivision(mode)}
-                  className={`rounded-full px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 ${
+                  className={`rounded-full px-3 py-1.5 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:py-1 ${
                     on ? "bg-emerald-400 text-zinc-950 shadow-sm" : "text-zinc-300 hover:text-white"
                   }`}
                 >
-                  {label} <span className={`hidden sm:inline ${on ? "text-zinc-900/80" : "text-zinc-500"}`}>{meter}</span>
+                  {label} <span className={on ? "text-zinc-900/75" : "text-zinc-400"}>{meter}</span>
                 </button>
               );
             })}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <div role="group" aria-label="Tempo" className="flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-1.5 py-1">
+          <div className="flex w-full flex-wrap items-center justify-between gap-1.5 sm:w-auto sm:justify-center sm:gap-2.5">
+            <div role="group" aria-label="Tempo" className="flex items-center gap-0.5 rounded-full border border-zinc-800 bg-zinc-950/70 p-0.5">
               <button
-                className="chip h-7 w-7 px-0! text-xs font-bold"
+                className="chip h-7 w-7 border-zinc-700/80 px-0! text-xs font-bold"
                 onClick={() => setBpm((b) => Math.max(BPM_MIN, b - 5))}
                 disabled={bpm <= BPM_MIN}
                 aria-label="Más lento"
               >
                 −
               </button>
-              <span className="min-w-14 sm:min-w-16 text-center text-xs font-semibold tabular-nums text-zinc-50">
-                {subdivision === "ternary" ? "♩." : "♩"} = {bpm}
+              <span className="min-w-12 px-1 text-center text-xs font-semibold tabular-nums text-zinc-100 sm:min-w-14">
+                {subdivision === "ternary" ? "♩." : "♩"} {bpm}
               </span>
               <button
-                className="chip h-7 w-7 px-0! text-xs font-bold"
+                className="chip h-7 w-7 border-zinc-700/80 px-0! text-xs font-bold"
                 onClick={() => setBpm((b) => Math.min(BPM_MAX, b + 5))}
                 disabled={bpm >= BPM_MAX}
                 aria-label="Más rápido"
@@ -190,20 +194,22 @@ export function RhythmTrainer() {
               </button>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <button
-                className="chip h-8 px-3 text-xs"
+                className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3"
                 aria-pressed={includeRests}
                 onClick={() => setIncludeRests((v) => !v)}
               >
-                {includeRests ? "✓" : "○"} Silencios
+                <span aria-hidden className="text-[11px]">{includeRests ? "✓" : "○"}</span>
+                <span>Silencios</span>
               </button>
               <button
-                className="chip h-8 px-3 text-xs"
+                className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3"
                 aria-pressed={metronome}
                 onClick={() => setMetronome((v) => !v)}
               >
-                {metronome ? "✓" : "○"} Metrónomo
+                <span aria-hidden className="text-[11px]">{metronome ? "✓" : "○"}</span>
+                <span>Metrónomo</span>
               </button>
             </div>
           </div>
@@ -211,9 +217,9 @@ export function RhythmTrainer() {
       </section>
 
       {/* Answer: one paper slot per beat */}
-      <section className={`card relative flex min-h-52 shrink-0 flex-col justify-between p-2.5 transition-opacity sm:p-3 ${target ? "" : "pointer-events-none opacity-40"}`} aria-labelledby="answer-title">
-        <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="answer-title" className="text-xs sm:text-sm font-semibold text-zinc-100">Tu compás</h2>
+      <section className={`card relative flex shrink-0 flex-col justify-between gap-2.5 p-2.5 transition-opacity sm:min-h-52 sm:p-3 ${checked ? "min-h-56" : ""} ${target ? "" : "pointer-events-none opacity-40"}`} aria-labelledby="answer-title">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+          <h2 id="answer-title" className="text-xs font-semibold text-zinc-100 sm:text-sm">Tu compás</h2>
           {hint && <p role="status" className={`text-xs sm:text-sm ${checked ? (allRight ? "font-semibold text-emerald-300" : "font-semibold text-red-300") : "text-zinc-300"}`}>
             {hint}
           </p>}
@@ -326,10 +332,6 @@ export function RhythmTrainer() {
           ))}
         </div>
       </section>
-      <p className="flex shrink-0 flex-wrap items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-700 px-3 py-2 text-center text-xs text-zinc-300 sm:text-sm">
-        <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-zinc-950">Próximamente</span>
-        Reconocer tipos de compases: binarios (2/4, 3/4, 4/4) · ternarios (6/8, 9/8, 12/8) · irregulares (5/4, 7/4…)
-      </p>
     </main>
     </SuiteShell>
   );

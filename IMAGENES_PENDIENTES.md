@@ -6,7 +6,7 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 - **Registro en el código:** `src/components/mascot.tsx` (`getMascotCharacter` y `CHARACTERS`).
 - **Formato:** cuadrado o casi cuadrado, con la cara centrada: se recorta en círculo.
 
-## Ya tienen imagen (22 de 24)
+## Ya tienen imagen (23 de 24)
 
 | Intervalo      | Personaje                                             | Checkear melodía                                                                 |
 | -------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -29,20 +29,19 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 6ta mayor asc  | Carlos Gardel (El día que me quieras)                | [x] El día que me quieras · [x] My Way                                           |
 | 6ta mayor desc | Thom Yorke · Radiohead (No Surprises)                | [x] No Surprises · [ ] Nobody Knows the Trouble I've Seen                        |
 | 7ma menor asc  | Agnetha de ABBA (The Winner Takes It All)             | [ ] The Winner Takes It All · [ ] Somewhere (West Side Story)                    |
+| 7ma menor desc | George Gershwin (An American in Paris)                | [x] An American in Paris · [ ] Watermelon Man · [ ] Blanca Navidad               |
 | 7ma mayor asc  | Morten Harket · a-ha (Take On Me)                    | [ ] Take On Me · [ ] Superman                                                    |
-| 8va justa asc  | Judy Garland (Somewhere Over the Rainbow)             | [ ] Somewhere Over the Rainbow · [ ] Singin' in the Rain                         |
+| 8va justa asc  | Judy Garland (Somewhere Over the Rainbow)             | [ ] Somewhere Over the Rainbow · [x] Singin' in the Rain                         |
 | 8va justa desc | León Gieco (Todos los días un poco)                 | [x] Todos los días un poco · [ ] Doogie Howser, M.D. · [ ] Willow Weep for Me    |
 
-## Faltan (2)
+## Faltan (1)
 
 | Intervalo      | Canciones                                                         | Personaje sugerido                         | Checkear melodía                                                     |
 | -------------- | ----------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------- |
-| 7ma menor desc | Watermelon Man (Herbie Hancock) · Blanca Navidad                 | Herbie Hancock o Papá Noel (ilustración) | [ ] Watermelon Man · [ ] Blanca Navidad (White Christmas)            |
 | 7ma mayor desc | I Love You (Cole Porter) · Have Yourself a Merry Little Christmas | Cole Porter                                | [ ] I Love You · [ ] Have Yourself a Merry Little Christmas          |
 
-## Próximas secciones y mejoras pendientes
+## Próximas secciones pendientes
 
-- **Mejorar el switch binario/ternario** en Células rítmicas (definir diseño/comportamiento).
 - **Reconocer tipos de compases**: módulo para identificar auditivamente el compás:
   - Binarios: `2/4`, `3/4`, `4/4`
   - Ternarios (compuestos): `6/8`, `9/8`, `12/8`
