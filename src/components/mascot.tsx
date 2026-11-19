@@ -90,7 +90,7 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
     },
   },
   homer: {
-    label: "Homero Simpson · Los Simpson",
+    label: "Homero Simpson",
     happy: {
       src: "/images/homer/happy.jpg",
       alt: "Homero Simpson festejando (The Simpsons)",

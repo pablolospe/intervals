@@ -62,8 +62,11 @@ export function useTrainerAudio() {
       stabRef.current.reset();
       resetLive();
       const seconds = synth.playSequence(notes, bpm);
+      live.playStartMs = performance.now();
+      live.playDurationMs = seconds * 1000 + 100;
       timerRef.current = window.setTimeout(() => {
         mutedRef.current = false;
+        live.playDurationMs = 0;
         onDone?.();
       }, seconds * 1000 + 100);
     },

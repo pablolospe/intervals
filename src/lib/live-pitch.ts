@@ -5,12 +5,16 @@
 export interface LiveData {
   frequency: number | null;
   progress: number; // 0..1 stabilization
+  playStartMs: number;
+  playDurationMs: number;
   buffer: Float32Array | null;
 }
 
-export const live: LiveData = { frequency: null, progress: 0, buffer: null };
+export const live: LiveData = { frequency: null, progress: 0, playStartMs: 0, playDurationMs: 0, buffer: null };
 
 export function resetLive(): void {
   live.frequency = null;
   live.progress = 0;
+  live.playStartMs = 0;
+  live.playDurationMs = 0;
 }

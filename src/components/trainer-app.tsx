@@ -1,8 +1,9 @@
 "use client";
 import { SuiteShell } from "@/components/suite-shell";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BASE_INTERVALS, directedId, getInterval, signedSemitones } from "@/lib/audio/intervals-catalog";
 import { dict } from "@/lib/i18n";
+import { live } from "@/lib/live-pitch";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
 import { IdentifyModal } from "./identify-modal";
@@ -52,10 +53,41 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
     ? ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "IDENTIFY"]
     : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET"];
   const stepIndex = finished ? order.length : order.indexOf(phase);
+  const barRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const mood: Mood = phase === "SUCCESS" ? "happy" : phase === "MISS" ? "sad" : "neutral";
   const mainLabel = phase === "IDLE" ? t.newChallenge : t.next;
   /** The pitch view only matters while listening/singing; otherwise it hosts the main actions. */
   const canvasIdle = phase === "IDLE" || finished;
+
+  useEffect(() => {
+    let raf = 0;
+    const animate = phase === "PLAYING_INTERVAL" || phase === "SINGING_ROOT" || phase === "SINGING_TARGET";
+
+    const update = () => {
+      for (let i = 0; i < stepLabels.length; i++) {
+        const el = barRefs.current[i];
+        if (!el) continue;
+        let pct = 0;
+        if (i < stepIndex) {
+          pct = 100;
+        } else if (i === stepIndex) {
+          if (phase === "PLAYING_INTERVAL") {
+            const p = live.playDurationMs > 0 ? Math.min(1, Math.max(0, (performance.now() - live.playStartMs) / live.playDurationMs)) : 0;
+            pct = p * 100;
+          } else if (phase === "SINGING_ROOT" || phase === "SINGING_TARGET") {
+            pct = Math.min(1, Math.max(0, live.progress)) * 100;
+          } else if (phase === "IDENTIFY") {
+            pct = 100;
+          }
+        }
+        el.style.width = `${pct}%`;
+      }
+      if (animate) raf = requestAnimationFrame(update);
+    };
+
+    update();
+    return () => cancelAnimationFrame(raf);
+  }, [phase, stepIndex, stepLabels.length]);
 
   return (
     <SuiteShell active={mode}>
@@ -81,7 +113,15 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
           <ol className="[@media(max-height:480px)]:hidden mb-2.5 grid gap-1.5 sm:mb-4 sm:gap-2" style={{ gridTemplateColumns: `repeat(${stepLabels.length}, minmax(0, 1fr))` }} aria-label="progress">
             {stepLabels.map((label, i) => (
               <li key={label} className="flex flex-col gap-1">
-                <span className={`h-2 rounded-full transition-colors ${i <= stepIndex ? "bg-emerald-400" : "bg-zinc-800"}`} />
+                <span className="relative h-2.5 overflow-hidden rounded-full bg-zinc-800">
+                  <span
+                    ref={(el) => {
+                      barRefs.current[i] = el;
+                    }}
+                    className="block h-full rounded-full bg-emerald-400"
+                    style={{ width: i < stepIndex ? "100%" : "0%" }}
+                  />
+                </span>
                 <span className={`truncate text-xs sm:text-sm ${i === stepIndex ? "font-bold text-emerald-300" : i < stepIndex ? "font-medium text-zinc-300" : "font-medium text-zinc-500"}`}>{label}</span>
               </li>
             ))}

@@ -8,6 +8,7 @@ import type { Phase } from "@/store/trainer-store";
 const GOOD = "#34d399";
 const WARN = "#fbbf24";
 const DIM = "#52525b";
+const SHOW_CIRCULAR_PROGRESS = false;
 
 /** 60fps oscilloscope + tuner needle (±50 cents) + large translucent hold circle. Reads `live`, never React state. */
 export function PitchCanvas({ idleLabel, phase }: { idleLabel: string; phase?: Phase; lang?: Lang }) {
@@ -49,7 +50,7 @@ export function PitchCanvas({ idleLabel, phase }: { idleLabel: string; phase?: P
       const singing = curPhase === "SINGING_ROOT" || curPhase === "SINGING_TARGET";
 
       // Large, semi-transparent circular hold progress centered behind the tuner.
-      if (singing) {
+      if (SHOW_CIRCULAR_PROGRESS && singing) {
         const ringX = w / 2;
         const ringY = h * 0.48;
         const ringR = Math.min(w, h) * 0.38;

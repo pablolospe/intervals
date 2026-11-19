@@ -51,6 +51,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotLabel("m7-desc")).toBe("George Gershwin");
     expect(getMascotLabel("M7-asc")).toBe("Morten de A-ha");
     expect(getMascotLabel("M7-desc")).toBe("Cole Porter");
+    expect(getMascotLabel("TT-asc")).toBe("Homero Simpson");
     expect(getMascotLabel("TT-desc")).toBe("Eddie de Pearl Jam");
     expect(getMascotLabel("P8-asc")).toBe("Judy Garland");
     expect(getMascotLabel("P8-desc")).toBe("León Gieco");
@@ -64,6 +65,7 @@ describe("getMascotCharacter", () => {
     expect(getMascotReaction("P8-asc", "happy")).toBe("Pusiste feliz a Judy Garland");
     expect(getMascotReaction("P4-asc", "happy")).toBe("Pusiste feliz a la novia");
     expect(getMascotReaction("P4-asc", "sad")).toBe("La novia está triste");
+    expect(getMascotReaction("TT-asc", "sad")).toBe("Homero Simpson está triste");
     expect(getMascotReaction("unknown", "happy", "Wagner")).toBe("Pusiste feliz a Wagner");
     expect(getMascotReaction("unknown", "sad", "Wagner")).toBe("Wagner está triste");
     expect(getMascotReaction("unknown", "happy")).toBeNull();
