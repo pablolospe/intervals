@@ -52,6 +52,12 @@ body {
   --accent-edge: #a8820f;
 }
 
+[data-theme="stats"] {
+  --color-emerald-100: #ede9fe; --color-emerald-200: #ddd6fe; --color-emerald-300: #c4b5fd;
+  --color-emerald-400: #a78bfa; --color-emerald-500: #8b5cf6; --color-emerald-600: #7c3aed;
+  --accent-edge: #6d4fd1;
+}
+
 @keyframes pop {
   0% { transform: scale(0.6) rotate(-12deg); }
   60% { transform: scale(1.25) rotate(8deg); }
@@ -86,19 +92,19 @@ body {
   /* Raised "key" buttons: a solid bottom edge that squashes when pressed. */
   .btn-primary {
     @apply bg-emerald-400 text-zinc-950 shadow-[0_4px_0_0_var(--accent-edge)] hover:bg-emerald-300
-      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_var(--accent-edge)];
+      enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_var(--accent-edge)];
   }
   .btn-accent {
     @apply bg-violet-400 text-zinc-950 shadow-[0_4px_0_0_#5b21b6] hover:bg-violet-300
-      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#5b21b6];
+      enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#5b21b6];
   }
   .btn-danger {
     @apply bg-red-500 text-white shadow-[0_4px_0_0_#991b1b] hover:bg-red-400
-      enabled:active:translate-y-[3px] enabled:active:shadow-[0_1px_0_0_#991b1b];
+      enabled:active:translate-y-0.75 enabled:active:shadow-[0_1px_0_0_#991b1b];
   }
   .btn-ghost {
     @apply border border-zinc-600 bg-zinc-800 text-zinc-50 shadow-[0_3px_0_0_#09090b] hover:border-zinc-400 hover:bg-zinc-700
-      enabled:active:translate-y-[2px] enabled:active:shadow-[0_1px_0_0_#09090b];
+      enabled:active:translate-y-0.5 enabled:active:shadow-[0_1px_0_0_#09090b];
   }
   .btn-sm {
     @apply rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
+import { StoreHydrator } from "@/components/store-hydrator";
 import "./globals.css";
 
 const geistSans = Plus_Jakarta_Sans({
@@ -23,7 +24,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#0b0c10]">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#0b0c10]">
+        <StoreHydrator />
+        {children}
+      </body>
     </html>
   );
 }

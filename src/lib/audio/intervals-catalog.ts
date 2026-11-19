@@ -329,7 +329,7 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         },
         {
           title: "Nobody Knows the Trouble I've Seen",
-          motif: [n(0, 0.75), n(-9, 1.25), n(-7, 0.5), n(-5, 1.5)],
+          motif: [n(0, 0.75), n(-9, 1.25), n(-7, 0.5), n(-4, 1.5)],
         },
       ],
     },

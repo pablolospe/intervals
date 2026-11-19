@@ -1,29 +1,22 @@
 "use client";
 import { SuiteShell } from "@/components/suite-shell";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { cellPool, getCell, grade, randomRhythm, type Subdivision } from "@/lib/rhythm/cells";
+import { cellPool, getCell, grade, type Subdivision } from "@/lib/rhythm/cells";
 import { RhythmPlayer } from "@/lib/rhythm/rhythm-player";
+import { BEATS, BPM_MAX, BPM_MIN, useRhythm } from "@/store/rhythm-store";
+import { useHydrated } from "../store-hydrator";
 import { RhythmNotation } from "./rhythm-notation";
 
-const BEATS = 4;
 // Dark enough to read on the light paper surface.
 const OK = "var(--accent-edge)";
 const BAD = "#dc2626";
-const empty = () => Array<string | null>(BEATS).fill(null);
-const BPM_MIN = 50;
-const BPM_MAX = 130;
 
 export function RhythmTrainer() {
-  const [target, setTarget] = useState<string[] | null>(null);
-  const [answer, setAnswer] = useState<(string | null)[]>(empty);
-  const [cursor, setCursor] = useState(0);
-  const [checked, setChecked] = useState(false);
-  const [bpm, setBpm] = useState(80);
-  const [subdivision, setSubdivision] = useState<Subdivision>("binary");
-  const [includeRests, setIncludeRests] = useState(true);
-  const [metronome, setMetronome] = useState(true);
+  // Settings, progress and the exercise in progress live in the store so they survive navigating away.
+  const { target, answer, cursor, checked, bpm, subdivision, includeRests, metronome, stats } = useRhythm();
+  const { setBpm, setSubdivision, setIncludeRests, setMetronome, setCursor, pick, clear, check } = useRhythm.getState();
+  const hydrated = useHydrated();
   const [playing, setPlaying] = useState(false);
-  const [stats, setStats] = useState({ score: 0, total: 0, streak: 0 });
   const player = useRef<RhythmPlayer | null>(null);
   const timer = useRef<number | undefined>(undefined);
 
@@ -59,49 +52,15 @@ export function RhythmTrainer() {
   const switchSubdivision = (next: Subdivision) => {
     if (next === subdivision) return;
     stop();
-    setSubdivision(next);
-    setTarget(null);
-    setAnswer(empty());
-    setCursor(0);
-    setChecked(false);
+    setSubdivision(next); // also drops the current exercise
   };
 
-  const newRhythm = () => {
-    const ids = randomRhythm(pool, BEATS);
-    setTarget(ids);
-    setAnswer(empty());
-    setCursor(0);
-    setChecked(false);
-    play(ids);
-  };
-
-  const pick = (id: string) => {
-    if (!canPick) return;
-    const next = answer.slice();
-    next[cursor] = id;
-    setAnswer(next);
-    const nextEmpty = next.findIndex((a, i) => a === null && i > cursor);
-    const anyEmpty = next.findIndex((a) => a === null);
-    setCursor(nextEmpty >= 0 ? nextEmpty : anyEmpty >= 0 ? anyEmpty : cursor);
-  };
-
-  const check = () => {
-    if (!target) return;
-    const ok = grade(answer, target).every(Boolean);
-    setChecked(true);
-    setStats((s) => ({ score: s.score + (ok ? 1 : 0), total: s.total + 1, streak: ok ? s.streak + 1 : 0 }));
-  };
+  const newRhythm = () => play(useRhythm.getState().newRhythm());
 
   /** Giving up skips to another rhythm, but counts as a miss, so it is never easier than trying. */
   const giveUp = () => {
-    if (!target) return;
-    setStats((st) => ({ ...st, total: st.total + 1, streak: 0 }));
-    newRhythm();
-  };
-
-  const clear = () => {
-    setAnswer(empty());
-    setCursor(0);
+    const ids = useRhythm.getState().giveUp();
+    if (ids) play(ids);
   };
 
   const hint = playing
@@ -127,9 +86,9 @@ export function RhythmTrainer() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 text-xs sm:px-3 sm:text-sm" aria-label={`Aciertos: ${stats.score}/${stats.total}. Racha: ${stats.streak}`}>
+        <div className={`flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 text-xs transition-opacity sm:px-3 sm:text-sm ${hydrated ? "" : "opacity-40"}`} aria-label={`Aciertos: ${stats.correct}/${stats.total}. Racha: ${stats.streak}`}>
           <span className="text-zinc-400 text-[11px] sm:text-xs">Aciertos</span>
-          <b className="tabular-nums text-zinc-100">{stats.score}/{stats.total}</b>
+          <b className="tabular-nums text-zinc-100">{stats.correct}/{stats.total}</b>
           <span className="text-zinc-600">·</span>
           <span className="text-zinc-400 text-[11px] sm:text-xs">Racha</span>
           <b className="tabular-nums text-amber-300">{stats.streak}</b>
@@ -180,7 +139,7 @@ export function RhythmTrainer() {
             <div role="group" aria-label="Tempo" className="flex items-center gap-0.5 rounded-full border border-zinc-800 bg-zinc-950/70 p-0.5">
               <button
                 className="chip h-7 w-7 border-zinc-700/80 px-0! text-xs font-bold"
-                onClick={() => setBpm((b) => Math.max(BPM_MIN, b - 5))}
+                onClick={() => setBpm(bpm - 5)}
                 disabled={bpm <= BPM_MIN}
                 aria-label="Más lento"
               >
@@ -191,7 +150,7 @@ export function RhythmTrainer() {
               </span>
               <button
                 className="chip h-7 w-7 border-zinc-700/80 px-0! text-xs font-bold"
-                onClick={() => setBpm((b) => Math.min(BPM_MAX, b + 5))}
+                onClick={() => setBpm(bpm + 5)}
                 disabled={bpm >= BPM_MAX}
                 aria-label="Más rápido"
               >
@@ -203,7 +162,7 @@ export function RhythmTrainer() {
               <button
                 className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3"
                 aria-pressed={includeRests}
-                onClick={() => setIncludeRests((v) => !v)}
+                onClick={() => setIncludeRests(!includeRests)}
               >
                 <span aria-hidden className="text-[11px]">{includeRests ? "✓" : "○"}</span>
                 <span>Silencios</span>
@@ -211,7 +170,7 @@ export function RhythmTrainer() {
               <button
                 className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3"
                 aria-pressed={metronome}
-                onClick={() => setMetronome((v) => !v)}
+                onClick={() => setMetronome(!metronome)}
               >
                 <span aria-hidden className="text-[11px]">{metronome ? "✓" : "○"}</span>
                 <span>Metrónomo</span>

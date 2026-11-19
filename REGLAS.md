@@ -10,7 +10,8 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
   1. **Adivinar intervalos** → `/intervalos/adivinar` (turquesa)
   2. **Cantar intervalos** → `/intervalos/cantar` (coral)
   3. **Células rítmicas** → `/ritmo` (amarillo). El módulo se llama "Células rítmicas", no "Ritmo".
-  4. **Partitura** → **deshabilitada** ("próximamente"). `/partitura` redirige al home. El código del editor se conserva.
+  4. **Resultados** → `/resultados` (violeta `#a78bfa`). No es un juego: muestra el progreso (ver "Progreso y persistencia").
+  5. **Partitura** → **deshabilitada** ("próximamente"). `/partitura` redirige al home. El código del editor se conserva.
 - `/intervalos` redirige a `/intervalos/cantar`.
 
 ### Adivinar intervalos (modo sorpresa)
@@ -54,14 +55,25 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
   | Adivinar | `#14d6cc` | `#0b6f6b` |
   | Cantar | `#f4726f` | `#a93a38` |
   | Células rítmicas | `#ffcf3f` | `#a8820f` |
-- **Cómo se aplica el tema:** cada entrenador pone `data-theme` (`recognize` / `sing` / `rhythm`) en su `<main>`. En `globals.css` ese scope **remapea la escala `emerald-*`** de Tailwind y `--accent-edge`. Por eso el código usa `emerald-*` para "el color del módulo"; no hardcodear colores de acento.
+  | Resultados | `#a78bfa` | `#6d4fd1` |
+- **Cómo se aplica el tema:** cada entrenador pone `data-theme` (`recognize` / `sing` / `rhythm` / `stats`) en su `<main>`. En `globals.css` ese scope **remapea la escala `emerald-*`** de Tailwind y `--accent-edge`. Por eso el código usa `emerald-*` para "el color del módulo"; no hardcodear colores de acento.
 - **Botones y bordes:** botones de píldora (`rounded-full`), tarjetas muy redondeadas (`rounded-3xl`). Los botones principales son tipo tecla (borde inferior sólido que se aplasta al presionar).
-- **Home:** carrusel de tarjetas (scroll horizontal con snap en celular, 3 columnas en escritorio). Cada tarjeta: ilustración, título, descripción y botón "Comenzar →" del color del módulo.
-- **Menú:** barra lateral en escritorio y hamburguesa en celular. Solo Inicio y los módulos; **Resultados y Ajustes no existen** y no se muestran.
+- **Home:** carrusel de tarjetas (scroll horizontal con snap en celular, 2 columnas en tablet y 4 en pantallas anchas). Cada tarjeta: ilustración, título, descripción y botón del color del módulo ("Comenzar →"; en Resultados, "Ver resultados →"). El menú y las tarjetas salen de `MODULES`, así que un módulo nuevo aparece en los dos.
+- **Menú:** barra lateral en escritorio y hamburguesa en celular. Inicio, los módulos y Resultados; **Ajustes no existe** y no se muestra.
 - **El menú también está dentro de cada actividad** (`SuiteShell` envuelve los entrenadores): barra lateral fija en escritorio y tablet (con el módulo activo resaltado en su color) y hamburguesa en la barra superior en celular. Ya no hay botón "← BurpEars" en los entrenadores; el logo del menú lleva al inicio.
 - **Accesibilidad:** foco visible, `aria-*` en grupos de opciones, ilustraciones decorativas con `aria-hidden`, respetar `prefers-reduced-motion`.
 
-## 4. Ilustraciones y marca
+## 4. Progreso y persistencia
+
+- **Sin base de datos ni backend:** el progreso se guarda en `localStorage` del dispositivo con el middleware `persist` de Zustand. No se sincroniza entre dispositivos.
+- **Stores y claves:** `useTrainer` (`burpears:trainer`, intervalos) y `useRhythm` (`burpears:rhythm`, células rítmicas). Cada uno tiene `version` y `migrate`.
+- **Qué se guarda:** idioma, dirección, último intervalo elegido en Cantar (`singSelection`), puntajes **separados por juego** (`scores.recognize` / `scores.sing`), aciertos por intervalo dirigido (`byInterval`, suma Adivinar y Cantar), y en ritmo: tempo, subdivisión, silencios, metrónomo y puntaje.
+- **Qué NO se guarda:** el desafío en curso (`phase`, `currentId`, notas, evaluación). Guardarlo dejaría la app trabada a mitad de un intervalo. El ejercicio de ritmo en curso sobrevive a navegar entre secciones (vive en el store) pero no a recargar.
+- **Si cambia la forma de los datos:** subir `version` y convertir lo viejo en `migrate`; nunca cambiarla sin migración o se pierde el progreso de la gente. Lo leído de `localStorage` se valida (`sanitize`) antes de usarse.
+- **Hidratación:** los stores usan `skipHydration`; `<StoreHydrator />` (en `layout.tsx`) los carga después de montar y pide `navigator.storage.persist()`. Mientras no esté cargado (`useHydrated()`), los contadores se ven atenuados. Los componentes no deben leer `localStorage` directamente.
+- El almacenamiento va por `safe-storage.ts`: si `localStorage` falla (modo privado, cuota), cae a memoria sin romper la app.
+
+## 5. Ilustraciones y marca
 
 - Estilo: mancha de color con degradé + figura con trazo oscuro fino (3,5 px sobre `viewBox` 240 px), destellos y un hilito curvo abajo a la izquierda.
 - Piel `#fde8d4 → #f3c4a0`, contorno `#1a1a1f`, notas crema `#fff6ec`.
@@ -69,20 +81,20 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - **Proceso para dibujar o editar SVG:** usar la skill `vector-illustration`, con IDs semánticos (`ear.helix`, `mouth.tongue`), validar con `validate_svg.py` y **mirar el render** sobre el fondo oscuro de la app (no solo sobre blanco). Comparar contra la imagen de diseño de referencia.
 - En esta máquina no hay `rsvg-convert` ni CairoSVG; se renderiza con `qlmanage -t -s <px> -o <dir> archivo.svg`. No instalar herramientas sin avisar.
 
-## 5. Código
+## 6. Código
 
 - **Next.js 16 con cambios incompatibles:** leer la guía correspondiente en `node_modules/next/dist/docs/` antes de escribir código de Next (ver `AGENTS.md`).
 - Los componentes y datos compartidos entre servidor y cliente no se exportan desde un archivo `"use client"` si el servidor los usa (por eso `MODULES` está en `src/lib/modules.ts`).
 - Evitar diferencias servidor/cliente que rompan la hidratación (nada de `Date.now()`, `Math.random()` ni idioma del usuario en el render inicial). Si aparece un error de hidratación tras renombrar rutas, probar primero `rm -rf .next` y reiniciar `pnpm dev`.
-- El estado del entrenador vive en Zustand (`src/store/trainer-store.ts`); el audio, en clases sin React (`src/lib/audio`, `src/lib/rhythm`).
+- El estado vive en Zustand (`src/store/trainer-store.ts`, `src/store/rhythm-store.ts`); el audio, en clases sin React (`src/lib/audio`, `src/lib/rhythm`).
 - Para documentación de librerías, consultar Context7 antes que memoria.
 
-## 6. Verificación antes de dar algo por hecho
+## 7. Verificación antes de dar algo por hecho
 
-- `npx tsc --noEmit`, `npx eslint src`, `npx vitest run` y `pnpm build` deben pasar. Hoy hay un error de `eslint` previo (`setSelectedSongIndex` dentro de un efecto en `trainer-app.tsx`) y una advertencia (`OK_ONLY` sin usar) que no son de cambios recientes.
+- `npx tsc --noEmit`, `npx eslint src`, `npx vitest run` y `pnpm build` deben pasar. Hoy `eslint` tiene 3 errores previos (`set-state-in-effect` en `identify-modal.tsx` y `trainer-app.tsx`, y `refs` en `pitch-canvas.tsx`) y `mascot.test.ts` tiene 2 tests rotos por textos de mascota; ninguno es de cambios recientes.
 - Los cambios visuales y de audio se prueban en `pnpm dev`; type-check y tests no cubren cómo se ve ni cómo suena.
 
-## 7. Trabajo con el asistente
+## 8. Trabajo con el asistente
 
 - Preguntar cuando hay una decisión de diseño con varias lecturas razonables; si no, avanzar con el criterio más conservador y avisarlo.
 - Los commits terminan con la línea de atribución indicada por la configuración de Claude Code.

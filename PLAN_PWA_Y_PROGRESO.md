@@ -24,7 +24,7 @@ Hay además dos problemas en `useTrainer` que conviene arreglar antes de persist
 
 ---
 
-## Fase 1: Persistencia con Zustand + localStorage
+## Fase 1: Persistencia con Zustand + localStorage ✅ (hecha)
 
 ### 1.1 Separar el estado por modo en `trainer-store.ts`
 

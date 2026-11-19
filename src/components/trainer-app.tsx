@@ -6,6 +6,7 @@ import { dict } from "@/lib/i18n";
 import { live } from "@/lib/live-pitch";
 import { useTrainer, type Phase } from "@/store/trainer-store";
 import { useTrainerAudio } from "@/hooks/use-trainer-audio";
+import { useHydrated } from "./store-hydrator";
 import { IdentifyModal } from "./identify-modal";
 import { getMascotCharacter, getMascotReaction, Mascot, type Mood } from "./mascot";
 import { MiniPiano } from "./mini-piano";
@@ -16,7 +17,9 @@ const floating =
   "inline-flex items-center gap-1.5 rounded-full border border-zinc-600/80 bg-zinc-900/80 px-2.5 py-1 text-xs font-semibold text-zinc-100 backdrop-blur transition hover:border-zinc-400 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:opacity-40";
 
 export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
-  const { lang, selection, direction, currentId, phase, rootMidi, rootHz, evaluation, micError, score, setSelection, setDirection, answer } = useTrainer();
+  const { lang, selection, direction, currentId, phase, rootMidi, rootHz, evaluation, micError, scores, setSelection, setDirection, setMode, answer } = useTrainer();
+  const score = scores[mode];
+  const hydrated = useHydrated();
   const { startChallenge, replay, playReference } = useTrainerAudio();
   const [selectedSongIndex, setSelectedSongIndex] = useState(0);
   const [pickOpen, setPickOpen] = useState(false);
@@ -25,9 +28,8 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
   const [lastPick, setLastPick] = useState(selection === "random" ? "P5" : selection);
 
   useEffect(() => {
-    // The route decides the game: recognise = surprise interval, sing = chosen interval.
-    if (mode === "recognize") setSelection("random");
-    else if (useTrainer.getState().selection === "random") setSelection("P5");
+    // The route decides the game: recognise = surprise interval, sing = the interval chosen last time.
+    setMode(mode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
@@ -99,7 +101,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
           </h1>
           {/* <p className="hidden text-xs text-zinc-400 sm:block [@media(max-height:480px)]:hidden!">{t.tagline}</p> */}
         </div>
-        <div className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 text-xs sm:px-3 sm:text-sm" aria-label={`${t.score}: ${score.correct}/${score.total}. ${t.streak}: ${score.streak}`}>
+        <div className={`flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/70 px-2.5 py-1 text-xs transition-opacity sm:px-3 sm:text-sm ${hydrated ? "" : "opacity-40"}`} aria-label={`${t.score}: ${score.correct}/${score.total}. ${t.streak}: ${score.streak}`}>
           <span className="hidden text-zinc-400 sm:inline">{t.score}</span>
           <b className="tabular-nums">{score.correct}/{score.total}</b>
           <span className="text-zinc-600">·</span>
