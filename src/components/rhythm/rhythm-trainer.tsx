@@ -50,11 +50,15 @@ export function RhythmTrainer() {
     timer.current = window.setTimeout(() => setPlaying(false), secs * 1000);
   };
 
-  const switchSubdivision = (next: Subdivision) => {
-    if (next === subdivision) return;
+  const stop = () => {
     window.clearTimeout(timer.current);
     player.current?.stop();
     setPlaying(false);
+  };
+
+  const switchSubdivision = (next: Subdivision) => {
+    if (next === subdivision) return;
+    stop();
     setSubdivision(next);
     setTarget(null);
     setAnswer(empty());
@@ -132,15 +136,16 @@ export function RhythmTrainer() {
         </div>
       </header>
 
-      {/* Listen: one big button that turns into "Repetir" once a rhythm exists. */}
+      {/* Listen: one big button that turns into "Repetir" once a rhythm exists, or "Detener" while playing. */}
       <section className="card flex shrink-0 flex-col gap-2.5 p-2.5 sm:gap-3 sm:p-4 xl:flex-row xl:items-center xl:justify-between">
         <button
-          onClick={() => (target ? play(target) : newRhythm())}
-          disabled={playing}
-          className="btn btn-primary h-11 w-full gap-2 text-base font-extrabold sm:h-12 sm:w-auto sm:min-w-56 sm:self-center sm:px-8 xl:shrink-0"
+          onClick={() => (playing ? stop() : target ? play(target) : newRhythm())}
+          className={`btn h-11 w-full gap-2 text-base font-extrabold sm:h-12 sm:w-auto sm:min-w-56 sm:self-center sm:px-8 xl:shrink-0 ${
+            playing ? "btn-danger" : "btn-primary"
+          }`}
         >
-          <span aria-hidden>{target && !playing ? "↻" : "▶"}</span>
-          {playing ? "Sonando…" : target ? "Repetir" : "Escuchar ritmo"}
+          <span aria-hidden>{playing ? "■" : target ? "↻" : "▶"}</span>
+          {playing ? "Detener" : target ? "Repetir" : "Escuchar ritmo"}
         </button>
 
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-3 xl:justify-end">
@@ -220,7 +225,7 @@ export function RhythmTrainer() {
       <section className={`card relative flex shrink-0 flex-col justify-between gap-2.5 p-2.5 transition-opacity sm:min-h-52 sm:p-3 ${checked ? "min-h-56" : ""} ${target ? "" : "pointer-events-none opacity-40"}`} aria-labelledby="answer-title">
         <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
           <h2 id="answer-title" className="text-xs font-semibold text-zinc-100 sm:text-sm">Tu compás</h2>
-          {hint && <p role="status" className={`text-xs sm:text-sm ${checked ? (allRight ? "font-semibold text-emerald-300" : "font-semibold text-red-300") : "text-zinc-300"}`}>
+          {hint && <p role="status" className={`text-xs sm:text-sm ${playing ? "hidden sm:block " : ""}${checked ? (allRight ? "font-semibold text-emerald-300" : "font-semibold text-red-300") : "text-zinc-300"}`}>
             {hint}
           </p>}
         </div>
@@ -275,7 +280,7 @@ export function RhythmTrainer() {
             Borrar
           </button>
           <button onClick={giveUp} disabled={!target || playing} className="btn btn-ghost btn-sm ml-auto text-zinc-400">
-            Me rindo
+            Nuevo ritmo
           </button>
         </div>
 
@@ -298,14 +303,9 @@ export function RhythmTrainer() {
                 <RhythmNotation ids={target} width={340} height={72} line colors={resultColors} className="h-full w-auto max-w-sm" />
               </div>
             </div>
-            <div className="flex items-center gap-2.5">
-              <button onClick={newRhythm} disabled={playing} className="btn btn-primary px-5 py-2.5 text-base font-bold">
-                <span aria-hidden>▶</span> Otro ritmo
-              </button>
-              <button onClick={() => play(target)} disabled={playing} className="btn btn-ghost px-4 py-2.5 text-base font-bold">
-                <span aria-hidden>↻</span> Repetir
-              </button>
-            </div>
+            <button onClick={newRhythm} disabled={playing} className="btn btn-primary px-5 py-2.5 text-base font-bold">
+              <span aria-hidden>▶</span> Otro ritmo
+            </button>
           </div>
         )}
       </section>
