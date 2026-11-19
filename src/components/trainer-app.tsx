@@ -49,9 +49,9 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
   const asc = direction === "asc";
   const stepLabels = isRandom ? t.stepsRandom : t.steps;
   const order: Phase[] = isRandom
-    ? ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "IDENTIFY", "SUCCESS"]
-    : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "SUCCESS"];
-  const stepIndex = phase === "MISS" ? order.length - 1 : order.indexOf(phase);
+    ? ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET", "IDENTIFY"]
+    : ["PLAYING_INTERVAL", "SINGING_ROOT", "SINGING_TARGET"];
+  const stepIndex = finished ? order.length : order.indexOf(phase);
   const mood: Mood = phase === "SUCCESS" ? "happy" : phase === "MISS" ? "sad" : "neutral";
   const mainLabel = phase === "IDLE" ? t.newChallenge : t.next;
   /** The pitch view only matters while listening/singing; otherwise it hosts the main actions. */
@@ -78,32 +78,11 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
 
       <div className="flex flex-col gap-2.5 md:grid md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:gap-3">
         <section className="flex w-full min-w-0 flex-col self-start rounded-2xl border border-zinc-800 bg-zinc-900/50 p-3 shadow-xl backdrop-blur sm:rounded-3xl sm:p-5">
-          <div className="mb-2 flex items-center gap-3 sm:mb-4 sm:gap-4">
-            <div className="min-w-0">
-              <p className="text-base font-semibold sm:text-xl">
-                {finished ? def?.name[lang] ?? "" : t.phase[phase]}
-              </p>
-              <p className="text-xs text-zinc-400 sm:text-sm">
-                {finished
-                  ? def
-                    ? def.direction === "asc"
-                      ? t.ascending
-                      : t.descending
-                    : ""
-                  : def
-                    ? revealed
-                      ? `${def.name[lang]} · ${def.direction === "asc" ? t.ascending : t.descending}`
-                      : t.mystery
-                    : ""}
-              </p>
-            </div>
-          </div>
-
-          <ol className="[@media(max-height:480px)]:hidden mb-2 grid gap-1.5 sm:mb-4 sm:gap-2" style={{ gridTemplateColumns: `repeat(${stepLabels.length}, minmax(0, 1fr))` }} aria-label="progress">
+          <ol className="[@media(max-height:480px)]:hidden mb-2.5 grid gap-1.5 sm:mb-4 sm:gap-2" style={{ gridTemplateColumns: `repeat(${stepLabels.length}, minmax(0, 1fr))` }} aria-label="progress">
             {stepLabels.map((label, i) => (
               <li key={label} className="flex flex-col gap-1">
-                <span className={`h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-emerald-400" : "bg-zinc-800"}`} />
-                <span className={`truncate text-[10px] [@media(max-height:600px)]:hidden sm:text-[11px] ${i === stepIndex ? "text-zinc-100" : "text-zinc-500"}`}>{label}</span>
+                <span className={`h-2 rounded-full transition-colors ${i <= stepIndex ? "bg-emerald-400" : "bg-zinc-800"}`} />
+                <span className={`truncate text-xs sm:text-sm ${i === stepIndex ? "font-bold text-emerald-300" : i < stepIndex ? "font-medium text-zinc-300" : "font-medium text-zinc-500"}`}>{label}</span>
               </li>
             ))}
           </ol>
