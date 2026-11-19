@@ -22,8 +22,11 @@ export function RhythmTrainer() {
 
   useEffect(
     () => () => {
+      // The route may be hidden (not unmounted) by <Activity>; drop the closed player so it's rebuilt.
       window.clearTimeout(timer.current);
       player.current?.close();
+      player.current = null;
+      setPlaying(false);
     },
     [],
   );

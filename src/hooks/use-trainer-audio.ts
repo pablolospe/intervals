@@ -18,7 +18,9 @@ export function useTrainerAudio() {
   const timerRef = useRef<number | undefined>(undefined);
 
   const ensureAudio = useCallback(() => {
-    if (!ctxRef.current) {
+    // A closed context (e.g. after the route was hidden by <Activity> and its cleanup ran) can't be revived.
+    if (!ctxRef.current || ctxRef.current.state === "closed") {
+      micRef.current?.stop();
       const ctx = new AudioContext();
       ctxRef.current = ctx;
       synthRef.current = new SynthEngine(ctx);
@@ -115,9 +117,16 @@ export function useTrainerAudio() {
 
   useEffect(
     () => () => {
+      // With `cacheComponents`, Next keeps the route alive inside <Activity> when you navigate away:
+      // this cleanup runs but the refs survive. Null them so the next interaction builds a fresh context.
       window.clearTimeout(timerRef.current);
+      mutedRef.current = false;
       micRef.current?.stop();
       void ctxRef.current?.close();
+      ctxRef.current = null;
+      synthRef.current = null;
+      micRef.current = null;
+      stabRef.current.reset();
     },
     [],
   );
