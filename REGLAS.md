@@ -78,6 +78,16 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 - **Manifest:** `src/app/manifest.ts` (Next lo sirve en `/manifest.webmanifest`). `display: standalone`, `orientation: portrait`, `background_color` y `theme_color` = `#0b0c10`. Si cambia el fondo de la app, cambiarlo en el manifest y en `viewport.themeColor` (`layout.tsx`).
 - **Íconos:** `public/icons/icon-192.png` y `icon-512.png` (el logo sobre transparente, como el favicon) e `icon-maskable-512.png` (logo al ~62 % centrado sobre `#0b0c10`, para el recorte circular de Android). `src/app/icon.png` y `src/app/apple-icon.png` los enlaza Next solo; el de Apple es opaco (iOS pinta de negro lo transparente). Todos salen de `public/images/favicon.png`; si cambia el logo, regenerarlos desde ahí.
 - **iOS:** `appleWebApp` en el `metadata` con barra de estado `black` (opaca): la página queda debajo de la barra y no hace falta `safe-area`. Si algún día se pasa a `black-translucent`, hay que agregar `viewportFit: "cover"` y padding con `env(safe-area-inset-*)`.
+- **Offline (service worker con Serwist):**
+  - El código del worker es `src/app/sw.ts`; **no** forma parte del bundle de la app. `src/app/serwist/[path]/route.ts` lo empaqueta con esbuild y lo sirve estático en `/serwist/sw.js`; `<SerwistProvider>` (en `layout.tsx`) lo registra.
+  - Precachea el shell de las 4 pantallas y `/~offline`, todo `/_next/static` (incluidas las fuentes `.woff2`, que el patrón por defecto de Serwist no trae) y `public/`. Se instala en la primera visita y después todo abre sin conexión.
+  - **Por qué el route handler usa `'use cache'`:** con `cacheComponents`, empaquetar con esbuild cuenta como I/O dinámico y la ruta pasaría a renderizarse en cada request (necesitaría esbuild y `sw.ts` en producción). Dentro de `'use cache'` corre una vez en el build. Se omiten `dynamic`/`dynamicParams`/`revalidate` que exporta la librería, porque `cacheComponents` los rechaza; por eso la lista de archivos servidos (`FILES`) está fija y lo demás da 404. Si se agrega otro archivo de salida (por ejemplo, sourcemap), sumarlo a `FILES`.
+  - **Actualizaciones:** no hay `skipWaiting`. La versión nueva se baja y espera; `<UpdatePrompt />` muestra "Hay una versión nueva" y recién al tocar "Actualizar" se activa y se recarga. `reloadOnOnline` está apagado: volver a tener conexión nunca recarga la página en medio de un ejercicio.
+  - **En `next dev` el service worker está apagado** (para no pelear con el HMR). Se prueba con `pnpm build && PORT=3100 pnpm start`.
+  - **Cómo probar offline:** la navegación por la herramienta de Chrome del asistente se salta el service worker, así que ahí no sirve. En Chrome normal: DevTools → Application → Service Workers → Offline, y recargar. Para probarlo automatizado se usó un Chrome headless con perfil temporal y `Network.emulateNetworkConditions({ offline: true })` por CDP.
+  - **Limitación conocida:** una URL que nunca se visitó ni se precacheó (por ejemplo, una escrita a mano) muestra la 404 de la app en vez de "Sin conexión": el worker entrega `/~offline`, pero el router de Next lo reemplaza al ver otra URL.
+  - **Whisper (dictado de partitura, hoy deshabilitada):** los modelos los cachea transformers.js por su cuenta, y la primera descarga necesita conexión.
+  - Los sitios no se actualizan solos entre builds: cada build genera un `sw.js` distinto (revisión de las páginas precacheadas), así que el navegador detecta la versión nueva.
 - **Micrófono:** necesita HTTPS (en `localhost` también vale). En iPhone instalado, `getUserMedia` es lo más frágil: probarlo siempre en un dispositivo real.
 
 ## 6. Ilustraciones y marca
@@ -98,7 +108,7 @@ Reglas de producto, diseño, audio y trabajo acordadas hasta ahora. Si algo camb
 
 ## 8. Verificación antes de dar algo por hecho
 
-- `npx tsc --noEmit`, `npx eslint src`, `npx vitest run` y `pnpm build` deben pasar. Hoy `eslint` tiene 3 errores previos (`set-state-in-effect` en `identify-modal.tsx` y `trainer-app.tsx`, y `refs` en `pitch-canvas.tsx`) y `mascot.test.ts` tiene 2 tests rotos por textos de mascota; ninguno es de cambios recientes.
+- `pnpm typecheck` (revisa la app y, aparte, el service worker con `tsconfig.sw.json`), `npx eslint src`, `npx vitest run` y `pnpm build` deben pasar. Hoy `eslint` tiene 3 errores previos (`set-state-in-effect` en `identify-modal.tsx` y `trainer-app.tsx`, y `refs` en `pitch-canvas.tsx`) y `mascot.test.ts` tiene 2 tests rotos por textos de mascota; ninguno es de cambios recientes.
 - Los cambios visuales y de audio se prueban en `pnpm dev`; type-check y tests no cubren cómo se ve ni cómo suena.
 
 ## 9. Trabajo con el asistente

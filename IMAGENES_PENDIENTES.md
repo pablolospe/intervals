@@ -30,7 +30,7 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 6ta mayor desc | Thom Yorke · Radiohead (No Surprises)                | [x] No Surprises · [x] Nobody Knows the Trouble I've Seen                        |
 | 7ma menor asc  | Agnetha de ABBA (The Winner Takes It All)             | [x] The Winner Takes It All · [ ] Somewhere (West Side Story)                    |
 | 7ma menor desc | George Gershwin (An American in Paris)                | [x] An American in Paris · [ ] Watermelon Man · [ ] Blanca Navidad               |
-| 7ma mayor asc  | Morten Harket · a-ha (Take On Me)                    | [ ] Take On Me · [ ] Superman                                                    |
+| 7ma mayor asc  | Morten Harket · a-ha (Take On Me)                    | [x] Take On Me · [ ] Superman                                                    |
 | 7ma mayor desc | Cole Porter (I Love You)                              | [x] I Love You · [ ] Have Yourself a Merry Little Christmas                      |
 | 8va justa asc  | Judy Garland (Somewhere Over the Rainbow)             | [ ] Somewhere Over the Rainbow · [x] Singin' in the Rain                         |
 | 8va justa desc | León Gieco (Todos los días un poco)                 | [x] Todos los días un poco · [ ] Doogie Howser, M.D. · [ ] Willow Weep for Me    |

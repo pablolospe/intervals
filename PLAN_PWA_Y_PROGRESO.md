@@ -121,7 +121,7 @@ Next 16 soporta el manifest de forma nativa. Guía: `node_modules/next/dist/docs
 
 ---
 
-## Fase 3: Offline con service worker (Serwist)
+## Fase 3: Offline con service worker (Serwist) ✅ (hecha; falta probar en celu real)
 
 La guía oficial de Next recomienda **Serwist** para el caché offline, y tiene un ejemplo para Turbopack (`next-turbo-basic`).
 
@@ -134,7 +134,7 @@ La guía oficial de Next recomienda **Serwist** para el caché offline, y tiene 
 - [ ] Headers para `/sw.js` en `next.config.ts` (`Cache-Control: no-cache`, `Content-Type` correcto), según la guía de Next.
 - [ ] Service worker desactivado en `next dev`, para no pelear con el HMR.
 - [ ] Actualizaciones: cuando hay versión nueva, mostrar un aviso tipo "Hay una versión nueva, tocá para actualizar" en vez de recargar sin preguntar a mitad de un ejercicio.
-- [ ] Evaluar `experimental.useOffline` de Next (`offline-support.md`) para la navegación sin red. Ya usamos `cacheComponents` y `partialPrefetching`, que es lo que pide.
+- [x] `experimental.useOffline` de Next **no hizo falta**: con el service worker, las pantallas y la navegación entre ellas funcionan sin red (verificado con la red emulada en offline).
 
 ### Criterio de "listo" (Fase 3)
 

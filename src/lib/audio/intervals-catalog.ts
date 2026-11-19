@@ -384,7 +384,7 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "Take On Me",
           artist: "a-ha",
-          motif: [n(0, 1.5), n(11, 1.5), n(12, 2)],
+          motif: [n(0, 4), n(11, 4), n(12, 4)],
         },
         {
           title: "Superman (Love Theme)",
