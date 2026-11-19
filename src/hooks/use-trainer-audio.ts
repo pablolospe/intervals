@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { directedId, getInterval, intervalNotes, motifNotes } from "@/lib/audio/intervals-catalog";
 import { MicPitchSource } from "@/lib/audio/mic-pitch-source";
+import { centsOff } from "@/lib/audio/music-math";
 import { NoteStabilizer } from "@/lib/audio/note-stabilizer";
 import { SynthEngine, type SequenceNote } from "@/lib/audio/synth-engine";
 import { live, resetLive } from "@/lib/live-pitch";
@@ -12,7 +13,7 @@ export function useTrainerAudio() {
   const ctxRef = useRef<AudioContext | null>(null);
   const synthRef = useRef<SynthEngine | null>(null);
   const micRef = useRef<MicPitchSource | null>(null);
-  const stabRef = useRef(new NoteStabilizer());
+  const stabRef = useRef(new NoteStabilizer({ holdMs: 320, toleranceCents: 40, graceMs: 120 }));
   const mutedRef = useRef(false); // true while the app itself is playing sound
   const timerRef = useRef<number | undefined>(undefined);
 
@@ -25,12 +26,20 @@ export function useTrainerAudio() {
       mic.subscribe((frame) => {
         live.buffer = frame.buffer;
         live.frequency = frame.frequency;
-        const { phase, confirmNote } = useTrainer.getState();
+        const { phase, rootHz, confirmNote } = useTrainer.getState();
         if (mutedRef.current || (phase !== "SINGING_ROOT" && phase !== "SINGING_TARGET")) {
           live.progress = 0;
           return;
         }
-        const st = stabRef.current.update(frame.time, frame.frequency);
+        // Ignore lingering pitch from the 1st note while waiting for the 2nd note.
+        const freq =
+          phase === "SINGING_TARGET" &&
+          rootHz !== null &&
+          frame.frequency !== null &&
+          Math.abs(centsOff(frame.frequency, rootHz)) < 50
+            ? null
+            : frame.frequency;
+        const st = stabRef.current.update(frame.time, freq);
         live.progress = st.progress;
         if (st.confirmed && st.confirmedFrequency !== null) {
           confirmNote(st.confirmedFrequency);

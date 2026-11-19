@@ -31,8 +31,7 @@ export class NoteStabilizer {
   private readonly tol: number;
   private readonly hold: number;
   private readonly grace: number;
-  private samples: number[] = [];
-  private runStart = 0;
+  private samples: { time: number; freq: number }[] = [];
   private lastVoiced = 0;
   private confirmedFreq: number | null = null;
 
@@ -53,24 +52,31 @@ export class NoteStabilizer {
       if (frequency === null) {
         if (this.samples.length && nowMs - this.lastVoiced > this.grace) this.samples = [];
       } else {
-        // Run breaks when its pitch spread would exceed ±tol around some center (order-independent,
-        // so vibrato within the tolerance never resets it).
-        if (this.samples.length) {
-          const lo = Math.min(...this.samples, frequency);
-          const hi = Math.max(...this.samples, frequency);
-          if (centsOff(hi, lo) > 2 * this.tol) this.samples = [];
-        }
-        if (!this.samples.length) this.runStart = nowMs;
-        this.samples.push(frequency);
+        // Keep a sliding window: trim older frames until the remaining pitch spread fits within ±tol,
+        // so a brief scoop on vocal attack trims cleanly instead of wiping the whole run.
+        this.samples.push({ time: nowMs, freq: frequency });
         this.lastVoiced = nowMs;
-        if (nowMs - this.runStart >= this.hold) this.confirmedFreq = median(this.samples);
+        while (this.samples.length > 1) {
+          let lo = Infinity;
+          let hi = -Infinity;
+          for (const s of this.samples) {
+            if (s.freq < lo) lo = s.freq;
+            if (s.freq > hi) hi = s.freq;
+          }
+          if (centsOff(hi, lo) <= 2 * this.tol) break;
+          this.samples.shift();
+        }
+        const runStart = this.samples[0].time;
+        if (nowMs - runStart >= this.hold) {
+          this.confirmedFreq = median(this.samples.map((s) => s.freq));
+        }
       }
     }
 
     const active = this.samples.length > 0;
     return {
-      progress: this.confirmedFreq !== null ? 1 : active ? Math.min(1, (nowMs - this.runStart) / this.hold) : 0,
-      frequency: active ? median(this.samples) : null,
+      progress: this.confirmedFreq !== null ? 1 : active ? Math.min(1, (nowMs - this.samples[0].time) / this.hold) : 0,
+      frequency: active ? median(this.samples.map((s) => s.freq)) : null,
       confirmed: this.confirmedFreq !== null,
       confirmedFrequency: this.confirmedFreq,
     };

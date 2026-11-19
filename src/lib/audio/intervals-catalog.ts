@@ -395,7 +395,8 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "I Love You",
           artist: "Cole Porter",
-          motif: [n(0, 1.5), n(-11, 2.5)],
+          // Do(negra) - Do(blanca) - Reb(grave, blanca)
+          motif: [n(0, 1), n(0, 2), n(-11, 2)],
         },
         {
           title: "Have Yourself a Merry Little Christmas",

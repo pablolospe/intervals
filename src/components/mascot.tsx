@@ -1,5 +1,5 @@
 export type Mood = "neutral" | "happy" | "sad";
-export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim" | "armstrong" | "bride" | "cake" | "lennon" | "gershwin";
+export type MascotCharacter = "mccartney" | "gardel" | "homer" | "jaws" | "luke" | "flintstones" | "beethoven" | "deep-purple" | "mozart" | "radiohead" | "abba" | "aha" | "judy" | "pearl-jam" | "gieco" | "jobim" | "armstrong" | "bride" | "cake" | "lennon" | "gershwin" | "porter";
 
 export function getMascotCharacter(intervalId: string | null | undefined): MascotCharacter | null {
   if (!intervalId) return null;
@@ -22,6 +22,7 @@ export function getMascotCharacter(intervalId: string | null | undefined): Masco
   if (intervalId === "m7-asc") return "abba";
   if (intervalId === "m7-desc") return "gershwin";
   if (intervalId === "M7-asc") return "aha";
+  if (intervalId === "M7-desc") return "porter";
   if (intervalId === "P8-asc") return "judy";
   if (intervalId === "P8-desc") return "gieco";
   return null;
@@ -410,6 +411,24 @@ const CHARACTERS: Record<MascotCharacter, { label: string; happy: PhotoConfig; s
       src: "/images/gershwin/happy.jpg",
       alt: "George Gershwin (An American in Paris)",
       objectPosition: "object-[50%_25%] scale-105",
+    },
+  },
+  porter: {
+    label: "Cole Porter",
+    happy: {
+      src: "/images/porter/happy.jpg",
+      alt: "Cole Porter sonriendo (I Love You)",
+      objectPosition: "object-center scale-105",
+    },
+    sad: {
+      src: "/images/porter/sad.jpg",
+      alt: "Cole Porter serio (I Love You)",
+      objectPosition: "object-center scale-105",
+    },
+    neutral: {
+      src: "/images/porter/happy.jpg",
+      alt: "Cole Porter (I Love You)",
+      objectPosition: "object-center scale-105",
     },
   },
 };

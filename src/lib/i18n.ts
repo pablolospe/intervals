@@ -32,8 +32,8 @@ export const dict = {
     phase: {
       IDLE: "Calentá la garganta y apretá el botón",
       PLAYING_INTERVAL: "Orejas paradas… ya viene el intervalo.",
-      SINGING_ROOT: "Cantá la primera nota y bancala firme.",
-      SINGING_TARGET: "Ahora el salto: cantá la segunda nota.",
+      SINGING_ROOT: "1/2 · Cantá la 1ª nota y sostenela hasta llenar la barra.",
+      SINGING_TARGET: "2/2 · ¡Lista la 1ª! Ahora cantá la 2ª nota y sostenela.",
       IDENTIFY: "¿Qué intervalo cantaste?",
       SUCCESS: "¡Clavado!",
       MISS: "Uy, casi.",
@@ -83,8 +83,8 @@ export const dict = {
     phase: {
       IDLE: "Warm up your throat and hit the green button.",
       PLAYING_INTERVAL: "Ears up… here comes the interval.",
-      SINGING_ROOT: "Sing the first note and hold it steady.",
-      SINGING_TARGET: "Now the leap: sing the second note.",
+      SINGING_ROOT: "1/2 · Sing the 1st note and hold it until the bar fills.",
+      SINGING_TARGET: "2/2 · 1st note locked! Now sing and hold the 2nd note.",
       IDENTIFY: "Which interval did you just sing?",
       SUCCESS: "Nailed it!",
       MISS: "Ooh, so close.",

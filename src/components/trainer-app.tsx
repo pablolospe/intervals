@@ -111,7 +111,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
           {/* Pitch view: action buttons float over it while it's idle, and shrink to the corner while singing. */}
           <div className="relative min-h-40 shrink-0 sm:min-h-52 md:min-h-56 [@media(max-height:600px)]:min-h-40">
             <div className="absolute inset-0">
-              <PitchCanvas idleLabel={t.idleLabel} />
+              <PitchCanvas idleLabel={t.idleLabel} phase={phase} lang={lang} />
             </div>
             {canvasIdle ? (
               <div className="relative z-10 flex min-h-40 flex-col items-center justify-center gap-2.5 rounded-2xl bg-zinc-950/80 p-3 backdrop-blur-[2px] sm:min-h-52 sm:gap-3 md:min-h-56 [@media(max-height:600px)]:min-h-40">

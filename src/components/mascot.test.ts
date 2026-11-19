@@ -24,12 +24,13 @@ describe("getMascotCharacter", () => {
     expect(getMascotCharacter("m7-asc")).toBe("abba");
     expect(getMascotCharacter("m7-desc")).toBe("gershwin");
     expect(getMascotCharacter("M7-asc")).toBe("aha");
+    expect(getMascotCharacter("M7-desc")).toBe("porter");
     expect(getMascotCharacter("P8-asc")).toBe("judy");
     expect(getMascotCharacter("P8-desc")).toBe("gieco");
   });
 
   it("returns null for intervals without mascot", () => {
-    expect(getMascotCharacter("M7-desc")).toBeNull();
+    expect(getMascotCharacter("unknown")).toBeNull();
     expect(getMascotCharacter(null)).toBeNull();
     expect(getMascotCharacter(undefined)).toBeNull();
   });
@@ -49,10 +50,11 @@ describe("getMascotCharacter", () => {
     expect(getMascotLabel("m7-asc")).toBe("Agnetha de ABBA");
     expect(getMascotLabel("m7-desc")).toBe("George Gershwin");
     expect(getMascotLabel("M7-asc")).toBe("Morten de A-ha");
+    expect(getMascotLabel("M7-desc")).toBe("Cole Porter");
     expect(getMascotLabel("TT-desc")).toBe("Eddie de Pearl Jam");
     expect(getMascotLabel("P8-asc")).toBe("Judy Garland");
     expect(getMascotLabel("P8-desc")).toBe("León Gieco");
-    expect(getMascotLabel("M7-desc")).toBeNull();
+    expect(getMascotLabel("unknown")).toBeNull();
     expect(getMascotLabel(null)).toBeNull();
   });
 
@@ -62,9 +64,9 @@ describe("getMascotCharacter", () => {
     expect(getMascotReaction("P8-asc", "happy")).toBe("Pusiste feliz a Judy Garland");
     expect(getMascotReaction("P4-asc", "happy")).toBe("Pusiste feliz a la novia");
     expect(getMascotReaction("P4-asc", "sad")).toBe("La novia está triste");
-    expect(getMascotReaction("M7-desc", "happy", "Wagner")).toBe("Pusiste feliz a Wagner");
-    expect(getMascotReaction("M7-desc", "sad", "Wagner")).toBe("Wagner está triste");
-    expect(getMascotReaction("M7-desc", "happy")).toBeNull();
+    expect(getMascotReaction("unknown", "happy", "Wagner")).toBe("Pusiste feliz a Wagner");
+    expect(getMascotReaction("unknown", "sad", "Wagner")).toBe("Wagner está triste");
+    expect(getMascotReaction("unknown", "happy")).toBeNull();
   });
 });
 
