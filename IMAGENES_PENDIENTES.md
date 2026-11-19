@@ -18,7 +18,7 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 3ra menor desc | Paul McCartney · The Beatles (Hey Jude)              | [ ] Hey Jude · [ ] Te quiero yo (Barney)                                         |
 | 3ra mayor asc  | Louis Armstrong (When the Saints Go Marching In)      | [ ] When the Saints Go Marching In · [ ] Kumbaya                                 |
 | 3ra mayor desc | Ludwig van Beethoven (5ta Sinfonía)                  | [ ] 5ta Sinfonía · [ ] Swing Low, Sweet Chariot · [ ] Águas de Março             |
-| 4ta justa asc  | La novia (Marcha nupcial · Wagner)                    | [ ] Bridal Chorus · [ ] A Hard Day's Night · [ ] Himno Nacional Argentino        |
+| 4ta justa asc  | La novia (Marcha nupcial · Wagner)                    | [x] Bridal Chorus · [x] Arroz con leche                                          |
 | 4ta justa desc | Wolfgang Amadeus Mozart (Pequeña serenata nocturna)  | [ ] Pequeña serenata nocturna · [ ] Born Free                                    |
 | Tritono asc    | Homero Simpson · Los Simpson                         | [ ] The Simpsons · [ ] Maria (West Side Story)                                   |
 | Tritono desc   | Eddie de Pearl Jam (Even Flow)                        | [x] Even Flow · [ ] Black Sabbath                                                |

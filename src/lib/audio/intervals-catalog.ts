@@ -178,16 +178,16 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "Bridal Chorus (Here Comes the Bride)",
           artist: "Wagner",
-          motif: [n(0, 1), n(5, 1.5), n(5, 0.5), n(5, 2), n(0, 1), n(7, 1.5), n(4, 0.5), n(5, 2)],
+          // negra (1), corchea con punto (0.75), semicorchea (0.25), blanca (2) × 2
+          motif: [n(0, 1), n(5, 0.75), n(5, 0.25), n(5, 2), n(0, 1), n(7, 0.75), n(4, 0.25), n(5, 2)],
         },
         {
-          title: "A Hard Day's Night",
-          artist: "The Beatles",
-          motif: [n(0, 1), n(5, 1.5), n(3, 0.5), n(0, 1), n(-2, 2)],
-        },
-        {
-          title: "Himno Nacional Argentino",
-          motif: [n(0, 1), n(5, 2), n(5, 0.5), n(4, 0.5), n(5, 2)],
+          title: "Arroz con leche",
+          // Sol(0.5) | Do(1) Mi(1) Do(1) | Do(0.5) Sol(0.5) Do(1) Do(0.5) Mi(0.5) | Re(1.5)
+          motif: [
+            n(0, 0.5), n(5, 1), n(9, 1), n(5, 1), n(5, 0.5), n(0, 0.5),
+            n(5, 1), n(5, 0.5), n(9, 0.5), n(7, 1.5),
+          ],
         },
       ],
       desc: [
@@ -225,7 +225,7 @@ export const BASE_INTERVALS: readonly BaseInterval[] = [
         {
           title: "Even Flow",
           artist: "Pearl Jam",
-          motif: [n(0, 1), n(-6, 1.5), n(-7, 1), n(-5, 1.5)],
+          motif: [n(0, 2), n(-6, 2)],
         },
         {
           title: "Black Sabbath",

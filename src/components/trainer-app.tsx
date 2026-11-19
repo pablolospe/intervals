@@ -124,7 +124,7 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                     style={{ width: i < stepIndex ? "100%" : "0%" }}
                   />
                 </span>
-                <span className={`truncate text-xs sm:text-sm ${i === stepIndex ? "font-bold text-emerald-300" : i < stepIndex ? "font-medium text-zinc-300" : "font-medium text-zinc-500"}`}>{label}</span>
+                <span className={`truncate text-[11px] sm:text-xs ${i === stepIndex ? "font-bold text-emerald-300" : i < stepIndex ? "font-medium text-zinc-300" : "font-medium text-zinc-500"}`}>{label}</span>
               </li>
             ))}
           </ol>
@@ -171,16 +171,16 @@ export function TrainerApp({ mode }: { mode: "recognize" | "sing" }) {
                     mainLabel
                   ) : (
                     <>
-                      <span className="sm:hidden">{t.nextShort}</span>
-                      <span className="hidden sm:inline">{mainLabel}</span>
+                      <span className="lg:hidden">{t.nextShort}</span>
+                      <span className="hidden lg:inline">{mainLabel}</span>
                     </>
                   )}
                 </button>
                 {def && (
                   <button onClick={replay} className="btn btn-ghost px-4 py-2.5 text-sm sm:px-5 sm:py-3 sm:text-base">
                     <span aria-hidden>↻</span>
-                    <span className="sm:hidden">{t.replayShort}</span>
-                    <span className="hidden sm:inline">{t.replay}</span>
+                    <span className="lg:hidden">{t.replayShort}</span>
+                    <span className="hidden lg:inline">{t.replay}</span>
                   </button>
                 )}
                 </div>
