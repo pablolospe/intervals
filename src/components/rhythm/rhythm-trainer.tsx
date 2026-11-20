@@ -19,6 +19,7 @@ export function RhythmTrainer() {
   const hydrated = useHydrated();
   const [playing, setPlaying] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const answerCard = useRef<HTMLElement>(null);
   const player = useRef<RhythmPlayer | null>(null);
   const timer = useRef<number | undefined>(undefined);
 
@@ -62,6 +63,13 @@ export function RhythmTrainer() {
   };
 
   const newRhythm = () => play(useRhythm.getState().newRhythm());
+
+  /** Checks the answer and brings the result into view: on phones the card may be scrolled off-screen. */
+  const checkAnswer = () => {
+    check();
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    requestAnimationFrame(() => answerCard.current?.scrollIntoView({ block: "nearest", behavior: calm ? "auto" : "smooth" }));
+  };
 
   /** Giving up skips to another rhythm, but counts as a miss, so it is never easier than trying. */
   const giveUp = () => {
@@ -185,7 +193,7 @@ export function RhythmTrainer() {
       </section>
 
       {/* Answer: one paper slot per beat */}
-      <section className={`card relative flex shrink-0 flex-col justify-between gap-2.5 p-2.5 transition-opacity sm:min-h-52 sm:p-3 ${checked ? "min-h-56" : ""} ${target ? "" : "pointer-events-none opacity-40"}`} aria-labelledby="answer-title">
+      <section ref={answerCard} className={`card relative flex shrink-0 flex-col justify-between gap-2.5 p-2.5 transition-opacity sm:min-h-52 sm:p-3 ${checked ? "min-h-56" : ""} ${target ? "" : "pointer-events-none opacity-40"}`} aria-labelledby="answer-title">
         <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
           <h2 id="answer-title" className="text-xs font-semibold text-zinc-100 sm:text-sm">Tu compás</h2>
           {hint && <p role="status" className={`text-xs sm:text-sm ${playing ? "hidden sm:block " : ""}${checked ? (allRight ? "font-semibold text-emerald-300" : "font-semibold text-red-300") : "text-zinc-300"}`}>
@@ -236,13 +244,18 @@ export function RhythmTrainer() {
         </div>
 
         <div className="mt-2.5 flex gap-2 border-t border-zinc-800 pt-2">
-          <button onClick={check} disabled={!target || !filled} className="btn btn-accent btn-sm">
-            Comprobar
+          {/* Desktop: big primary action in the card. On phones it moves to the sticky bar under the palette. */}
+          <button
+            onClick={checkAnswer}
+            disabled={!target || !filled}
+            className={`btn btn-accent hidden h-11 min-w-44 flex-1 text-base font-extrabold md:inline-flex ${filled && canPick ? "anim-pop" : ""}`}
+          >
+            <span aria-hidden>✓</span> Comprobar
           </button>
           <button onClick={clear} disabled={!answer.some(Boolean)} className="btn btn-ghost btn-sm">
             Borrar
           </button>
-          <button onClick={giveUp} disabled={!target || playing} className="btn btn-ghost btn-sm ml-auto text-zinc-400">
+          <button onClick={giveUp} disabled={!target || playing} className="btn btn-ghost btn-sm ml-auto text-zinc-400 md:ml-0">
             Nuevo ritmo
           </button>
         </div>
@@ -266,7 +279,7 @@ export function RhythmTrainer() {
                 <RhythmNotation ids={target} width={340} height={72} line colors={resultColors} className="h-full w-auto max-w-sm" />
               </div>
             </div>
-            <button onClick={newRhythm} disabled={playing} className="btn btn-primary px-5 py-2.5 text-base font-bold">
+            <button onClick={newRhythm} disabled={playing} className="btn btn-primary px-5 py-2.5 text-base font-bold max-md:hidden">
               <span aria-hidden>▶</span> Otro ritmo
             </button>
           </div>
@@ -295,6 +308,25 @@ export function RhythmTrainer() {
           ))}
         </div>
       </section>
+
+      {/* Phones: the main action floats at the bottom, within thumb reach: "Comprobar" once the measure is complete, then "Otro ritmo". */}
+      {target && (checked || filled) && (
+        <>
+        {/* Room at the end of the page so the fixed bar never covers the last row of cells. */}
+        <div aria-hidden className="h-20 shrink-0 md:hidden" />
+        <div className="anim-pop fixed inset-x-0 bottom-0 z-40 bg-linear-to-t from-[#0b0c10] from-70% to-transparent px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-6 md:hidden">
+          {checked ? (
+            <button onClick={newRhythm} disabled={playing} className="btn btn-primary h-14 w-full text-lg font-extrabold">
+              <span aria-hidden>▶</span> Otro ritmo
+            </button>
+          ) : (
+            <button onClick={checkAnswer} className="btn btn-accent h-14 w-full text-lg font-extrabold">
+              <span aria-hidden>✓</span> Comprobar
+            </button>
+          )}
+        </div>
+        </>
+      )}
     </main>
     <CellPickerDialog
       open={pickerOpen}

@@ -16,7 +16,7 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 | 2da mayor desc | Paul McCartney · The Beatles (Yesterday)             | [ ] Yesterday · [ ] Mary Had a Little Lamb                                       |
 | 3ra menor asc  | Ritchie Blackmore · Deep Purple (Smoke on the Water) | [ ] Smoke on the Water · [ ] Greensleeves · [ ] Arrullo (Canción de cuna)        |
 | 3ra menor desc | Paul McCartney · The Beatles (Hey Jude)              | [ ] Hey Jude · [ ] Te quiero yo (Barney)                                         |
-| 3ra mayor asc  | Louis Armstrong (When the Saints Go Marching In)      | [ ] When the Saints Go Marching In · [ ] Kumbaya                                 |
+| 3ra mayor asc  | Louis Armstrong (When the Saints Go Marching In)      | [ ] When the Saints Go Marching In *(retocar ritmo)* · [ ] Kumbaya *(retocar ritmo)* |
 | 3ra mayor desc | Ludwig van Beethoven (5ta Sinfonía)                  | [ ] 5ta Sinfonía · [ ] Swing Low, Sweet Chariot · [ ] Águas de Março             |
 | 4ta justa asc  | La novia (Marcha nupcial · Wagner)                    | [x] Bridal Chorus · [x] Arroz con leche                                          |
 | 4ta justa desc | Wolfgang Amadeus Mozart (Pequeña serenata nocturna)  | [ ] Pequeña serenata nocturna · [ ] Born Free                                    |
@@ -75,8 +75,8 @@ Lista completa de canciones configuradas en `src/lib/audio/intervals-catalog.ts`
 
 ### 4. 3ra mayor
 - **Ascendente (`M3-asc`):**
-  - [ ] **When the Saints Go Marching In** — Louis Armstrong
-  - [ ] **Kumbaya**
+  - [ ] **When the Saints Go Marching In** — Louis Armstrong *(retocar ritmo — prioridad baja)*
+  - [ ] **Kumbaya** *(retocar ritmo — prioridad baja)*
 - **Descendente (`M3-desc`):**
   - [ ] **5ta Sinfonía** — Ludwig van Beethoven
   - [ ] **Swing Low, Sweet Chariot**
