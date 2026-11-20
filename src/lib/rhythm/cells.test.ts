@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CELLS, TERNARY_CELLS, cellPool, grade, hasRest, isDotted, planRhythm, randomRhythm, vexDuration } from "./cells";
+import { CELLS, TERNARY_CELLS, basicDisabled, cellPool, isUsablePool, grade, hasRest, isDotted, planRhythm, randomRhythm, vexDuration } from "./cells";
 
 describe("rhythm cells", () => {
   it("every cell fills exactly one beat and ids are unique", () => {
@@ -9,25 +9,45 @@ describe("rhythm cells", () => {
     expect(new Set(all.map((c) => c.id)).size).toBe(all.length);
   });
 
-  it("pool without rests excludes rest cells in both binary and ternary", () => {
-    expect(cellPool(false).some(hasRest)).toBe(false);
-    expect(cellPool(false)).toHaveLength(6);
-    expect(cellPool(true)).toHaveLength(CELLS.length);
-    expect(cellPool(false, "ternary").some(hasRest)).toBe(false);
-    expect(cellPool(false, "ternary")).toHaveLength(6);
-    expect(cellPool(true, "ternary")).toHaveLength(TERNARY_CELLS.length);
+  it("pool is every cell of the meter minus the disabled ones", () => {
+    expect(cellPool("binary")).toHaveLength(CELLS.length);
+    expect(cellPool("ternary")).toHaveLength(TERNARY_CELLS.length);
+    const noRests = (list: typeof CELLS) => list.filter(hasRest).map((c) => c.id);
+    expect(cellPool("binary", noRests(CELLS)).some(hasRest)).toBe(false);
+    expect(cellPool("binary", noRests(CELLS))).toHaveLength(6);
+    expect(cellPool("ternary", noRests(TERNARY_CELLS))).toHaveLength(6);
+    expect(cellPool("binary", ["q", "no-such-cell"]).map((c) => c.id)).not.toContain("q");
+  });
+
+  it("a usable pool needs 2+ cells and one that is not a whole-beat rest", () => {
+    const byId = (...ids: string[]) => CELLS.filter((c) => ids.includes(c.id));
+    expect(isUsablePool(byId("q"))).toBe(false);
+    expect(isUsablePool(byId("q", "8-8"))).toBe(true);
+    expect(isUsablePool(byId("qr"))).toBe(false);
+    expect(isUsablePool(byId("qr", "q"))).toBe(true);
+    expect(isUsablePool([])).toBe(false);
+  });
+
+  it("basic preset keeps only plain whole-beat cells", () => {
+    const off = basicDisabled("binary");
+    expect(cellPool("binary", off).map((c) => c.id)).toEqual(["q", "8-8", "16x4"]);
+    expect(isUsablePool(cellPool("ternary", basicDisabled("ternary")))).toBe(true);
+  });
+
+  it("never loops forever when only a whole-beat rest is left", () => {
+    expect(randomRhythm(CELLS.filter((c) => c.id === "qr"))).toEqual(["qr", "qr", "qr", "qr"]);
   });
 
   it("random rhythm has 4 beats, at most one full rest, never on beat 1", () => {
     let seed = 1;
     const rng = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
     for (let k = 0; k < 500; k++) {
-      const ids = randomRhythm(cellPool(true), 4, rng);
+      const ids = randomRhythm(cellPool("binary"), 4, rng);
       expect(ids).toHaveLength(4);
       expect(ids[0]).not.toBe("qr");
       expect(ids.filter((i) => i === "qr").length).toBeLessThanOrEqual(1);
 
-      const tIds = randomRhythm(cellPool(true, "ternary"), 4, rng);
+      const tIds = randomRhythm(cellPool("ternary"), 4, rng);
       expect(tIds).toHaveLength(4);
       expect(tIds[0]).not.toBe("qdr");
       expect(tIds.filter((i) => i === "qdr").length).toBeLessThanOrEqual(1);

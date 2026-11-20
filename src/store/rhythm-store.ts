@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { cellPool, grade, randomRhythm, type Subdivision } from "@/lib/rhythm/cells";
+import { cellPool, cellsFor, grade, hasRest, isUsablePool, randomRhythm, type Subdivision } from "@/lib/rhythm/cells";
 import { safeStorage } from "./safe-storage";
 import type { Score } from "./trainer-store";
 
@@ -15,7 +15,8 @@ export interface RhythmState {
   // Persisted: settings and progress.
   bpm: number;
   subdivision: Subdivision;
-  includeRests: boolean;
+  /** Cells switched off in the dictation, per meter. Stored as "off" so cells added later start enabled. */
+  disabledCells: Record<Subdivision, string[]>;
   metronome: boolean;
   stats: Score;
 
@@ -27,7 +28,13 @@ export interface RhythmState {
 
   setBpm: (bpm: number) => void;
   setSubdivision: (subdivision: Subdivision) => void;
-  setIncludeRests: (v: boolean) => void;
+  /**
+   * Turns cells of the current meter on or off. Refused (returns false) if it would leave too few cells to
+   * dictate. A rhythm in progress that uses a newly disabled cell is dropped, like on a meter change.
+   */
+  setCellsEnabled: (ids: readonly string[], enabled: boolean) => boolean;
+  /** Keeps exactly these cells of the current meter on. Same rules as `setCellsEnabled`. */
+  selectCells: (ids: readonly string[]) => boolean;
   setMetronome: (v: boolean) => void;
   /** Draws a new rhythm and returns it so the caller can play it. */
   newRhythm: (rng?: () => number) => string[];
@@ -42,7 +49,10 @@ export interface RhythmState {
 
 const clampBpm = (bpm: number) => Math.min(BPM_MAX, Math.max(BPM_MIN, Math.round(bpm)));
 
-type PersistedRhythm = Pick<RhythmState, "bpm" | "subdivision" | "includeRests" | "metronome" | "stats">;
+type PersistedRhythm = Pick<RhythmState, "bpm" | "subdivision" | "disabledCells" | "metronome" | "stats">;
+
+const SUBDIVISIONS: Subdivision[] = ["binary", "ternary"];
+const noneDisabled = (): Record<Subdivision, string[]> => ({ binary: [], ternary: [] });
 
 const isCount = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n) && n >= 0;
 
@@ -52,7 +62,17 @@ function sanitize(raw: unknown): Partial<PersistedRhythm> {
   const out: Partial<PersistedRhythm> = {};
   if (typeof p.bpm === "number" && Number.isFinite(p.bpm)) out.bpm = clampBpm(p.bpm);
   if (p.subdivision === "binary" || p.subdivision === "ternary") out.subdivision = p.subdivision;
-  if (typeof p.includeRests === "boolean") out.includeRests = p.includeRests;
+  if (p.disabledCells && typeof p.disabledCells === "object") {
+    const raw = p.disabledCells as Record<string, unknown>;
+    const disabled = noneDisabled();
+    for (const sub of SUBDIVISIONS) {
+      const known = cellsFor(sub).map((c) => c.id);
+      const ids = Array.isArray(raw[sub]) ? (raw[sub] as unknown[]).filter((id): id is string => typeof id === "string" && known.includes(id)) : [];
+      // A selection that can't make a dictation is corrupt (or from an older cell list): start over.
+      disabled[sub] = isUsablePool(cellPool(sub, ids)) ? [...new Set(ids)] : [];
+    }
+    out.disabledCells = disabled;
+  }
   if (typeof p.metronome === "boolean") out.metronome = p.metronome;
   const st = p.stats as Score | undefined;
   if (st && isCount(st.correct) && isCount(st.total) && isCount(st.streak)) out.stats = { correct: st.correct, total: st.total, streak: st.streak };
@@ -63,10 +83,21 @@ export const useRhythm = create<RhythmState>()(
   persist(
     (set, get) => {
       const draw = (rng?: () => number) => {
-        const { includeRests, subdivision } = get();
-        const target = randomRhythm(cellPool(includeRests, subdivision), BEATS, rng);
+        const { disabledCells, subdivision } = get();
+        const target = randomRhythm(cellPool(subdivision, disabledCells[subdivision]), BEATS, rng);
         set({ target, answer: emptyAnswer(), cursor: 0, checked: false });
         return target;
+      };
+      const applyDisabled = (next: string[]) => {
+        const { subdivision, disabledCells, target, checked } = get();
+        if (!isUsablePool(cellPool(subdivision, next))) return false;
+        // Still being answered and uses a cell that is now off: it can no longer be a fair exercise.
+        const stale = !!target && !checked && target.some((id) => next.includes(id));
+        set({
+          disabledCells: { ...disabledCells, [subdivision]: next },
+          ...(stale ? { target: null, answer: emptyAnswer(), cursor: 0 } : {}),
+        });
+        return true;
       };
       const addResult = (ok: boolean) =>
         set((s) => ({
@@ -80,7 +111,7 @@ export const useRhythm = create<RhythmState>()(
       return {
         bpm: 80,
         subdivision: "binary",
-        includeRests: true,
+        disabledCells: noneDisabled(),
         metronome: true,
         stats: emptyStats(),
 
@@ -94,7 +125,18 @@ export const useRhythm = create<RhythmState>()(
           if (subdivision === get().subdivision) return;
           set({ subdivision, target: null, answer: emptyAnswer(), cursor: 0, checked: false });
         },
-        setIncludeRests: (includeRests) => set({ includeRests }),
+        setCellsEnabled: (ids, enabled) => {
+          const { subdivision, disabledCells } = get();
+          const mine = cellsFor(subdivision).map((c) => c.id);
+          const touched = ids.filter((id) => mine.includes(id));
+          const current = disabledCells[subdivision];
+          const next = mine.filter((id) => (touched.includes(id) ? !enabled : current.includes(id)));
+          return applyDisabled(next);
+        },
+        selectCells: (ids) => {
+          const { subdivision } = get();
+          return applyDisabled(cellsFor(subdivision).map((c) => c.id).filter((id) => !ids.includes(id)));
+        },
         setMetronome: (metronome) => set({ metronome }),
 
         newRhythm: draw,
@@ -132,19 +174,31 @@ export const useRhythm = create<RhythmState>()(
     },
     {
       name: "burpears:rhythm",
-      version: 1,
+      version: 2,
       storage: safeStorage,
       // Rehydrated by <StoreHydrator /> after mount, so server and first client render match.
       skipHydration: true,
       partialize: (s): PersistedRhythm => ({
         bpm: s.bpm,
         subdivision: s.subdivision,
-        includeRests: s.includeRests,
+        disabledCells: s.disabledCells,
         metronome: s.metronome,
         stats: s.stats,
       }),
       // Bump `version` when the persisted shape changes and convert old data here instead of dropping it.
-      migrate: (persisted) => persisted as PersistedRhythm,
+      migrate: (persisted, version) => {
+        const p = (persisted && typeof persisted === "object" ? persisted : {}) as Record<string, unknown>;
+        // v1 had a single "Silencios" switch: turning it off now means disabling every rest cell.
+        if (version < 2) {
+          const { includeRests, ...rest } = p;
+          if (includeRests === false) {
+            const restIds = (sub: Subdivision) => cellsFor(sub).filter(hasRest).map((c) => c.id);
+            return { ...rest, disabledCells: { binary: restIds("binary"), ternary: restIds("ternary") } } as PersistedRhythm;
+          }
+          return rest as unknown as PersistedRhythm;
+        }
+        return p as unknown as PersistedRhythm;
+      },
       merge: (persisted, current) => ({ ...current, ...sanitize(persisted) }),
     },
   ),

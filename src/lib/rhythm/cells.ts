@@ -59,17 +59,41 @@ export function getCell(id: string): RhythmCell {
 
 export const hasRest = (c: RhythmCell) => c.slots.some((s) => s.rest);
 
-export function cellPool(includeRests: boolean, subdivision: Subdivision = "binary"): RhythmCell[] {
-  const list = subdivision === "ternary" ? TERNARY_CELLS : CELLS;
-  return includeRests ? list : list.filter((c) => !hasRest(c));
+/** All cells of a meter, with and without rests. */
+export const cellsFor = (subdivision: Subdivision = "binary"): RhythmCell[] => (subdivision === "ternary" ? TERNARY_CELLS : CELLS);
+
+/** The cells the user can be asked: every cell of the meter except the ones they turned off. */
+export function cellPool(subdivision: Subdivision = "binary", disabled: readonly string[] = []): RhythmCell[] {
+  return cellsFor(subdivision).filter((c) => !disabled.includes(c.id));
 }
 
 const isFullRest = (id: string) => id === "qr" || id === "qdr";
 
+/** Smallest selection that still makes a dictation worth doing. */
+export const MIN_CELLS = 2;
+
+/** A pool needs variety, and at least one cell that is not a whole-beat rest (those can't open a measure). */
+export const isUsablePool = (pool: readonly RhythmCell[]) => pool.length >= MIN_CELLS && pool.some((c) => !isFullRest(c.id));
+
+/** Starter selection: whole beats built from plain notes. */
+const BASIC_IDS: Record<Subdivision, readonly string[]> = {
+  binary: ["q", "8-8", "16x4"],
+  ternary: ["qd", "8-8-8", "q-8", "8-q"],
+};
+
+/** Ids to switch off so only the basic cells remain. */
+export const basicDisabled = (subdivision: Subdivision): string[] =>
+  cellsFor(subdivision)
+    .filter((c) => !BASIC_IDS[subdivision].includes(c.id))
+    .map((c) => c.id);
+
 /** Random measure of `beats` cells. Never more than one whole-beat rest, and never starting with one. */
 export function randomRhythm(pool: RhythmCell[], beats = 4, rng: () => number = Math.random): string[] {
+  const pick = () => pool[Math.floor(rng() * pool.length)].id;
+  // Without a sounding cell to open the measure the rules above can't be met: take whatever there is.
+  if (!pool.some((c) => !isFullRest(c.id))) return Array.from({ length: beats }, pick);
   for (;;) {
-    const ids = Array.from({ length: beats }, () => pool[Math.floor(rng() * pool.length)].id);
+    const ids = Array.from({ length: beats }, pick);
     const fullRests = ids.filter(isFullRest).length;
     if (fullRests <= 1 && !isFullRest(ids[0])) return ids;
   }

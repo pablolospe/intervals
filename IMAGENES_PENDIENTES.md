@@ -39,6 +39,116 @@ La app muestra una imagen por **intervalo y dirección** en el cartel de resulta
 
 Los 24 intervalos ya tienen su personaje cargado.
 
+---
+
+## Revisión de melodías / motifs (51 canciones en catálogo)
+
+Lista completa de canciones configuradas en `src/lib/audio/intervals-catalog.ts` para auditar auditivamente y ajustar notas/ritmo.
+
+- **Revisadas y confirmadas:** 14 / 51
+- **Pendientes de revisión:** 37 / 51
+
+### 1. 2da menor
+- **Ascendente (`m2-asc`):**
+  - [ ] **Tiburón (Jaws)** — John Williams
+  - [ ] **La Pantera Rosa** — Henry Mancini
+- **Descendente (`m2-desc`):**
+  - [ ] **Para Elisa** — Ludwig van Beethoven
+  - [ ] **Fly Me to the Moon** — Frank Sinatra
+
+### 2. 2da mayor
+- **Ascendente (`M2-asc`):**
+  - [ ] **Cumpleaños feliz**
+  - [ ] **Martinillo (Frère Jacques)**
+- **Descendente (`M2-desc`):**
+  - [ ] **Yesterday** — The Beatles
+  - [ ] **Mary Had a Little Lamb**
+
+### 3. 3ra menor
+- **Ascendente (`m3-asc`):**
+  - [ ] **Smoke on the Water** — Deep Purple
+  - [ ] **Greensleeves**
+  - [ ] **Arrullo (Canción de cuna)** — Johannes Brahms
+- **Descendente (`m3-desc`):**
+  - [ ] **Hey Jude** — The Beatles
+  - [ ] **Te quiero yo (Barney)**
+
+### 4. 3ra mayor
+- **Ascendente (`M3-asc`):**
+  - [ ] **When the Saints Go Marching In** — Louis Armstrong
+  - [ ] **Kumbaya**
+- **Descendente (`M3-desc`):**
+  - [ ] **5ta Sinfonía** — Ludwig van Beethoven
+  - [ ] **Swing Low, Sweet Chariot**
+  - [ ] **Águas de Março** — Tom Jobim
+
+### 5. 4ta justa
+- **Ascendente (`P4-asc`):**
+  - [x] **Bridal Chorus (Here Comes the Bride)** — Richard Wagner
+  - [x] **Arroz con leche**
+- **Descendente (`P4-desc`):**
+  - [ ] **Pequeña serenata nocturna** — Wolfgang Amadeus Mozart
+  - [ ] **Born Free** — John Barry
+
+### 6. Tritono
+- **Ascendente (`TT-asc`):**
+  - [ ] **The Simpsons** — Danny Elfman
+  - [ ] **Maria (West Side Story)** — Leonard Bernstein
+- **Descendente (`TT-desc`):**
+  - [x] **Even Flow** — Pearl Jam
+  - [ ] **Black Sabbath** — Black Sabbath
+
+### 7. 5ta justa
+- **Ascendente (`P5-asc`):**
+  - [ ] **Star Wars (Main Theme)** — John Williams
+  - [ ] **Estrellita (Twinkle Twinkle)**
+- **Descendente (`P5-desc`):**
+  - [ ] **Los Picapiedras**
+  - [ ] **Game of Thrones** — Ramin Djawadi
+
+### 8. 6ta menor
+- **Ascendente (`m6-asc`):**
+  - [x] **In My Life (intro)** — The Beatles
+  - [ ] **The Entertainer** — Scott Joplin
+  - [ ] **Conquest of Paradise** — Vangelis
+- **Descendente (`m6-desc`):**
+  - [ ] **Chega de Saudade** — Tom Jobim
+  - [ ] **Love Story (Where Do I Begin)** — Francis Lai
+
+### 9. 6ta mayor
+- **Ascendente (`M6-asc`):**
+  - [x] **El día que me quieras** — Carlos Gardel
+  - [x] **My Way** — Frank Sinatra
+- **Descendente (`M6-desc`):**
+  - [x] **No Surprises** — Radiohead
+  - [x] **Nobody Knows the Trouble I've Seen**
+
+### 10. 7ma menor
+- **Ascendente (`m7-asc`):**
+  - [x] **The Winner Takes It All** — ABBA
+  - [ ] **Somewhere (West Side Story)** — Leonard Bernstein
+- **Descendente (`m7-desc`):**
+  - [x] **An American in Paris** — George Gershwin
+  - [ ] **Watermelon Man** — Herbie Hancock
+  - [ ] **Blanca Navidad (White Christmas)** — Irving Berlin
+
+### 11. 7ma mayor
+- **Ascendente (`M7-asc`):**
+  - [x] **Take On Me** — a-ha
+  - [ ] **Superman (Love Theme)** — John Williams
+- **Descendente (`M7-desc`):**
+  - [x] **I Love You** — Cole Porter
+  - [ ] **Have Yourself a Merry Little Christmas**
+
+### 12. 8va justa
+- **Ascendente (`P8-asc`):**
+  - [ ] **Somewhere Over the Rainbow** — Judy Garland
+  - [x] **Singin' in the Rain** — Gene Kelly
+- **Descendente (`P8-desc`):**
+  - [x] **Todos los días un poco** — León Gieco
+  - [ ] **Doogie Howser, M.D.** — Mike Post
+  - [ ] **Willow Weep for Me** — Ann Ronell
+
 ## Próximas secciones pendientes
 
 - **Reconocer tipos de compases**: módulo para identificar auditivamente el compás:

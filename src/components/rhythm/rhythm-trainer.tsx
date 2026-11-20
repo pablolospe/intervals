@@ -1,10 +1,11 @@
 "use client";
 import { SuiteShell } from "@/components/suite-shell";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { cellPool, getCell, grade, type Subdivision } from "@/lib/rhythm/cells";
+import { cellPool, cellsFor, getCell, grade, type Subdivision } from "@/lib/rhythm/cells";
 import { RhythmPlayer } from "@/lib/rhythm/rhythm-player";
 import { BEATS, BPM_MAX, BPM_MIN, useRhythm } from "@/store/rhythm-store";
 import { useHydrated } from "../store-hydrator";
+import { CellPickerDialog } from "./cell-picker-dialog";
 import { RhythmNotation } from "./rhythm-notation";
 
 // Dark enough to read on the light paper surface.
@@ -13,10 +14,11 @@ const BAD = "#dc2626";
 
 export function RhythmTrainer() {
   // Settings, progress and the exercise in progress live in the store so they survive navigating away.
-  const { target, answer, cursor, checked, bpm, subdivision, includeRests, metronome, stats } = useRhythm();
-  const { setBpm, setSubdivision, setIncludeRests, setMetronome, setCursor, pick, clear, check } = useRhythm.getState();
+  const { target, answer, cursor, checked, bpm, subdivision, disabledCells, metronome, stats } = useRhythm();
+  const { setBpm, setSubdivision, setMetronome, setCursor, pick, clear, check } = useRhythm.getState();
   const hydrated = useHydrated();
   const [playing, setPlaying] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const player = useRef<RhythmPlayer | null>(null);
   const timer = useRef<number | undefined>(undefined);
 
@@ -31,7 +33,8 @@ export function RhythmTrainer() {
     [],
   );
 
-  const pool = useMemo(() => cellPool(includeRests, subdivision), [includeRests, subdivision]);
+  const disabled = disabledCells[subdivision];
+  const pool = useMemo(() => cellPool(subdivision, disabled), [subdivision, disabled]);
   const results = useMemo(() => (checked && target ? grade(answer, target) : null), [checked, answer, target]);
   const resultColors = useMemo(() => results?.map((r) => (r ? OK : BAD)), [results]);
   const allRight = results?.every(Boolean) ?? false;
@@ -162,13 +165,11 @@ export function RhythmTrainer() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <button
-                className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3"
-                aria-pressed={includeRests}
-                onClick={() => setIncludeRests(!includeRests)}
-              >
-                <span aria-hidden className="text-[11px]">{includeRests ? "✓" : "○"}</span>
-                <span>Silencios</span>
+              <button className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3" onClick={() => setPickerOpen(true)} aria-haspopup="dialog">
+                <span>Elegir células</span>
+                <span className="rounded-full bg-zinc-950/60 px-1.5 text-[10px] tabular-nums text-emerald-300">
+                  {pool.length}/{cellsFor(subdivision).length}
+                </span>
               </button>
               <button
                 className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3"
@@ -295,6 +296,14 @@ export function RhythmTrainer() {
         </div>
       </section>
     </main>
+    <CellPickerDialog
+      open={pickerOpen}
+      onClose={() => {
+        setPickerOpen(false);
+        // The exercise may have been dropped because it used a cell that is now off.
+        if (!useRhythm.getState().target) stop();
+      }}
+    />
     </SuiteShell>
   );
 }

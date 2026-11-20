@@ -126,3 +126,15 @@ body {
     @apply rounded-xl bg-stone-50 text-zinc-900 shadow-[inset_0_-2px_0_0_rgba(0,0,0,0.08)];
   }
 }
+
+/* ---------- Native modal dialogs ---------- */
+/* Keep scroll gestures over the dialog or its backdrop from moving the page behind it. */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgb(9 9 11 / 0.7);
+  backdrop-filter: blur(2px);
+}
