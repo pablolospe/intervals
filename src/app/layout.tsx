@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { SerwistProvider } from "@serwist/turbopack/react";
+import { Analytics } from "@vercel/analytics/next";
 import { StoreHydrator } from "@/components/store-hydrator";
 import { UpdatePrompt } from "@/components/update-prompt";
 import "./globals.css";
@@ -42,6 +43,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
           <UpdatePrompt />
         </SerwistProvider>
+        {/* Cookieless page-view analytics (Vercel Web Analytics). Only reports once enabled in the Vercel dashboard. */}
+        <Analytics />
       </body>
     </html>
   );
