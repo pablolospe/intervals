@@ -40,6 +40,8 @@ export interface RhythmState {
   newRhythm: (rng?: () => number) => string[];
   setCursor: (i: number) => void;
   pick: (cellId: string) => void;
+  /** Empties the last filled beat and puts the cursor there. */
+  removeLast: () => void;
   clear: () => void;
   check: () => void;
   /** Skips to another rhythm but counts as a miss, so it is never easier than trying. */
@@ -152,6 +154,16 @@ export const useRhythm = create<RhythmState>()(
           const nextEmpty = next.findIndex((a, i) => a === null && i > cursor);
           const anyEmpty = next.findIndex((a) => a === null);
           set({ answer: next, cursor: nextEmpty >= 0 ? nextEmpty : anyEmpty >= 0 ? anyEmpty : cursor });
+        },
+
+        removeLast: () => {
+          const { target, checked, answer } = get();
+          if (!target || checked) return;
+          const last = answer.findLastIndex((a) => a !== null);
+          if (last < 0) return;
+          const next = answer.slice();
+          next[last] = null;
+          set({ answer: next, cursor: last });
         },
 
         clear: () => set({ answer: emptyAnswer(), cursor: 0 }),

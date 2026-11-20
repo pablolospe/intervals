@@ -77,6 +77,32 @@ describe("rhythm exercise", () => {
   });
 });
 
+describe("removing the last cell", () => {
+  it("empties the last filled beat and moves the cursor back to it", () => {
+    s().newRhythm(seeded(1));
+    const t = s().target!;
+    s().pick(t[0]);
+    s().pick(t[1]);
+    s().removeLast();
+    expect(s().answer).toEqual([t[0], null, null, null]);
+    expect(s().cursor).toBe(1);
+    s().removeLast();
+    expect(s().answer.every((a) => a === null)).toBe(true);
+    s().removeLast(); // nothing left: no-op
+    expect(s().cursor).toBe(0);
+  });
+
+  it("does nothing once checked or without a rhythm", () => {
+    s().removeLast();
+    expect(s().answer.every((a) => a === null)).toBe(true);
+    s().newRhythm(seeded(1));
+    solve();
+    s().check();
+    s().removeLast();
+    expect(s().answer.every((a) => a !== null)).toBe(true);
+  });
+});
+
 describe("persistence", () => {
   it("saves settings and stats, not the exercise", () => {
     s().newRhythm(seeded(1));
