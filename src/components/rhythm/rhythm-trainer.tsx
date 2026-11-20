@@ -12,6 +12,17 @@ import { RhythmNotation } from "./rhythm-notation";
 const OK = "var(--accent-edge)";
 const BAD = "#dc2626";
 
+function MetronomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8.5 3h7l3.5 17.5a.8.8 0 0 1-.8 1H5.8a.8.8 0 0 1-.8-1L8.5 3Z" />
+      <path d="M12 17 16.5 6.5" />
+      <circle cx="14.6" cy="10.9" r="1.1" fill="currentColor" />
+      <path d="M7.5 17.5h9" />
+    </svg>
+  );
+}
+
 export function RhythmTrainer() {
   // Settings, progress and the exercise in progress live in the store so they survive navigating away.
   const { target, answer, cursor, checked, bpm, subdivision, disabledCells, metronome, stats } = useRhythm();
@@ -149,7 +160,7 @@ export function RhythmTrainer() {
             })}
           </div>
 
-          <div className="flex w-full flex-wrap items-center justify-between gap-1.5 sm:w-auto sm:justify-center sm:gap-2.5">
+          <div className="flex w-full items-center justify-between gap-1.5 sm:w-auto sm:justify-center sm:gap-2.5">
             <div role="group" aria-label="Tempo" className="flex items-center gap-0.5 rounded-full border border-zinc-800 bg-zinc-950/70 p-0.5">
               <button
                 className="chip h-7 w-7 border-zinc-700/80 px-0! text-xs font-bold"
@@ -159,7 +170,7 @@ export function RhythmTrainer() {
               >
                 −
               </button>
-              <span className="min-w-12 px-1 text-center text-xs font-semibold tabular-nums text-zinc-100 sm:min-w-14">
+              <span className="min-w-10 px-1 text-center text-xs font-semibold tabular-nums text-zinc-100 sm:min-w-14">
                 {subdivision === "ternary" ? "♩." : "♩"} {bpm}
               </span>
               <button
@@ -174,18 +185,20 @@ export function RhythmTrainer() {
 
             <div className="flex items-center gap-1.5">
               <button className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3" onClick={() => setPickerOpen(true)} aria-haspopup="dialog">
-                <span>Elegir células</span>
+                <span className="sm:hidden">Células</span>
+                <span className="hidden sm:inline">Elegir células</span>
                 <span className="rounded-full bg-zinc-950/60 px-1.5 text-[10px] tabular-nums text-emerald-300">
                   {pool.length}/{cellsFor(subdivision).length}
                 </span>
               </button>
               <button
-                className="chip h-8 gap-1.5 px-2.5 text-xs sm:px-3"
+                className="chip h-8 w-8 px-0!"
                 aria-pressed={metronome}
+                aria-label="Metrónomo"
+                title={metronome ? "Metrónomo activado" : "Metrónomo desactivado"}
                 onClick={() => setMetronome(!metronome)}
               >
-                <span aria-hidden className="text-[11px]">{metronome ? "✓" : "○"}</span>
-                <span>Metrónomo</span>
+                <MetronomeIcon />
               </button>
             </div>
           </div>
